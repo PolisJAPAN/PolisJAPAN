@@ -8,3 +8,8 @@
 # Mac開発時の.DS_Storeはすべて無視
 .DS_Store
 **/.DS_Store/
+
+# configs 以下の特定環境フォルダをすべて無視
+/configs/development/
+/configs/localhost/
+/configs/production/
