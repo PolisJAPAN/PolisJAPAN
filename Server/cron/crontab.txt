@@ -1,0 +1,1 @@
+0 * * * * curl -sS --fail -X POST 'http://web:8000/batch/update' -H 'accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'access_key=B0qVBsBeDWrsph8C3Y'

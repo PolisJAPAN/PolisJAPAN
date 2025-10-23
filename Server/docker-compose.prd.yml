@@ -1,0 +1,29 @@
+services:
+  web:
+    environment:
+      PROJECT_NAME: ${PROJECT_NAME}
+      APP_ENV: production
+
+  nginx:
+    # 配列は置換マージなので、ベース分＋本番追加分をすべて列挙する
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/production.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs:/etc/letsencrypt:ro
+      - ./webroot:/var/www/certbot:ro
+      - ./admin:/usr/share/nginx/html/dashboard:ro
+
+  # 本番のみ起動する certbot を追加
+  certbot:
+    image: certbot/certbot:latest
+    container_name: ${PROJECT_NAME}_certbot
+    volumes:
+      - ./certs:/etc/letsencrypt
+      - ./webroot:/var/www/certbot
+
+# ここは named volume を使う場合のみ必要（bind マウントだけなら省略可）
+volumes:
+  certs:
+  webroot:

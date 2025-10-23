@@ -1,0 +1,6 @@
+# Serverフォルダ内のすべての .pyc ファイルを無視
+/Server/**/*.pyc
+
+# すべての .vscode フォルダを中身ごと無視
+.vscode/
+**/.vscode/

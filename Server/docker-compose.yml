@@ -1,0 +1,50 @@
+services:
+  web:
+    build: ./web/
+    container_name: ${PROJECT_NAME}_web
+    environment:
+      PROJECT_NAME: ${PROJECT_NAME}
+      APP_ENV: localhost
+    volumes:
+      - ./web:/app
+    depends_on:
+      - db
+      - cache
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: ${PROJECT_NAME}_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./admin:/usr/share/nginx/html/dashboard:ro
+    depends_on:
+      - web
+
+  db:
+    image: mysql:8.0
+    container_name: ${PROJECT_NAME}_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: app_db
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ${PROJECT_NAME}_db_data:/var/lib/mysql
+
+  cache:
+    image: memcached:latest
+    container_name: ${PROJECT_NAME}_cache
+    ports:
+      - "11211:11211"
+  
+  cron:
+    build: ./cron
+    container_name: ${PROJECT_NAME}_cron
+    restart: unless-stopped
+
+volumes:
+  PolisJAPAN_db_data:

@@ -1,0 +1,22 @@
+
+TINYINT_MAX         = 127
+"""TINYINTの最大値"""
+SMALLINT_MAX        = 32767
+"""SMALLINTの最大値"""
+MEDIUMINT_MAX   	= 8388607
+"""MEDIUMINTの最大値"""
+INT_MAX   	        = 2147483647
+"""INTの最大値"""
+BIGINT_MAX   	    = 9223372036854775807
+"""BIGINT_MAXの最大値"""
+
+TINYINT_U_MAX       = 255
+"""TINYINT(符号なし)の最大値"""
+SMALLINT_U_MAX      = 65535
+"""SMALLINT(符号なし)の最大値"""
+MEDIUMINT_U_MAX   	= 16777215
+"""MEDIUMINT(符号なし)の最大値"""
+INT_U_MAX   	    = 4294967295
+"""TINT(符号なし)の最大値"""
+BIGINT_U_MAX   	    = 18446744073709551615
+"""BIGINT_MAX(符号なし)の最大値"""
