@@ -1,0 +1,97 @@
+@mixin fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    will-change: opacity, transform;
+
+    &.show {
+        animation-name: fadeSlideIn;
+        animation-duration: var(--dur, 0.8s);
+        animation-timing-function: ease;
+        animation-delay: var(--delay, 0s);
+        animation-fill-mode: both;
+    }
+}
+.fade-in, .scroll-fade-in { @include fade-in; }
+
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* 共通: 変数・基礎設定 */
+@mixin mask-reveal {
+    --dur: .8s;
+    --ease: cubic-bezier(.2, .7, 0, 1);
+
+    /* マスクの共通設定（Safari対策含む） */
+    -webkit-mask-image: linear-gradient(#000 0 0);
+    mask-image: linear-gradient(#000 0 0);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+
+    /* アニメーションの共通設定（初期は停止） */
+    animation-duration: var(--dur);
+    animation-timing-function: var(--ease);
+    animation-fill-mode: forwards;
+    animation-play-state: paused;
+
+    /* 品質向上 */
+    will-change: -webkit-mask-size, mask-size;
+
+    transition: mask-size var(--ease) 0.5s;
+
+    /* トリガー: これが付くと再生 */
+    &.show {
+        -webkit-mask-size: 100% 100% !important;
+        mask-size: 100% 100% !important;
+    }
+}
+.mask-reveal, .scroll-mask-reveal { @include mask-reveal; }
+
+/* 左→右 */
+@mixin from-left {
+    -webkit-mask-size: 0% 100%;
+    mask-size: 0% 100%;
+    -webkit-mask-position: left center;
+    mask-position: left center;
+}
+.from-left { @include from-left; }
+
+
+/* 右→左 */
+@mixin from-right {
+    -webkit-mask-size: 0% 100%;
+    mask-size: 0% 100%;
+    -webkit-mask-position: right center;
+    mask-position: right center;
+}
+.from-right { @include from-right; }
+
+
+/* 上→下 */
+@mixin from-top {
+    -webkit-mask-size: 100% 0%;
+    mask-size: 100% 0%;
+    -webkit-mask-position: center top;
+    mask-position: center top;
+}
+.from-top { @include from-top; }
+
+
+/* 下→上 */
+@mixin from-bottom {
+    -webkit-mask-size: 100% 0%;
+    mask-size: 100% 0%;
+    -webkit-mask-position: center bottom;
+    mask-position: center bottom;
+}
+.from-bottom { @include from-bottom; }

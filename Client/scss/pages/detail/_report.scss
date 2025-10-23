@@ -1,0 +1,284 @@
+@use "../../common" as common;
+
+body#detail {
+    .polis-report {
+        @include common.row;
+        @include common.center;
+
+        .report-container {
+            @include common.padding-16px;
+            @include common.stack;
+            @include common.stack-top;
+            @include common.align-center;
+            @include common.spacing-16px;
+            @include common.padding-bottom-96px;
+
+            max-width: 720px;
+
+            // --color-graph-positive: #8d91e7;
+            --color-graph-positive: #87b8fe;
+            --color-graph-negative: #f37979;
+            --color-graph-neutral: #cdcdcd;
+            --color-graph-nothing: #f2f2f2;
+
+            .comment-wrapper {
+                @include common.stack;
+                @include common.center;
+                @include common.align-center;
+                @include common.spacing-16px;
+
+                .title {
+                    @include common.width-full;
+                    @include common.font-weight-black;
+                    @include common.font-size-large;
+                    @include common.letter-spacing-small;
+                    @include common.text-center;
+                    @include common.padding-bottom-8px;
+                }
+    
+                .comment-list {
+                    @include common.stack;
+                    @include common.spacing-48px;
+                    @include common.padding-bottom-120px;
+                }
+            }
+
+
+            .comments-item {
+                @include common.stack;
+                @include common.center;
+                @include common.align-center;
+                @include common.spacing-8px;
+                @include common.padding-4px;
+
+                background-color: var(--color-light);
+
+                border-radius: 8px;
+                filter: drop-shadow(0px 4px 16px rgba(9, 8, 39, 0.15));
+
+                .caption {
+                    @include common.font-size-small;
+                    @include common.letter-spacing-default;
+                    color: var(--color-font-dark-gray);
+
+                    i {
+                        margin-right: 4px;
+                    }
+                }
+
+                .comments-text-group {
+                    @include common.row;
+                    @include common.both;
+                    @include common.align-center;
+                    @include common.width-full;
+                    @include common.height-full;
+                    @include common.padding-8px;
+                    overflow: hidden;
+                    background-image: linear-gradient(113deg, #ffffff 28%, #d5d5d5);
+                    color: var(--color-light);
+                    border-radius: 8px;
+
+                    .comment-person-img-group {
+                        @include common.relative;
+                        width: 120px;
+
+                        .comment-person-img {
+                            @include common.absolute;
+                            object-fit: cover;
+
+                            width: 140px;
+                            max-width: 140px;
+                            left: 46px;
+                            bottom: -16px;
+                            
+                            transform: translateX(-50%) translateY(50%);
+                        }
+                    }
+
+                    .comments-text {
+                        @include common.relative;
+                        @include common.row;
+                        @include common.center;
+                        @include common.align-center;
+                        @include common.width-full;
+                        @include common.height-fit;
+                        @include common.padding-16px;
+                        @include common.padding-left-20px;
+                        @include common.margin-left-16px;
+                        @include common.font-weight-semibold;
+                        @include common.letter-spacing-default;
+                        @include common.line-spacing-medium;
+                        font-size: 17px;
+                        background-color: var(--color-dark);
+                        color: var(--color-light);
+                        border-radius: 8px;
+                        text-align: start;
+
+                        min-height: 120px;
+
+                        .comment-arrow {
+                            /* 配置する */
+                            position: absolute;
+                            bottom: 25%;
+                            left: 0%;
+                            transform: translateX(-100%) rotate(116deg);
+                        }
+                    }
+                }
+
+
+                .graph-group {
+                    @include common.stack;
+                    @include common.width-full;
+                    @include common.height-fit;
+                    @include common.spacing-16px;
+                    @include common.padding-x-16px;
+                    @include common.padding-top-8px;
+                    @include common.padding-bottom-32px;
+                }
+                .graph-container {
+                    @include common.stack ;
+                    @include common.center;
+                    @include common.height-fit;
+                    @include common.width-full;
+
+                    overflow: hidden;
+                    border-radius: 8px;
+
+                    .graph-item {
+                        @include common.row;
+                        @include common.row-left;
+                        height: 40px;
+                        overflow: hidden;
+                        background-color: var(--color-graph-nothing);
+                        box-sizing: border-box;
+
+                        .graph-bar {
+                            @include common.height-full;
+                            @include common.width-full;
+                            
+                            &.positive {
+                                background-color: var(--color-graph-positive);
+                                z-index: var(--z-index-local-over-3);
+                            }
+
+                            &.negative {
+                                background-color: var(--color-graph-negative);
+                                z-index: var(--z-index-local-over-2);
+                            }
+
+                            &.neutral {
+                                background-color: var(--color-graph-neutral);
+                                z-index: var(--z-index-local-over-1);
+                            }
+                        }
+                    }
+                }
+                .group-graph-container {
+                    @include common.grid;
+                    @include common.grid-column-2;
+                    @include common.height-fit;
+                    @include common.width-full;
+                    @include common.spacing-16px;
+
+                    overflow: hidden;
+                    border-radius: 8px;
+
+                    .circle-graph-item {
+                        @include common.row;
+                        @include common.center;
+                        @include common.align-center;
+                        @include common.fill;
+                        @include common.height-fit;
+                        overflow: hidden;
+
+                        .graph-circle {
+                            @include common.row;
+                            @include common.center;
+                            @include common.align-center;
+                            @include common.margin-right-8px;
+                            height: 100px;
+                            width: 100px;
+                            max-width: 30vw;
+                            max-height: 30vw;
+                            border-radius: 50%;
+                            background-image: radial-gradient(#fff 55%, transparent 55%), conic-gradient(var(--color-graph-positive) 60%, var(--color-graph-negative) 60% 80%, var(--color-graph-neutral) 80% 100%);
+                            font-weight: 600;
+
+                            @include common.font-size-small;
+                            @include common.letter-spacing-default;
+                            color: var(--color-font-dark-gray);
+                        }
+
+                        .data-text-group {
+                            @include common.stack;
+                            @include common.stack-bottom;
+                            @include common.spacing-4px;
+                            @include common.height-full;
+
+                            height: 100px;
+                            max-height: 30vw;
+
+                            .data-text {
+                                @include common.font-weight-black;
+                                @include common.letter-spacing-default;
+                                @include common.font-size-medium;
+
+                                .percent {
+                                    @include common.font-weight-black;
+                                    @include common.letter-spacing-default;
+                                    @include common.line-spacing-medium;
+
+                                    @include common.font-size-small;
+                                }
+
+                                &.positive {
+                                    color: var(--color-graph-positive);
+                                }
+                                &.negative {
+                                    color: var(--color-graph-negative);
+                                }
+                                &.neutral {
+                                    color: var(--color-graph-neutral);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            .make-comments-group {
+                @include common.stack;
+                @include common.center;
+                @include common.align-center;
+                @include common.spacing-16px;
+                @include common.padding-bottom-180px;
+
+                .make-comment-img {
+                    max-width: 360px;
+                }
+
+                .make-comments-title {
+                    @include common.font-weight-black;
+                    @include common.font-size-medium;
+                    @include common.letter-spacing-small;
+                    @include common.text-center;
+                    color: var(--color-font-dark-gray);
+                }
+                .make-comments-detail {
+                    @include common.font-weight-regular;
+                    @include common.letter-spacing-small;
+                    @include common.line-spacing-medium;
+                    @include common.text-center;
+                    color: var(--color-font-dark-gray);
+                }
+
+                .goto-theme-button {
+                    border-color: var(--color-font-dark-gray);
+                    color: var(--color-font-dark-gray);
+                }
+            }
+        }
+    }
+}

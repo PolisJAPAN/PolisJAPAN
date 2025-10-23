@@ -1,0 +1,78 @@
+@use "../../common" as common;
+
+#info {
+    color: var(--color-light);
+    padding-bottom: 96px;
+
+    .section-bg {
+        background-color: var(--color-dark);
+    }
+
+    .info-content {
+        @include common.content;
+        @include common.stack;
+        @include common.stack-top;
+        @include common.align-center;
+        @include common.spacing-32px;
+
+    }
+
+    .info-group {
+        @include common.stack;
+        @include common.spacing-32px;
+        @include common.margin-top-64px;
+    }
+    
+    .info-item {
+        @include common.stack;
+        @include common.spacing-16px;
+        @include common.padding-64px;
+
+        width: 100%;
+        max-width: 920px;
+
+        border: 1px solid var(--color-light);
+
+        border-radius: 32px;
+
+        .info-title-group {
+            @include common.row;
+            @include common.row-left;
+            @include common.align-center;
+            @include common.spacing-8px;
+
+            p {
+                @include common.font-color-primary;
+                @include common.font-size-medium;
+                @include common.font-weight-black;
+                @include common.letter-spacing-small;
+            }
+
+            h3 {
+                @include common.text;
+                @include common.font-size-medium;
+                @include common.font-weight-black;
+                @include common.letter-spacing-small;
+            }
+        }
+
+        .detail {
+            @include common.text;
+            @include common.line-spacing-x-large;
+        }
+    }
+
+    @media (max-width: 1024px) {
+
+    }
+    @media (max-width: 768px) {
+        .info-group {
+            @include common.padding-x-16px;
+        }
+
+        .info-item {
+            @include common.padding-x-32px;
+            @include common.padding-y-64px;
+        }
+    }
+}

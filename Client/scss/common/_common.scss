@@ -1,0 +1,202 @@
+/* 
+=======================================
+_common.scss
+---------------------------------------
+HTML全てに適用するスタイル群
+======================================= 
+*/
+
+@mixin html {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+html { @include html; }
+
+@mixin body {
+    height: 100vh;
+    width: 100vw;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    position: relative;
+}
+body { @include body; }
+
+
+@mixin header {
+    width: 100vw;
+    height: fit-content;
+    position: fixed;
+
+    z-index: var(--z-index-grobal-menu);
+}
+header { @include header; }
+
+
+@mixin footer {
+    width: 100vw;
+    height: fit-content;
+
+    padding-top: 64px;
+    padding-bottom: 120px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    position: relative;
+
+    z-index: var(--z-index-grobal-content);
+}
+footer { @include footer; }
+
+
+@mixin main {
+    width: 100vw;
+    height: fit-content;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+main { @include main; }
+
+
+@mixin section {
+    width: 100vw;
+    height: fit-content;
+
+    padding-top: 64px;
+    padding-bottom: 280px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    position: relative;
+
+    z-index: var(--z-index-grobal-content);
+}
+section { @include section; }
+
+
+@mixin content {
+    width: 100lvw;
+    max-width: 1280px;
+}
+.content { @include content; }
+
+
+@mixin text {
+    height: fit-content;
+}
+.text { @include text; }
+
+
+/* スクロールバー非表示(デフォルト) */
+html,
+html * {
+    -ms-overflow-style: none;
+    /* IE/Edge 旧 */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+html::-webkit-scrollbar,
+html *::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+/* スクロールバーの表示調整 */
+@mixin scroll-visible {
+    /* 任意で上書き可能なデフォルト変数 */
+    --scroll-size: 10px;
+    --scroll-thumb: #FFFFFF33;
+    --scroll-thumb-hover: r#FFFFFF33;
+    --scroll-track: #FFFFFF14;
+    --scroll-radius: 8px;
+
+    scrollbar-width: thin;
+    /* auto | thin | none */
+    scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+
+    /* WebKit系 */
+    &::-webkit-scrollbar {
+        width: var(--scroll-size);
+        height: var(--scroll-size);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--scroll-thumb);
+        border-radius: var(--scroll-radius);
+        border: 2px solid transparent;
+        /* つまみの外側に余白感 */
+        background-clip: padding-box;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background-color: var(--scroll-thumb-hover);
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: var(--scroll-track);
+        border-radius: var(--scroll-radius);
+    }
+}
+.scroll-visible { @include scroll-visible; }
+
+
+img {
+    -webkit-user-drag: none;
+}
+
+@mixin druggable {
+    -webkit-user-drag: auto;
+}
+.druggable { @include druggable; }
+
+
+
+@mixin desktop-hidden {
+    @media (min-width: 1025px) {
+        display: none;
+    }
+    @media (max-width: 1024px) {
+
+    }
+    @media (max-width: 768px) {
+        
+    }
+}
+.desktop-hidden { @include desktop-hidden; }
+
+@mixin tablet-hidden {
+    @media (min-width: 1025px) {
+        display: none;
+    }
+    @media (min-width: 769px) {
+        display: none;
+    }
+    @media (max-width: 768px) {
+        
+    }
+}
+.tablet-hidden { @include tablet-hidden; }
+
+@mixin mobile-hidden {
+    @media (min-width: 1025px) {
+        
+    }
+    @media (max-width: 1024px) {
+        
+    }
+    @media (max-width: 768px) {
+        display: none;
+    }
+}
+.mobile-hidden { @include mobile-hidden; }
+

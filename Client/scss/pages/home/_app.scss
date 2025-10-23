@@ -1,0 +1,333 @@
+@use "../../common" as common;
+
+body#home {
+    background-color: var(--color-light);
+
+    #main {
+        @include common.stack-top;
+        width: 100vw;
+        height: 100vh;
+    
+        overflow: scroll;
+        background-color: var(--color-bg-gray);
+        z-index: var(--z-index-grobal-content);
+        padding-top: 120px;
+    
+        .inner-menu {
+            @include common.row;
+            @include common.align-center;
+            @include common.height-fit;
+            @include common.width-full;
+            @include common.padding-x-12px;
+            @include common.padding-top-16px;
+            @include common.spacing-8px;
+    
+            max-width: 720px;
+            padding-bottom: 0;
+
+            .tab-section {
+                @include common.fill;
+                max-width: calc(100% - 56px);
+            }
+            .sort-section {
+                min-width: 40px;
+            }
+
+            .category-tab-group {
+                @include common.row;
+                @include common.align-center;
+                @include common.height-fit;
+                @include common.width-full;
+        
+                // min-height: 64px;
+                overflow-x: scroll;
+
+                -webkit-mask-image: linear-gradient(to right, black calc(100% - 32px), transparent);
+                mask-image: linear-gradient(to right, black calc(100% - 32px), transparent);
+        
+                .category-tab-wrapper {
+                    @include common.row;
+                    @include common.align-center;
+                    @include common.width-fit;
+                    @include common.spacing-8px;
+        
+                    .category-button {
+                        @include common.padding-12px;
+                        @include common.padding-bottom-16px;
+                        @include common.font-weight-semibold;
+                        @include common.letter-spacing-small;
+                        @include common.width-fit;
+                        min-width: fit-content;
+                        border-radius: 8px;
+                        background-color: var(--color-light);
+            
+                        border: 1px solid var(--color-font-dark-secondary);
+                        
+                        border-color: var(--color-font-dark-secondary);
+                        color: var(--color-font-dark-secondary);
+            
+                        &.active {
+                            border-color: var(--color-dark);
+                            background-color: var(--color-dark);
+                            color: var(--color-light);
+                        }
+                    }
+                }
+            }
+
+            .sort-container {
+                @include common.relative;
+                display: inline-block;
+    
+                .sort-button {
+                    @include common.row;
+                    @include common.align-center;
+                    @include common.padding-8px;
+                    color: var(--color-font-dark-secondary);
+                    cursor: pointer;
+                    border-radius: 8px;
+                    height: 40px;
+        
+                    i {
+                        @include common.font-size-medium;
+                    }
+                }
+        
+                .sort-select {
+                    @include common.absolute;
+                    top: 100%;
+                    right: 0;
+                    margin-top: 4px;
+
+                    color: var(--color-font-dark-gray);
+                    background-color: var(--color-light);
+                    border: 1px solid var(--color-font-dark-secondary);
+
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    z-index: 100;
+                    width: 80px;
+
+                    display: none;
+
+                    &.show {
+                        display: block;
+                    }
+        
+                    .select-floating {
+                        @include common.stack;
+                        @include common.center;
+                        @include common.align-center;
+                        @include common.width-full;
+
+                        display: block;
+
+                        list-style: none;
+    
+                        .select-element {
+                            @include common.row;
+                            @include common.center;
+                            @include common.padding-y-12px;
+                            @include common.padding-x-8px;
+                            @include common.width-full;
+                            @include common.text-center;
+
+                            display: block;
+                            cursor: pointer;
+                            font-size: 14px;
+                            
+
+                            &:hover {
+                                background-color: #f0f0f0;
+                            }
+                        }
+                
+                    }
+            
+                }
+            }
+        }
+
+
+        .article-container {
+            @include common.stack;
+            @include common.align-center;
+            @include common.height-fit;
+            @include common.padding-16px;
+            @include common.spacing-16px;
+            max-width: 720px;
+        }
+    
+        .article-item {
+            @include common.row;
+            @include common.both;
+            @include common.align-center;
+            @include common.padding-16px;
+            @include common.spacing-16px;
+            @include common.relative;
+    
+            height: 200px;
+            width: 100%;
+            border-radius: 12px;
+    
+            background-color: var(--color-light);
+            color: var(--color-light);
+    
+            transition: filter 0.3s;
+    
+            filter: drop-shadow(0px 4px 12px rgba(9, 8, 39, 0.2));
+
+            display: none;
+
+            &.show {
+                display: block;
+            }
+    
+            .corner-bg {
+                @include common.absolute;
+            }
+    
+            .category-label {
+                @include common.text;
+                @include common.text-center;
+                @include common.font-size-small;
+                @include common.font-weight-semibold;
+                @include common.font-color-dark-secondary;
+                @include common.absolute;
+    
+                top: 0px;
+                left: 0px;
+    
+                width: 142px;
+                height: fit-content;
+    
+                padding: 16px;
+                z-index: var(--z-index-local-over-3);
+            }
+    
+            .corner-bg {
+                top: 12px;
+                left: 11px;
+    
+                height: auto;
+                width: 142px;
+    
+                object-fit: cover;
+    
+                z-index: var(--z-index-local-over-2);
+            }
+    
+            .article-window {
+                @include common.stack;
+                @include common.both;
+                @include common.align-center;
+                @include common.spacing-8px;
+                @include common.height-full;
+                @include common.width-full;
+    
+                border-radius: 12px;
+                
+                &.cat-1 {
+                    background-image: linear-gradient(135deg, #00a6f9 0%, #00db99 100%);
+                }
+    
+                &.cat-2 {
+                    background-image: linear-gradient(135deg, #ff1833 0%, #fda336 100%);
+                }
+    
+                &.cat-3 {
+                    background-image: linear-gradient(135deg, #71a8ff 0%, #ff70d7 100%);
+                }
+    
+                &.cat-4 {
+                    background-image: linear-gradient(135deg, #00ffc4 0%, #00c08f 100%);
+                }
+    
+                &.cat-5 {
+                    background-image: linear-gradient(135deg, #6058f5 0%, #ffc5ff 100%);
+                }
+    
+                &.cat-6 {
+                    background-image: linear-gradient(135deg, #6fffae 0%, #cc7bff 100%);
+                }
+    
+                .article-title-area {
+                    @include common.stack;
+                    @include common.center;
+                    @include common.align-center;
+                    @include common.fill;
+                    @include common.width-full;
+                    @include common.padding-x-16px;
+                    @include common.padding-top-32px;
+    
+                    .article-title {
+                        @include common.text;
+                        @include common.width-fit;
+                        @include common.height-fit;
+                        @include common.font-size-medium;
+                        @include common.font-weight-black;
+                        @include common.text-center;
+                        @include common.line-spacing-medium;
+    
+                    }
+                }
+    
+                .article-footer {
+                    @include common.row;
+                    @include common.row-right;
+                    @include common.align-center;
+                    @include common.fit;
+                    @include common.width-full;
+                    @include common.spacing-16px;
+                    @include common.padding-x-16px;
+                    @include common.padding-bottom-16px;
+    
+                    .article-opinion-group {
+                        @include common.row;
+                        @include common.row-right;
+                        @include common.align-center;
+                        @include common.fit;
+                        @include common.spacing-8px;
+                        
+                        .text {
+                            @include common.font-size-normal;
+                            @include common.font-weight-semibold;
+                        }
+                    }
+    
+                    .article-vote-group {
+                        @include common.row;
+                        @include common.row-right;
+                        @include common.align-center;
+                        @include common.fit;
+                        @include common.spacing-8px;
+    
+                        .text {
+                            @include common.font-size-normal;
+                            @include common.font-weight-semibold;
+                        }
+                    }
+                }
+    
+            }
+        }
+    }
+    
+    @media (max-width: 1024px) {
+
+    }
+    @media (max-width: 768px) {
+        #main {
+            .inner-menu {
+                max-width: 100%;
+            }
+        }
+    }
+
+    @media (display-mode: standalone){
+        #main {
+            padding-top: calc(120px + env(safe-area-inset-top));
+        }
+    }
+}

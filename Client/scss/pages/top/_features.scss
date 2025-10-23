@@ -1,0 +1,105 @@
+@use "../../common" as common;
+
+#features {
+    .section-bg {
+        background-color: var(--color-light);
+    } 
+
+    justify-content: center;
+
+    .features-content {
+        @include common.content;
+        @include common.stack;
+    }
+
+    .features-group {
+        @include common.stack;
+        @include common.spacing-120px;
+        @include common.margin-top-120px;
+        @include common.padding-bottom-120px;
+
+        gap: 220px;
+
+        .features-item {
+            @include common.row;
+            @include common.center;
+            @include common.align-center;
+            @include common.height-fit;
+
+            .features-text-group {
+                @include common.stack;
+                @include common.center;
+                @include common.spacing-12px;
+                @include common.fit;
+
+                max-width: 480px;
+                min-width: 480px;
+
+                .number {
+                    @include common.text;
+                    @include common.inter;
+                    @include common.font-size-xx-large;
+                    @include common.font-weight-black;
+                    @include common.letter-spacing-medium;
+
+                    color: var(--color-main);
+                }
+
+                .title {
+                    @include common.text;
+                    @include common.font-size-x-large;
+                    @include common.font-weight-black;
+                    @include common.letter-spacing-small;
+                    @include common.line-spacing-small;
+
+                    font-size: var(--font-size-40px);
+                }
+
+                .detail {
+                    @include common.text;
+                    @include common.letter-spacing-small;
+                    @include common.margin-top-12px;
+                    @include common.line-spacing-x-large;
+                }
+            }
+
+            .feature-image-group {
+                @include common.row;
+                @include common.row-left;
+                @include common.fit;
+                @include common.padding-top-64px;
+                @include common.padding-left-64px;
+
+                .mockup {
+                    @include common.relative;
+                    @include common.stack;
+                    @include common.center;
+                    @include common.align-center;
+
+                    filter: drop-shadow(-32px 32px 32px rgba(9, 8, 39, 0.1)) drop-shadow(0px 8px 8px rgba(9, 8, 39, 0.1));
+                }
+            }
+        } 
+    }
+
+    @media (max-width: 1024px) {
+    
+    }
+    @media (max-width: 768px) {
+        .features-group {
+            .features-item {
+                @include common.stack;
+
+                .features-text-group {
+                    @include common.padding-x-32px;
+                    max-width: 480px;
+                    min-width: auto;
+                }
+
+                .feature-image-group {
+                    @include common.padding-x-16px;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,947 @@
+:root {
+    --z-index-grobal-bg: 1000;
+    --z-index-grobal-content: 2000;
+    --z-index-grobal-menu: 3000;
+    --z-index-grobal-modal: 4000;
+    --z-index-grobal-overlay: 5000;
+    --z-index-grobal-laoding: 6000;
+    --z-index-grobal-over-iframe: calc(infinity);
+
+    --z-index-local-under-1: -1;
+    --z-index-local-over-1: 1;
+    --z-index-local-over-2: 2;
+    --z-index-local-over-3: 3;
+    --z-index-local-over-4: 4;
+    --z-index-local-over-5: 5;
+}
+
+
+@mixin relative {
+    position: relative;
+}
+.relative { @include relative; }
+
+
+@mixin absolute {
+    position: absolute;
+}
+.absolute { @include absolute; }
+
+
+@mixin fixed {
+    position: fixed;
+}
+.fixed { @include fixed }
+
+
+@mixin width-full {
+    width: 100%;
+}
+.width-full { @include width-full; }
+
+
+@mixin width-fit {
+    width: fit-content;
+}
+.width-fit { @include width-fit; }
+
+
+@mixin height-full {
+    height: 100%;
+}
+.height-full { @include height-full; }
+
+
+@mixin height-fit {
+    height: fit-content;
+}
+.height-fit { @include height-fit; }
+
+
+@mixin size-full {
+    width: 100%;
+    height: 100%;
+}
+.size-full { @include size-full; }
+
+
+@mixin size-fit {
+    width: fit-content;
+    height: fit-content;
+}
+.size-fit { @include size-fit; }
+
+
+@mixin text-center {
+    text-align: center;
+}
+.text-center { @include text-center; }
+
+
+@mixin center {
+    justify-content: center;
+}
+.center { @include center }
+
+
+@mixin both {
+    justify-content: space-between;
+}
+.both { @include both }
+
+
+@mixin align-center {
+    align-items: center;
+}
+.align-center { @include align-center; }
+
+@mixin fit {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: auto;
+}
+.fit { @include fit; }
+
+
+@mixin fill {
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: auto;
+}
+.fill { @include fill; }
+
+
+
+@mixin flex-1 {
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: auto;
+}
+.flex-1 { @include flex-1; }
+
+
+@mixin flex-2 {
+    flex-grow: 2;
+    flex-shrink: 0;
+    flex-basis: auto;
+}
+.flex-2 { @include flex-2; }
+
+
+@mixin flex-3 {
+    flex-grow: 3;
+    flex-shrink: 0;
+    flex-basis: auto;
+}
+.flex-3 { @include flex-3; }
+
+
+@mixin flex-4 {
+    flex-grow: 4;
+    flex-shrink: 0;
+    flex-basis: auto;
+}
+.flex-4 { @include flex-4; }
+
+
+
+
+@mixin row {
+    display: flex;
+    flex-direction: row;
+}
+.row { @include row; }
+
+@mixin row-left {
+    justify-content: flex-start;
+}
+.row-left { @include row-left; }
+
+
+@mixin row-right {
+    justify-content: flex-end;
+}
+.row-right { @include row-right; }
+
+
+@mixin row-top {
+    align-items: flex-start;
+}
+.row-top { @include row-top; }
+
+@mixin row-bottom {
+    align-items: flex-end;
+}
+.row-bottom { @include row-bottom; }
+
+
+@mixin stack {
+    display: flex;
+    flex-direction: column;
+}
+.stack { @include stack; }
+
+@mixin stack-top {
+    justify-content: flex-start;
+}
+.stack-top { @include stack-top; }
+
+
+@mixin stack-bottom {
+    justify-content: flex-end;
+}
+.stack-bottom { @include stack-bottom; }
+
+
+@mixin stack-left {
+    align-items: flex-start;
+}
+.stack-left { @include stack-left; }
+
+
+@mixin stack-right {
+    align-items: flex-end;
+}
+.stack-right { @include stack-right; }
+
+
+@mixin grid {
+    display: grid;
+}
+.grid { @include grid; }
+
+
+@mixin grid-column-1 {
+    grid-template-columns: 1fr;
+}
+.grid-column-1 { @include grid-column-1; }
+
+@mixin grid-column-2 {
+    grid-template-columns: 1fr 1fr;
+}
+.grid-column-2 { @include grid-column-2; }
+
+@mixin grid-column-3 {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.grid-column-3 { @include grid-column-3; }
+
+@mixin grid-column-4 {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.grid-column-4 { @include grid-column-4; }
+
+@mixin grid-column-5 {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+.grid-column-5 { @include grid-column-5; }
+
+
+// 位置調整用のスタイル
+@mixin spacing-0px   { gap: 0px;   }
+@mixin spacing-4px   { gap: 4px;   }
+@mixin spacing-8px   { gap: 8px;   }
+@mixin spacing-12px  { gap: 12px;  }
+@mixin spacing-16px  { gap: 16px;  }
+@mixin spacing-20px  { gap: 20px;  }
+@mixin spacing-24px  { gap: 24px;  }
+@mixin spacing-28px  { gap: 28px;  }
+@mixin spacing-32px  { gap: 32px;  }
+@mixin spacing-40px  { gap: 40px;  }
+@mixin spacing-48px  { gap: 48px;  }
+@mixin spacing-56px  { gap: 56px;  }
+@mixin spacing-64px  { gap: 64px;  }
+@mixin spacing-72px  { gap: 72px;  }
+@mixin spacing-80px  { gap: 80px;  }
+@mixin spacing-96px  { gap: 96px;  }
+@mixin spacing-120px { gap: 120px; }
+@mixin spacing-150px { gap: 150px; }
+@mixin spacing-180px { gap: 180px; }
+@mixin spacing-200px { gap: 200px; }
+@mixin spacing-240px { gap: 240px; }
+@mixin spacing-280px { gap: 280px; }
+@mixin spacing-320px { gap: 320px; }
+.spacing-0px   { @include spacing-0px;   }
+.spacing-4px   { @include spacing-4px;   }
+.spacing-8px   { @include spacing-8px;   }
+.spacing-12px  { @include spacing-12px;  }
+.spacing-16px  { @include spacing-16px;  }
+.spacing-20px  { @include spacing-20px;  }
+.spacing-24px  { @include spacing-24px;  }
+.spacing-28px  { @include spacing-28px;  }
+.spacing-32px  { @include spacing-32px;  }
+.spacing-40px  { @include spacing-40px;  }
+.spacing-48px  { @include spacing-48px;  }
+.spacing-56px  { @include spacing-56px;  }
+.spacing-64px  { @include spacing-64px;  }
+.spacing-72px  { @include spacing-72px;  }
+.spacing-80px  { @include spacing-80px;  }
+.spacing-96px  { @include spacing-96px;  }
+.spacing-120px { @include spacing-120px; }
+.spacing-150px { @include spacing-150px; }
+.spacing-180px { @include spacing-180px; }
+.spacing-200px { @include spacing-200px; }
+.spacing-240px { @include spacing-240px; }
+.spacing-280px { @include spacing-280px; }
+.spacing-320px { @include spacing-320px; }
+
+@mixin padding-0px   { padding: 0px; }
+@mixin padding-4px   { padding: 4px; }
+@mixin padding-8px   { padding: 8px; }
+@mixin padding-12px  { padding: 12px; }
+@mixin padding-16px  { padding: 16px; }
+@mixin padding-20px  { padding: 20px; }
+@mixin padding-24px  { padding: 24px; }
+@mixin padding-28px  { padding: 28px; }
+@mixin padding-32px  { padding: 32px; }
+@mixin padding-40px  { padding: 40px; }
+@mixin padding-48px  { padding: 48px; }
+@mixin padding-56px  { padding: 56px; }
+@mixin padding-64px  { padding: 64px; }
+@mixin padding-72px  { padding: 72px; }
+@mixin padding-80px  { padding: 80px; }
+@mixin padding-96px  { padding: 96px; }
+@mixin padding-120px { padding: 120px; }
+@mixin padding-150px { padding: 150px; }
+@mixin padding-180px { padding: 180px; }
+@mixin padding-200px { padding: 200px; }
+@mixin padding-240px { padding: 240px; }
+@mixin padding-280px { padding: 280px; }
+@mixin padding-320px { padding: 320px; }
+.padding-0px   { @include padding-0px; }
+.padding-4px   { @include padding-4px; }
+.padding-8px   { @include padding-8px; }
+.padding-12px  { @include padding-12px; }
+.padding-16px  { @include padding-16px; }
+.padding-20px  { @include padding-20px; }
+.padding-24px  { @include padding-24px; }
+.padding-28px  { @include padding-28px; }
+.padding-32px  { @include padding-32px; }
+.padding-40px  { @include padding-40px; }
+.padding-48px  { @include padding-48px; }
+.padding-56px  { @include padding-56px; }
+.padding-64px  { @include padding-64px; }
+.padding-72px  { @include padding-72px; }
+.padding-80px  { @include padding-80px; }
+.padding-96px  { @include padding-96px; }
+.padding-120px { @include padding-120px; }
+.padding-150px { @include padding-150px; }
+.padding-180px { @include padding-180px; }
+.padding-200px { @include padding-200px; }
+.padding-240px { @include padding-240px; }
+.padding-280px { @include padding-280px; }
+.padding-320px { @include padding-320px; }
+
+@mixin margin-0px   { margin: 0px; }
+@mixin margin-4px   { margin: 4px; }
+@mixin margin-8px   { margin: 8px; }
+@mixin margin-12px  { margin: 12px; }
+@mixin margin-16px  { margin: 16px; }
+@mixin margin-20px  { margin: 20px; }
+@mixin margin-24px  { margin: 24px; }
+@mixin margin-28px  { margin: 28px; }
+@mixin margin-32px  { margin: 32px; }
+@mixin margin-40px  { margin: 40px; }
+@mixin margin-48px  { margin: 48px; }
+@mixin margin-56px  { margin: 56px; }
+@mixin margin-64px  { margin: 64px; }
+@mixin margin-72px  { margin: 72px; }
+@mixin margin-80px  { margin: 80px; }
+@mixin margin-96px  { margin: 96px; }
+@mixin margin-120px { margin: 120px; }
+@mixin margin-150px { margin: 150px; }
+@mixin margin-180px { margin: 180px; }
+@mixin margin-200px { margin: 200px; }
+@mixin margin-240px { margin: 240px; }
+@mixin margin-280px { margin: 280px; }
+@mixin margin-320px { margin: 320px; }
+.margin-0px   { @include margin-0px; }
+.margin-4px   { @include margin-4px; }
+.margin-8px   { @include margin-8px; }
+.margin-12px  { @include margin-12px; }
+.margin-16px  { @include margin-16px; }
+.margin-20px  { @include margin-20px; }
+.margin-24px  { @include margin-24px; }
+.margin-28px  { @include margin-28px; }
+.margin-32px  { @include margin-32px; }
+.margin-40px  { @include margin-40px; }
+.margin-48px  { @include margin-48px; }
+.margin-56px  { @include margin-56px; }
+.margin-64px  { @include margin-64px; }
+.margin-72px  { @include margin-72px; }
+.margin-80px  { @include margin-80px; }
+.margin-96px  { @include margin-96px; }
+.margin-120px { @include margin-120px; }
+.margin-150px { @include margin-150px; }
+.margin-180px { @include margin-180px; }
+.margin-200px { @include margin-200px; }
+.margin-240px { @include margin-240px; }
+.margin-280px { @include margin-280px; }
+.margin-320px { @include margin-320px; }
+
+@mixin padding-x-0px   { padding-right: 0px;   padding-left: 0px; }
+@mixin padding-x-4px   { padding-right: 4px;   padding-left: 4px; }
+@mixin padding-x-8px   { padding-right: 8px;   padding-left: 8px; }
+@mixin padding-x-12px  { padding-right: 12px;  padding-left: 12px; }
+@mixin padding-x-16px  { padding-right: 16px;  padding-left: 16px; }
+@mixin padding-x-20px  { padding-right: 20px;  padding-left: 20px; }
+@mixin padding-x-24px  { padding-right: 24px;  padding-left: 24px; }
+@mixin padding-x-28px  { padding-right: 28px;  padding-left: 28px; }
+@mixin padding-x-32px  { padding-right: 32px;  padding-left: 32px; }
+@mixin padding-x-40px  { padding-right: 40px;  padding-left: 40px; }
+@mixin padding-x-48px  { padding-right: 48px;  padding-left: 48px; }
+@mixin padding-x-56px  { padding-right: 56px;  padding-left: 56px; }
+@mixin padding-x-64px  { padding-right: 64px;  padding-left: 64px; }
+@mixin padding-x-72px  { padding-right: 72px;  padding-left: 72px; }
+@mixin padding-x-80px  { padding-right: 80px;  padding-left: 80px; }
+@mixin padding-x-96px  { padding-right: 96px;  padding-left: 96px; }
+@mixin padding-x-120px { padding-right: 120px; padding-left: 120px; }
+@mixin padding-x-150px { padding-right: 150px; padding-left: 150px; }
+@mixin padding-x-180px { padding-right: 180px; padding-left: 180px; }
+@mixin padding-x-200px { padding-right: 200px; padding-left: 200px; }
+@mixin padding-x-240px { padding-right: 240px; padding-left: 240px; }
+@mixin padding-x-280px { padding-right: 280px; padding-left: 280px; }
+@mixin padding-x-320px { padding-right: 320px; padding-left: 320px; }
+.padding-x-0px   { @include padding-x-0px; }
+.padding-x-4px   { @include padding-x-4px; }
+.padding-x-8px   { @include padding-x-8px; }
+.padding-x-12px  { @include padding-x-12px; }
+.padding-x-16px  { @include padding-x-16px; }
+.padding-x-20px  { @include padding-x-20px; }
+.padding-x-24px  { @include padding-x-24px; }
+.padding-x-28px  { @include padding-x-28px; }
+.padding-x-32px  { @include padding-x-32px; }
+.padding-x-40px  { @include padding-x-40px; }
+.padding-x-48px  { @include padding-x-48px; }
+.padding-x-56px  { @include padding-x-56px; }
+.padding-x-64px  { @include padding-x-64px; }
+.padding-x-72px  { @include padding-x-72px; }
+.padding-x-80px  { @include padding-x-80px; }
+.padding-x-96px  { @include padding-x-96px; }
+.padding-x-120px { @include padding-x-120px; }
+.padding-x-150px { @include padding-x-150px; }
+.padding-x-180px { @include padding-x-180px; }
+.padding-x-200px { @include padding-x-200px; }
+.padding-x-240px { @include padding-x-240px; }
+.padding-x-280px { @include padding-x-280px; }
+.padding-x-320px { @include padding-x-320px; }
+
+@mixin margin-x-0px   { margin-right: 0px;   margin-left: 0px; }
+@mixin margin-x-4px   { margin-right: 4px;   margin-left: 4px; }
+@mixin margin-x-8px   { margin-right: 8px;   margin-left: 8px; }
+@mixin margin-x-12px  { margin-right: 12px;  margin-left: 12px; }
+@mixin margin-x-16px  { margin-right: 16px;  margin-left: 16px; }
+@mixin margin-x-20px  { margin-right: 20px;  margin-left: 20px; }
+@mixin margin-x-24px  { margin-right: 24px;  margin-left: 24px; }
+@mixin margin-x-28px  { margin-right: 28px;  margin-left: 28px; }
+@mixin margin-x-32px  { margin-right: 32px;  margin-left: 32px; }
+@mixin margin-x-40px  { margin-right: 40px;  margin-left: 40px; }
+@mixin margin-x-48px  { margin-right: 48px;  margin-left: 48px; }
+@mixin margin-x-56px  { margin-right: 56px;  margin-left: 56px; }
+@mixin margin-x-64px  { margin-right: 64px;  margin-left: 64px; }
+@mixin margin-x-72px  { margin-right: 72px;  margin-left: 72px; }
+@mixin margin-x-80px  { margin-right: 80px;  margin-left: 80px; }
+@mixin margin-x-96px  { margin-right: 96px;  margin-left: 96px; }
+@mixin margin-x-120px { margin-right: 120px; margin-left: 120px; }
+@mixin margin-x-150px { margin-right: 150px; margin-left: 150px; }
+@mixin margin-x-180px { margin-right: 180px; margin-left: 180px; }
+@mixin margin-x-200px { margin-right: 200px; margin-left: 200px; }
+@mixin margin-x-240px { margin-right: 240px; margin-left: 240px; }
+@mixin margin-x-280px { margin-right: 280px; margin-left: 280px; }
+@mixin margin-x-320px { margin-right: 320px; margin-left: 320px; }
+.margin-x-0px   { @include margin-x-0px; }
+.margin-x-4px   { @include margin-x-4px; }
+.margin-x-8px   { @include margin-x-8px; }
+.margin-x-12px  { @include margin-x-12px; }
+.margin-x-16px  { @include margin-x-16px; }
+.margin-x-20px  { @include margin-x-20px; }
+.margin-x-24px  { @include margin-x-24px; }
+.margin-x-28px  { @include margin-x-28px; }
+.margin-x-32px  { @include margin-x-32px; }
+.margin-x-40px  { @include margin-x-40px; }
+.margin-x-48px  { @include margin-x-48px; }
+.margin-x-56px  { @include margin-x-56px; }
+.margin-x-64px  { @include margin-x-64px; }
+.margin-x-72px  { @include margin-x-72px; }
+.margin-x-80px  { @include margin-x-80px; }
+.margin-x-96px  { @include margin-x-96px; }
+.margin-x-120px { @include margin-x-120px; }
+.margin-x-150px { @include margin-x-150px; }
+.margin-x-180px { @include margin-x-180px; }
+.margin-x-200px { @include margin-x-200px; }
+.margin-x-240px { @include margin-x-240px; }
+.margin-x-280px { @include margin-x-280px; }
+.margin-x-320px { @include margin-x-320px; }
+
+@mixin padding-y-0px   { padding-top: 0px;   padding-bottom: 0px; }
+@mixin padding-y-4px   { padding-top: 4px;   padding-bottom: 4px; }
+@mixin padding-y-8px   { padding-top: 8px;   padding-bottom: 8px; }
+@mixin padding-y-12px  { padding-top: 12px;  padding-bottom: 12px; }
+@mixin padding-y-16px  { padding-top: 16px;  padding-bottom: 16px; }
+@mixin padding-y-20px  { padding-top: 20px;  padding-bottom: 20px; }
+@mixin padding-y-24px  { padding-top: 24px;  padding-bottom: 24px; }
+@mixin padding-y-28px  { padding-top: 28px;  padding-bottom: 28px; }
+@mixin padding-y-32px  { padding-top: 32px;  padding-bottom: 32px; }
+@mixin padding-y-40px  { padding-top: 40px;  padding-bottom: 40px; }
+@mixin padding-y-48px  { padding-top: 48px;  padding-bottom: 48px; }
+@mixin padding-y-56px  { padding-top: 56px;  padding-bottom: 56px; }
+@mixin padding-y-64px  { padding-top: 64px;  padding-bottom: 64px; }
+@mixin padding-y-72px  { padding-top: 72px;  padding-bottom: 72px; }
+@mixin padding-y-80px  { padding-top: 80px;  padding-bottom: 80px; }
+@mixin padding-y-96px  { padding-top: 96px;  padding-bottom: 96px; }
+@mixin padding-y-120px { padding-top: 120px; padding-bottom: 120px; }
+@mixin padding-y-150px { padding-top: 150px; padding-bottom: 150px; }
+@mixin padding-y-180px { padding-top: 180px; padding-bottom: 180px; }
+@mixin padding-y-200px { padding-top: 200px; padding-bottom: 200px; }
+@mixin padding-y-240px { padding-top: 240px; padding-bottom: 240px; }
+@mixin padding-y-280px { padding-top: 280px; padding-bottom: 280px; }
+@mixin padding-y-320px { padding-top: 320px; padding-bottom: 320px; }
+.padding-y-0px   { @include padding-y-0px; }
+.padding-y-4px   { @include padding-y-4px; }
+.padding-y-8px   { @include padding-y-8px; }
+.padding-y-12px  { @include padding-y-12px; }
+.padding-y-16px  { @include padding-y-16px; }
+.padding-y-20px  { @include padding-y-20px; }
+.padding-y-24px  { @include padding-y-24px; }
+.padding-y-28px  { @include padding-y-28px; }
+.padding-y-32px  { @include padding-y-32px; }
+.padding-y-40px  { @include padding-y-40px; }
+.padding-y-48px  { @include padding-y-48px; }
+.padding-y-56px  { @include padding-y-56px; }
+.padding-y-64px  { @include padding-y-64px; }
+.padding-y-72px  { @include padding-y-72px; }
+.padding-y-80px  { @include padding-y-80px; }
+.padding-y-96px  { @include padding-y-96px; }
+.padding-y-120px { @include padding-y-120px; }
+.padding-y-150px { @include padding-y-150px; }
+.padding-y-180px { @include padding-y-180px; }
+.padding-y-200px { @include padding-y-200px; }
+.padding-y-240px { @include padding-y-240px; }
+.padding-y-280px { @include padding-y-280px; }
+.padding-y-320px { @include padding-y-320px; }
+
+@mixin margin-y-0px   { margin-top: 0px;   margin-bottom: 0px; }
+@mixin margin-y-4px   { margin-top: 4px;   margin-bottom: 4px; }
+@mixin margin-y-8px   { margin-top: 8px;   margin-bottom: 8px; }
+@mixin margin-y-12px  { margin-top: 12px;  margin-bottom: 12px; }
+@mixin margin-y-16px  { margin-top: 16px;  margin-bottom: 16px; }
+@mixin margin-y-20px  { margin-top: 20px;  margin-bottom: 20px; }
+@mixin margin-y-24px  { margin-top: 24px;  margin-bottom: 24px; }
+@mixin margin-y-28px  { margin-top: 28px;  margin-bottom: 28px; }
+@mixin margin-y-32px  { margin-top: 32px;  margin-bottom: 32px; }
+@mixin margin-y-40px  { margin-top: 40px;  margin-bottom: 40px; }
+@mixin margin-y-48px  { margin-top: 48px;  margin-bottom: 48px; }
+@mixin margin-y-56px  { margin-top: 56px;  margin-bottom: 56px; }
+@mixin margin-y-64px  { margin-top: 64px;  margin-bottom: 64px; }
+@mixin margin-y-72px  { margin-top: 72px;  margin-bottom: 72px; }
+@mixin margin-y-80px  { margin-top: 80px;  margin-bottom: 80px; }
+@mixin margin-y-96px  { margin-top: 96px;  margin-bottom: 96px; }
+@mixin margin-y-120px { margin-top: 120px; margin-bottom: 120px; }
+@mixin margin-y-150px { margin-top: 150px; margin-bottom: 150px; }
+@mixin margin-y-180px { margin-top: 180px; margin-bottom: 180px; }
+@mixin margin-y-200px { margin-top: 200px; margin-bottom: 200px; }
+@mixin margin-y-240px { margin-top: 240px; margin-bottom: 240px; }
+@mixin margin-y-280px { margin-top: 280px; margin-bottom: 280px; }
+@mixin margin-y-320px { margin-top: 320px; margin-bottom: 320px; }
+.margin-y-0px   { @include margin-y-0px; }
+.margin-y-4px   { @include margin-y-4px; }
+.margin-y-8px   { @include margin-y-8px; }
+.margin-y-12px  { @include margin-y-12px; }
+.margin-y-16px  { @include margin-y-16px; }
+.margin-y-20px  { @include margin-y-20px; }
+.margin-y-24px  { @include margin-y-24px; }
+.margin-y-28px  { @include margin-y-28px; }
+.margin-y-32px  { @include margin-y-32px; }
+.margin-y-40px  { @include margin-y-40px; }
+.margin-y-48px  { @include margin-y-48px; }
+.margin-y-56px  { @include margin-y-56px; }
+.margin-y-64px  { @include margin-y-64px; }
+.margin-y-72px  { @include margin-y-72px; }
+.margin-y-80px  { @include margin-y-80px; }
+.margin-y-96px  { @include margin-y-96px; }
+.margin-y-120px { @include margin-y-120px; }
+.margin-y-150px { @include margin-y-150px; }
+.margin-y-180px { @include margin-y-180px; }
+.margin-y-200px { @include margin-y-200px; }
+.margin-y-240px { @include margin-y-240px; }
+.margin-y-280px { @include margin-y-280px; }
+.margin-y-320px { @include margin-y-320px; }
+
+
+@mixin padding-top-0px   { padding-top: 0px;   }
+@mixin padding-top-4px   { padding-top: 4px;   }
+@mixin padding-top-8px   { padding-top: 8px;   }
+@mixin padding-top-12px  { padding-top: 12px;  }
+@mixin padding-top-16px  { padding-top: 16px;  }
+@mixin padding-top-20px  { padding-top: 20px;  }
+@mixin padding-top-24px  { padding-top: 24px;  }
+@mixin padding-top-28px  { padding-top: 28px;  }
+@mixin padding-top-32px  { padding-top: 32px;  }
+@mixin padding-top-40px  { padding-top: 40px;  }
+@mixin padding-top-48px  { padding-top: 48px;  }
+@mixin padding-top-56px  { padding-top: 56px;  }
+@mixin padding-top-64px  { padding-top: 64px;  }
+@mixin padding-top-72px  { padding-top: 72px;  }
+@mixin padding-top-80px  { padding-top: 80px;  }
+@mixin padding-top-96px  { padding-top: 96px;  }
+@mixin padding-top-120px { padding-top: 120px; }
+@mixin padding-top-150px { padding-top: 150px; }
+@mixin padding-top-180px { padding-top: 180px; }
+@mixin padding-top-200px { padding-top: 200px; }
+@mixin padding-top-240px { padding-top: 240px; }
+@mixin padding-top-280px { padding-top: 280px; }
+@mixin padding-top-320px { padding-top: 320px; }
+.padding-top-0px   { @include padding-top-0px; }
+.padding-top-4px   { @include padding-top-4px; }
+.padding-top-8px   { @include padding-top-8px; }
+.padding-top-12px  { @include padding-top-12px; }
+.padding-top-16px  { @include padding-top-16px; }
+.padding-top-20px  { @include padding-top-20px; }
+.padding-top-24px  { @include padding-top-24px; }
+.padding-top-28px  { @include padding-top-28px; }
+.padding-top-32px  { @include padding-top-32px; }
+.padding-top-40px  { @include padding-top-40px; }
+.padding-top-48px  { @include padding-top-48px; }
+.padding-top-56px  { @include padding-top-56px; }
+.padding-top-64px  { @include padding-top-64px; }
+.padding-top-72px  { @include padding-top-72px; }
+.padding-top-80px  { @include padding-top-80px; }
+.padding-top-96px  { @include padding-top-96px; }
+.padding-top-120px { @include padding-top-120px; }
+.padding-top-150px { @include padding-top-150px; }
+.padding-top-180px { @include padding-top-180px; }
+.padding-top-200px { @include padding-top-200px; }
+.padding-top-240px { @include padding-top-240px; }
+.padding-top-280px { @include padding-top-280px; }
+.padding-top-320px { @include padding-top-320px; }
+
+@mixin margin-top-0px   { margin-top: 0px;   }
+@mixin margin-top-4px   { margin-top: 4px;   }
+@mixin margin-top-8px   { margin-top: 8px;   }
+@mixin margin-top-12px  { margin-top: 12px;  }
+@mixin margin-top-16px  { margin-top: 16px;  }
+@mixin margin-top-20px  { margin-top: 20px;  }
+@mixin margin-top-24px  { margin-top: 24px;  }
+@mixin margin-top-28px  { margin-top: 28px;  }
+@mixin margin-top-32px  { margin-top: 32px;  }
+@mixin margin-top-40px  { margin-top: 40px;  }
+@mixin margin-top-48px  { margin-top: 48px;  }
+@mixin margin-top-56px  { margin-top: 56px;  }
+@mixin margin-top-64px  { margin-top: 64px;  }
+@mixin margin-top-72px  { margin-top: 72px;  }
+@mixin margin-top-80px  { margin-top: 80px;  }
+@mixin margin-top-96px  { margin-top: 96px;  }
+@mixin margin-top-120px { margin-top: 120px; }
+@mixin margin-top-150px { margin-top: 150px; }
+@mixin margin-top-180px { margin-top: 180px; }
+@mixin margin-top-200px { margin-top: 200px; }
+@mixin margin-top-240px { margin-top: 240px; }
+@mixin margin-top-280px { margin-top: 280px; }
+@mixin margin-top-320px { margin-top: 320px; }
+.margin-top-0px   { @include margin-top-0px; }
+.margin-top-4px   { @include margin-top-4px; }
+.margin-top-8px   { @include margin-top-8px; }
+.margin-top-12px  { @include margin-top-12px; }
+.margin-top-16px  { @include margin-top-16px; }
+.margin-top-20px  { @include margin-top-20px; }
+.margin-top-24px  { @include margin-top-24px; }
+.margin-top-28px  { @include margin-top-28px; }
+.margin-top-32px  { @include margin-top-32px; }
+.margin-top-40px  { @include margin-top-40px; }
+.margin-top-48px  { @include margin-top-48px; }
+.margin-top-56px  { @include margin-top-56px; }
+.margin-top-64px  { @include margin-top-64px; }
+.margin-top-72px  { @include margin-top-72px; }
+.margin-top-80px  { @include margin-top-80px; }
+.margin-top-96px  { @include margin-top-96px; }
+.margin-top-120px { @include margin-top-120px; }
+.margin-top-150px { @include margin-top-150px; }
+.margin-top-180px { @include margin-top-180px; }
+.margin-top-200px { @include margin-top-200px; }
+.margin-top-240px { @include margin-top-240px; }
+.margin-top-280px { @include margin-top-280px; }
+.margin-top-320px { @include margin-top-320px; }
+
+
+@mixin padding-left-0px   { padding-left: 0px;   }
+@mixin padding-left-4px   { padding-left: 4px;   }
+@mixin padding-left-8px   { padding-left: 8px;   }
+@mixin padding-left-12px  { padding-left: 12px;  }
+@mixin padding-left-16px  { padding-left: 16px;  }
+@mixin padding-left-20px  { padding-left: 20px;  }
+@mixin padding-left-24px  { padding-left: 24px;  }
+@mixin padding-left-28px  { padding-left: 28px;  }
+@mixin padding-left-32px  { padding-left: 32px;  }
+@mixin padding-left-40px  { padding-left: 40px;  }
+@mixin padding-left-48px  { padding-left: 48px;  }
+@mixin padding-left-56px  { padding-left: 56px;  }
+@mixin padding-left-64px  { padding-left: 64px;  }
+@mixin padding-left-72px  { padding-left: 72px;  }
+@mixin padding-left-80px  { padding-left: 80px;  }
+@mixin padding-left-96px  { padding-left: 96px;  }
+@mixin padding-left-120px { padding-left: 120px; }
+@mixin padding-left-150px { padding-left: 150px; }
+@mixin padding-left-180px { padding-left: 180px; }
+@mixin padding-left-200px { padding-left: 200px; }
+@mixin padding-left-240px { padding-left: 240px; }
+@mixin padding-left-280px { padding-left: 280px; }
+@mixin padding-left-320px { padding-left: 320px; }
+.padding-left-0px   { @include padding-left-0px; }
+.padding-left-4px   { @include padding-left-4px; }
+.padding-left-8px   { @include padding-left-8px; }
+.padding-left-12px  { @include padding-left-12px; }
+.padding-left-16px  { @include padding-left-16px; }
+.padding-left-20px  { @include padding-left-20px; }
+.padding-left-24px  { @include padding-left-24px; }
+.padding-left-28px  { @include padding-left-28px; }
+.padding-left-32px  { @include padding-left-32px; }
+.padding-left-40px  { @include padding-left-40px; }
+.padding-left-48px  { @include padding-left-48px; }
+.padding-left-56px  { @include padding-left-56px; }
+.padding-left-64px  { @include padding-left-64px; }
+.padding-left-72px  { @include padding-left-72px; }
+.padding-left-80px  { @include padding-left-80px; }
+.padding-left-96px  { @include padding-left-96px; }
+.padding-left-120px { @include padding-left-120px; }
+.padding-left-150px { @include padding-left-150px; }
+.padding-left-180px { @include padding-left-180px; }
+.padding-left-200px { @include padding-left-200px; }
+.padding-left-240px { @include padding-left-240px; }
+.padding-left-280px { @include padding-left-280px; }
+.padding-left-320px { @include padding-left-320px; }
+
+@mixin margin-left-0px   { margin-left: 0px;   }
+@mixin margin-left-4px   { margin-left: 4px;   }
+@mixin margin-left-8px   { margin-left: 8px;   }
+@mixin margin-left-12px  { margin-left: 12px;  }
+@mixin margin-left-16px  { margin-left: 16px;  }
+@mixin margin-left-20px  { margin-left: 20px;  }
+@mixin margin-left-24px  { margin-left: 24px;  }
+@mixin margin-left-28px  { margin-left: 28px;  }
+@mixin margin-left-32px  { margin-left: 32px;  }
+@mixin margin-left-40px  { margin-left: 40px;  }
+@mixin margin-left-48px  { margin-left: 48px;  }
+@mixin margin-left-56px  { margin-left: 56px;  }
+@mixin margin-left-64px  { margin-left: 64px;  }
+@mixin margin-left-72px  { margin-left: 72px;  }
+@mixin margin-left-80px  { margin-left: 80px;  }
+@mixin margin-left-96px  { margin-left: 96px;  }
+@mixin margin-left-120px { margin-left: 120px; }
+@mixin margin-left-150px { margin-left: 150px; }
+@mixin margin-left-180px { margin-left: 180px; }
+@mixin margin-left-200px { margin-left: 200px; }
+@mixin margin-left-240px { margin-left: 240px; }
+@mixin margin-left-280px { margin-left: 280px; }
+@mixin margin-left-320px { margin-left: 320px; }
+.margin-left-0px   { @include margin-left-0px; }
+.margin-left-4px   { @include margin-left-4px; }
+.margin-left-8px   { @include margin-left-8px; }
+.margin-left-12px  { @include margin-left-12px; }
+.margin-left-16px  { @include margin-left-16px; }
+.margin-left-20px  { @include margin-left-20px; }
+.margin-left-24px  { @include margin-left-24px; }
+.margin-left-28px  { @include margin-left-28px; }
+.margin-left-32px  { @include margin-left-32px; }
+.margin-left-40px  { @include margin-left-40px; }
+.margin-left-48px  { @include margin-left-48px; }
+.margin-left-56px  { @include margin-left-56px; }
+.margin-left-64px  { @include margin-left-64px; }
+.margin-left-72px  { @include margin-left-72px; }
+.margin-left-80px  { @include margin-left-80px; }
+.margin-left-96px  { @include margin-left-96px; }
+.margin-left-120px { @include margin-left-120px; }
+.margin-left-150px { @include margin-left-150px; }
+.margin-left-180px { @include margin-left-180px; }
+.margin-left-200px { @include margin-left-200px; }
+.margin-left-240px { @include margin-left-240px; }
+.margin-left-280px { @include margin-left-280px; }
+.margin-left-320px { @include margin-left-320px; }
+
+
+@mixin padding-right-0px   { padding-right: 0px;   }
+@mixin padding-right-4px   { padding-right: 4px;   }
+@mixin padding-right-8px   { padding-right: 8px;   }
+@mixin padding-right-12px  { padding-right: 12px;  }
+@mixin padding-right-16px  { padding-right: 16px;  }
+@mixin padding-right-20px  { padding-right: 20px;  }
+@mixin padding-right-24px  { padding-right: 24px;  }
+@mixin padding-right-28px  { padding-right: 28px;  }
+@mixin padding-right-32px  { padding-right: 32px;  }
+@mixin padding-right-40px  { padding-right: 40px;  }
+@mixin padding-right-48px  { padding-right: 48px;  }
+@mixin padding-right-56px  { padding-right: 56px;  }
+@mixin padding-right-64px  { padding-right: 64px;  }
+@mixin padding-right-72px  { padding-right: 72px;  }
+@mixin padding-right-80px  { padding-right: 80px;  }
+@mixin padding-right-96px  { padding-right: 96px;  }
+@mixin padding-right-120px { padding-right: 120px; }
+@mixin padding-right-150px { padding-right: 150px; }
+@mixin padding-right-180px { padding-right: 180px; }
+@mixin padding-right-200px { padding-right: 200px; }
+@mixin padding-right-240px { padding-right: 240px; }
+@mixin padding-right-280px { padding-right: 280px; }
+@mixin padding-right-320px { padding-right: 320px; }
+.padding-right-0px   { @include padding-right-0px; }
+.padding-right-4px   { @include padding-right-4px; }
+.padding-right-8px   { @include padding-right-8px; }
+.padding-right-12px  { @include padding-right-12px; }
+.padding-right-16px  { @include padding-right-16px; }
+.padding-right-20px  { @include padding-right-20px; }
+.padding-right-24px  { @include padding-right-24px; }
+.padding-right-28px  { @include padding-right-28px; }
+.padding-right-32px  { @include padding-right-32px; }
+.padding-right-40px  { @include padding-right-40px; }
+.padding-right-48px  { @include padding-right-48px; }
+.padding-right-56px  { @include padding-right-56px; }
+.padding-right-64px  { @include padding-right-64px; }
+.padding-right-72px  { @include padding-right-72px; }
+.padding-right-80px  { @include padding-right-80px; }
+.padding-right-96px  { @include padding-right-96px; }
+.padding-right-120px { @include padding-right-120px; }
+.padding-right-150px { @include padding-right-150px; }
+.padding-right-180px { @include padding-right-180px; }
+.padding-right-200px { @include padding-right-200px; }
+.padding-right-240px { @include padding-right-240px; }
+.padding-right-280px { @include padding-right-280px; }
+.padding-right-320px { @include padding-right-320px; }
+
+@mixin margin-right-0px   { margin-right: 0px;   }
+@mixin margin-right-4px   { margin-right: 4px;   }
+@mixin margin-right-8px   { margin-right: 8px;   }
+@mixin margin-right-12px  { margin-right: 12px;  }
+@mixin margin-right-16px  { margin-right: 16px;  }
+@mixin margin-right-20px  { margin-right: 20px;  }
+@mixin margin-right-24px  { margin-right: 24px;  }
+@mixin margin-right-28px  { margin-right: 28px;  }
+@mixin margin-right-32px  { margin-right: 32px;  }
+@mixin margin-right-40px  { margin-right: 40px;  }
+@mixin margin-right-48px  { margin-right: 48px;  }
+@mixin margin-right-56px  { margin-right: 56px;  }
+@mixin margin-right-64px  { margin-right: 64px;  }
+@mixin margin-right-72px  { margin-right: 72px;  }
+@mixin margin-right-80px  { margin-right: 80px;  }
+@mixin margin-right-96px  { margin-right: 96px;  }
+@mixin margin-right-120px { margin-right: 120px; }
+@mixin margin-right-150px { margin-right: 150px; }
+@mixin margin-right-180px { margin-right: 180px; }
+@mixin margin-right-200px { margin-right: 200px; }
+@mixin margin-right-240px { margin-right: 240px; }
+@mixin margin-right-280px { margin-right: 280px; }
+@mixin margin-right-320px { margin-right: 320px; }
+.margin-right-0px   { @include margin-right-0px; }
+.margin-right-4px   { @include margin-right-4px; }
+.margin-right-8px   { @include margin-right-8px; }
+.margin-right-12px  { @include margin-right-12px; }
+.margin-right-16px  { @include margin-right-16px; }
+.margin-right-20px  { @include margin-right-20px; }
+.margin-right-24px  { @include margin-right-24px; }
+.margin-right-28px  { @include margin-right-28px; }
+.margin-right-32px  { @include margin-right-32px; }
+.margin-right-40px  { @include margin-right-40px; }
+.margin-right-48px  { @include margin-right-48px; }
+.margin-right-56px  { @include margin-right-56px; }
+.margin-right-64px  { @include margin-right-64px; }
+.margin-right-72px  { @include margin-right-72px; }
+.margin-right-80px  { @include margin-right-80px; }
+.margin-right-96px  { @include margin-right-96px; }
+.margin-right-120px { @include margin-right-120px; }
+.margin-right-150px { @include margin-right-150px; }
+.margin-right-180px { @include margin-right-180px; }
+.margin-right-200px { @include margin-right-200px; }
+.margin-right-240px { @include margin-right-240px; }
+.margin-right-280px { @include margin-right-280px; }
+.margin-right-320px { @include margin-right-320px; }
+
+@mixin padding-bottom-0px   { padding-bottom: 0px;   }
+@mixin padding-bottom-4px   { padding-bottom: 4px;   }
+@mixin padding-bottom-8px   { padding-bottom: 8px;   }
+@mixin padding-bottom-12px  { padding-bottom: 12px;  }
+@mixin padding-bottom-16px  { padding-bottom: 16px;  }
+@mixin padding-bottom-20px  { padding-bottom: 20px;  }
+@mixin padding-bottom-24px  { padding-bottom: 24px;  }
+@mixin padding-bottom-28px  { padding-bottom: 28px;  }
+@mixin padding-bottom-32px  { padding-bottom: 32px;  }
+@mixin padding-bottom-40px  { padding-bottom: 40px;  }
+@mixin padding-bottom-48px  { padding-bottom: 48px;  }
+@mixin padding-bottom-56px  { padding-bottom: 56px;  }
+@mixin padding-bottom-64px  { padding-bottom: 64px;  }
+@mixin padding-bottom-72px  { padding-bottom: 72px;  }
+@mixin padding-bottom-80px  { padding-bottom: 80px;  }
+@mixin padding-bottom-96px  { padding-bottom: 96px;  }
+@mixin padding-bottom-120px { padding-bottom: 120px; }
+@mixin padding-bottom-150px { padding-bottom: 150px; }
+@mixin padding-bottom-180px { padding-bottom: 180px; }
+@mixin padding-bottom-200px { padding-bottom: 200px; }
+@mixin padding-bottom-240px { padding-bottom: 240px; }
+@mixin padding-bottom-280px { padding-bottom: 280px; }
+@mixin padding-bottom-320px { padding-bottom: 320px; }
+.padding-bottom-0px   { @include padding-bottom-0px; }
+.padding-bottom-4px   { @include padding-bottom-4px; }
+.padding-bottom-8px   { @include padding-bottom-8px; }
+.padding-bottom-12px  { @include padding-bottom-12px; }
+.padding-bottom-16px  { @include padding-bottom-16px; }
+.padding-bottom-20px  { @include padding-bottom-20px; }
+.padding-bottom-24px  { @include padding-bottom-24px; }
+.padding-bottom-28px  { @include padding-bottom-28px; }
+.padding-bottom-32px  { @include padding-bottom-32px; }
+.padding-bottom-40px  { @include padding-bottom-40px; }
+.padding-bottom-48px  { @include padding-bottom-48px; }
+.padding-bottom-56px  { @include padding-bottom-56px; }
+.padding-bottom-64px  { @include padding-bottom-64px; }
+.padding-bottom-72px  { @include padding-bottom-72px; }
+.padding-bottom-80px  { @include padding-bottom-80px; }
+.padding-bottom-96px  { @include padding-bottom-96px; }
+.padding-bottom-120px { @include padding-bottom-120px; }
+.padding-bottom-150px { @include padding-bottom-150px; }
+.padding-bottom-180px { @include padding-bottom-180px; }
+.padding-bottom-200px { @include padding-bottom-200px; }
+.padding-bottom-240px { @include padding-bottom-240px; }
+.padding-bottom-280px { @include padding-bottom-280px; }
+.padding-bottom-320px { @include padding-bottom-320px; }
+
+@mixin margin-bottom-0px   { margin-bottom: 0px;   }
+@mixin margin-bottom-4px   { margin-bottom: 4px;   }
+@mixin margin-bottom-8px   { margin-bottom: 8px;   }
+@mixin margin-bottom-12px  { margin-bottom: 12px;  }
+@mixin margin-bottom-16px  { margin-bottom: 16px;  }
+@mixin margin-bottom-20px  { margin-bottom: 20px;  }
+@mixin margin-bottom-24px  { margin-bottom: 24px;  }
+@mixin margin-bottom-28px  { margin-bottom: 28px;  }
+@mixin margin-bottom-32px  { margin-bottom: 32px;  }
+@mixin margin-bottom-40px  { margin-bottom: 40px;  }
+@mixin margin-bottom-48px  { margin-bottom: 48px;  }
+@mixin margin-bottom-56px  { margin-bottom: 56px;  }
+@mixin margin-bottom-64px  { margin-bottom: 64px;  }
+@mixin margin-bottom-72px  { margin-bottom: 72px;  }
+@mixin margin-bottom-80px  { margin-bottom: 80px;  }
+@mixin margin-bottom-96px  { margin-bottom: 96px;  }
+@mixin margin-bottom-120px { margin-bottom: 120px; }
+@mixin margin-bottom-150px { margin-bottom: 150px; }
+@mixin margin-bottom-180px { margin-bottom: 180px; }
+@mixin margin-bottom-200px { margin-bottom: 200px; }
+@mixin margin-bottom-240px { margin-bottom: 240px; }
+@mixin margin-bottom-280px { margin-bottom: 280px; }
+@mixin margin-bottom-320px { margin-bottom: 320px; }
+.margin-bottom-0px   { @include margin-bottom-0px; }
+.margin-bottom-4px   { @include margin-bottom-4px; }
+.margin-bottom-8px   { @include margin-bottom-8px; }
+.margin-bottom-12px  { @include margin-bottom-12px; }
+.margin-bottom-16px  { @include margin-bottom-16px; }
+.margin-bottom-20px  { @include margin-bottom-20px; }
+.margin-bottom-24px  { @include margin-bottom-24px; }
+.margin-bottom-28px  { @include margin-bottom-28px; }
+.margin-bottom-32px  { @include margin-bottom-32px; }
+.margin-bottom-40px  { @include margin-bottom-40px; }
+.margin-bottom-48px  { @include margin-bottom-48px; }
+.margin-bottom-56px  { @include margin-bottom-56px; }
+.margin-bottom-64px  { @include margin-bottom-64px; }
+.margin-bottom-72px  { @include margin-bottom-72px; }
+.margin-bottom-80px  { @include margin-bottom-80px; }
+.margin-bottom-96px  { @include margin-bottom-96px; }
+.margin-bottom-120px { @include margin-bottom-120px; }
+.margin-bottom-150px { @include margin-bottom-150px; }
+.margin-bottom-180px { @include margin-bottom-180px; }
+.margin-bottom-200px { @include margin-bottom-200px; }
+.margin-bottom-240px { @include margin-bottom-240px; }
+.margin-bottom-280px { @include margin-bottom-280px; }
+.margin-bottom-320px { @include margin-bottom-320px; }

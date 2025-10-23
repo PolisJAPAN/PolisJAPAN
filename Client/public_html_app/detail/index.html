@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Polis JAPAN | 詳細</title>
+    <meta name="description" content="PolisJAPANは、世の中の様々な話題について不毛な議論やレスバトル、誹謗中傷を避け健全な合意形成を促すための新しいSNSサービスです。">
+
+    <!-- Canonical / Robots -->
+    <link rel="canonical" href="https://pol-is.jp/">
+    <meta name="robots" content="index, follow">
+
+    <!-- OGP -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Polis JAPAN | 分断をなくすSNS">
+    <meta property="og:title" content="Polis JAPAN | 分断をなくすSNS">
+    <meta property="og:description" content="PolisJAPANは、世の中の様々な話題について不毛な議論やレスバトル、誹謗中傷を避け健全な合意形成を促すための新しいSNSサービスです。">
+    <meta property="og:url" content="https://app.pol-is.jp/">
+    <meta property="og:image" content="http://app.pol-is.jp/images/og-image.png">
+    <meta property="og:locale" content="ja_JP">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Polis JAPAN | 分断をなくすSNS">
+    <meta name="twitter:description" content="PolisJAPANは、世の中の様々な話題について不毛な議論やレスバトル、誹謗中傷を避け健全な合意形成を促すための新しいSNSサービスです。">
+    <meta name="twitter:image" content="http://app.pol-is.jp/images/og-image.png">
+
+    <!-- Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- PWA / Favicon -->
+    <meta name="theme-color" content="#F2F2F0">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/polis-icon.png">
+
+    <!-- Fonts: Inter + Noto Sans JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Service Worker For PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <script>      
+        if (navigator.serviceWorker) {
+            navigator.serviceWorker.register ('/javascript/service-worker.js')
+        }
+    </script>
+
+    <!-- Structured Data (JSON-LD / WebSite) -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Polis JAPAN | 分断をなくすSNS",
+            "url": "https://pol-is.jp/detail/",
+            "inLanguage": "ja-JP",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://pol-is.jp/detail??conversation_id={conversation_id}",
+                "query-input": "required name=conversation_id"
+            }
+        }   
+    </script>
+</head>
+
+<body id="detail">
+    <div id="tab-group">
+        <a class="back" href="/">
+            <i class="bi bi bi-arrow-left"></i>
+        </a>
+        <div class="tab-wrapper">
+            <button class="tab active" data-tab="conversations">テーマ</button>
+            <button class="tab" data-tab="reports">みんなの意見</button>
+            <div class="tab-select on-conversations"></div>
+        </div>
+    </div>
+
+    <div id="app">
+        <div class="slide-container">
+            <div class='polis'></div>
+            <div class="polis-report">
+                <div class="report-container">
+                    <div class="report-list-container"></div>
+                    <div class="make-comments-group">
+                        <img class="make-comment-img" src="/images/tutorial/make-comments.png" alt="">
+                        <div class="make-comments-detail">みんなの意見には納得できましたか？<br>もっと同意できる意見を投稿してみましょう</div>
+                        <button class="goto-theme-button button secondary-border">投稿画面へ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="app-loading" class="show">
+            <div class="loader"></div>
+        </div>
+    </div>
+
+    <div id="bottom-menu">
+        <button class="help-button button secondary">
+            <i class="bi bi-question-circle"></i>
+            <div class="text">使い方</div>
+        </button>
+        <button class="share-button button secondary">
+            <i class="bi bi-box-arrow-up"></i>
+        </button>
+    </div>
+
+    <div id="copy-complete-modal" class="slide-modal simple-annouce-modal">
+        <div class="modal-window">
+            <div class="modal-content">
+                <i class="modal-content-icon bi bi-check-circle"></i>
+                <div class="modal-title">コピー完了</div>
+                <div class="modal-text">クリップボードにURLをコピーしました。<br>ペーストして他のユーザーに共有しましょう！</div>
+            </div>
+            <button class="modal-close-button button secondary">
+                <div class="text">閉じる</div>
+            </button>
+        </div>
+    </div>
+
+    <div id="tutorial">
+        <div class="tutorial-window" data-number="1">
+            <div class="tutorial-img">
+                <img src="/images/tutorial/tutorial_01.png" alt="">
+            </div>
+            <div class="tutorial-description">
+                <div class="title">意見に投票しましょう！</div>
+                <div class="detail">
+                    意見に対して、賛成・反対・どちらでもない<br class="tablet-hidden">を選び、投票することができます。<br>
+                    みんなの投票を分析し、<br class="tablet-hidden">Polisは自動でグループ分けを行います。<br>
+                </div>
+            </div>
+            <div class="tutorial-button">
+                <button class="next-button button secondary">次へ</button>
+            </div>
+        </div>
+        <div class="tutorial-window" data-number="2">
+            <div class="tutorial-img">
+                <img src="/images/tutorial/tutorial_02.png" alt="">
+            </div>
+            <div class="tutorial-description">
+                <div class="title">投票に疲れてしまいましたか？</div>
+                <div class="detail">
+                    投票は途中でやめても問題ありません。<br>
+                    途中までの入力で結果を確認できます。<br>
+                    同じ端末を使用する場合は、<br class="tablet-hidden">途中から投票を進めることもできます。<br>
+                </div>
+            </div>
+            <div class="tutorial-button">
+                <button class="next-button button secondary">次へ</button>
+            </div>
+        </div>
+        <div class="tutorial-window" data-number="3">
+            <div class="tutorial-img">
+                <img src="/images/tutorial/tutorial_03.png" alt="">
+            </div>
+            <div class="tutorial-description">
+                <div class="title">ぴったりの意見がありませんか？</div>
+                <div class="detail">
+                    あなたの考えに合う意見がない時には、<br class="tablet-hidden">新たな意見を投稿できます。<br>
+                    新たな視点を投稿して、みんなの賛成を得られるか試してみましょう！<br>
+                </div>
+            </div>
+            <div class="tutorial-button">
+                <button class="next-button button secondary">次へ</button>
+            </div>
+        </div>
+        <div class="tutorial-window" data-number="4">
+            <div class="tutorial-img">
+                <img src="/images/tutorial/tutorial_04.png" alt="">
+            </div>
+            <div class="tutorial-description">
+                <div class="title">どんな意見が人気？</div>
+                <div class="detail">
+                    「みんなの意見」タブを開くと、<br class="tablet-hidden">賛成した人が多い順に意見が表示されます。<br>
+                    トップには、立場が異なるグループを超えて<br class="tablet-hidden">賛成を集めた意見が表示されます。<br>
+                </div>
+            </div>
+            <div class="tutorial-button">
+                <button class="next-button button secondary">次へ</button>
+            </div>
+        </div>
+        <div class="tutorial-window" data-number="5">
+            <div class="tutorial-img">
+                <img src="/images/tutorial/tutorial_05.png" alt="">
+            </div>
+            <div class="tutorial-description">
+                <div class="title">
+                    意見や立場を表明すると<br>
+                    叩かれないか不安…
+                </div>
+                <div class="detail">
+                    ご安心ください。<br class="tablet-hidden">
+                    誰の投票か、誰が出した意見かが他の<br>
+                    ユーザーに公開されることはありません。<br>
+                </div>
+            </div>
+            <div class="tutorial-button">
+                <button class="next-button button secondary">次へ</button>
+            </div>
+        </div>
+        <button class="skip-button">
+            <i class="bi bi-x"></i>
+        </button>
+        <div class="hidden-checkbox">
+            <input type="checkbox" id="hidden-checkbox">
+            <label for="hidden-checkbox">次回から表示しない</label>
+        </div>
+    </div>
+
+    <script src="/javascript/common.js" defer></script>
+    <script src="/javascript/detail.js" defer></script>
+</body>
+
+</html>

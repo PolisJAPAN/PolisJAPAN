@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Polis JAPAN | 分断をなくすSNS</title>
+    <meta name="description" content="PolisJAPANは、世の中の様々な話題について不毛な議論やレスバトル、誹謗中傷を避け健全な合意形成を促すための新しいSNSサービスです。">
+
+    <!-- Canonical / Robots -->
+    <link rel="canonical" href="https://pol-is.jp/">
+    <meta name="robots" content="index, follow">
+
+    <!-- OGP -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Polis JAPAN | 分断をなくすSNS">
+    <meta property="og:title" content="Polis JAPAN | 分断をなくすSNS">
+    <meta property="og:description" content="PolisJAPANは、世の中の様々な話題について不毛な議論やレスバトル、誹謗中傷を避け健全な合意形成を促すための新しいSNSサービスです。">
+    <meta property="og:url" content="https://pol-is.jp/">
+    <meta property="og:image" content="http://pol-is.jp/images/polis-icon.png">
+    <meta property="og:locale" content="ja_JP">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Polis JAPAN | 分断をなくすSNS">
+    <meta name="twitter:description" content="PolisJAPANは、世の中の様々な話題について不毛な議論やレスバトル、誹謗中傷を避け健全な合意形成を促すための新しいSNSサービスです。">
+    <meta name="twitter:image" content="http://pol-is.jp/images/og-image.png">
+
+    <!-- Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- PWA / Favicon -->
+    <meta name="theme-color" content="#FFFFFF">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/polis-icon.png">
+
+    <!-- Fonts: Inter + Noto Sans JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap"
+        rel="stylesheet">
+
+
+    <!-- Structured Data (JSON-LD / WebSite) -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Polis JAPAN | 分断をなくすSNS",
+            "url": "https://pol-is.jp/",
+            "inLanguage": "ja-JP"
+        }   
+    </script>
+</head>
+
+<body id="top">
+    <header id="header">
+        <div id="menu">
+            <div class="menu-container">
+                <div class="menu-left">
+                    <img class="logo" src="./images/common/logo-dark.png" alt="">
+                </div>
+                <div class="menu-right">
+                    <button class="menu-button scroll-button" data-target="#problems">解決する問題</button>
+                    <button class="menu-button scroll-button" data-target="#features">Polisの特徴</button>
+                    <button class="menu-button scroll-button" data-target="#info">このサイトについて</button>
+                    <a class="button space-expand-button secondary" href="https://app.pol-is.jp/">
+                        <div class="text">使ってみる</div>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-expand-button hidden">
+            <div class="btn-bg"></div>
+            <div class="btn-trigger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="overlay-menu">
+            <div class="overlay-menu-content">
+                <div class="ovarlay-menu-text-group">
+                    <img class="logo" src="./images/common/logo-white.png" alt="">
+
+                    <div class="menu-jump-group">
+                        <div class="ovarlay-menu-label-text">CONTENTS</div>
+                        <div class="menu-jump-group-list">
+                            <div class="overlay-menu-button-base padding-top-0px">
+                                <button
+                                    class="overlay-menu-button scroll-button"
+                                    data-target="#problems"
+                                    >解決する問題</button>
+                            </div>
+                            <div class="overlay-menu-button-base">
+                                <button
+                                    class="overlay-menu-button scroll-button"
+                                    data-target="#features"
+                                    >Polisの特徴</button>
+                            </div>
+                            <div class="overlay-menu-button-base">
+                                <button
+                                    class="overlay-menu-button scroll-button"
+                                    data-target="#info"
+                                    >このサイトについて</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="menu-appication-group">
+                        <div class="ovarlay-menu-label-text">APPLICATION</div>
+                        <div class="menu-jump-group">
+                            <a class="button space-expand-button primary-border" href="./home/">
+                                <div class="text">使ってみる</div>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                        
+                    <div class="menu-sns-group">
+                        <div class="ovarlay-menu-label-text">FOLLOW US</div>
+                        <div class="sns-icon-group">
+                            <a href="https://app.pol-is.jp/" target="_brank">
+                                <i class="sns-icon bi bi-twitter-x"></i>
+                            </a>
+                            <a href="https://app.pol-is.jp/" target="_brank">
+                                <i class="sns-icon bi bi-instagram"></i>
+                            </a>
+                            <a href="https://app.pol-is.jp/" target="_brank">
+                                <i class="sns-icon bi bi-github"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="menu-link-group">
+                        <a class="link-text with-border"
+                            href="https://compdemocracy.org/Polis/" target="_brank">利用規約</a>
+                        <a class="link-text with-border"
+                            href="https://compdemocracy.org/Polis/" target="_brank">個人情報の取り扱いについて</a>
+                        <a class="link-text"
+                            href="https://compdemocracy.org/Polis/" target="_brank">ライセンス表記</a>
+                    </div>
+                </div>
+                <div class="ovarlay-menu-image-group">
+                    <div class="mockup">
+                        <img class="frame" src="./images/common/smartphone-mockup.png">
+                        <div class="screen">
+                            <img class="screen-img" src="./images/hero/screen-hero.png">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">Copyright © 2025 PolisJAPAN All Rights Reserved</div>
+        </div>
+    </header>
+
+    <div id="loading">
+        <div class="secondary-bg mask-reveal" data-delay="1.2"></div>
+        <div class="loading-content relative">
+            <img class="loading-logo mask-reveal" data-delay="0.5" src="./images/common/logo-dark.png" alt="">
+            <img class="loading-logo-reverse mask-reveal" data-delay="1.2" src="./images/common/logo-white.png" alt="">
+        </div>
+    </div>
+
+    <main id="main" role="main">
+        <section id="hero" class="">
+            <div class="hero-content">
+                <div class="hero-text-group">
+                    <h1 class="text scroll-fade-in" data-delay="1.7">明日のために、</h1>
+                    <h1 class="text scroll-fade-in" data-delay="1.9">意見を出そう。</h1>
+                    <h3 class="text scroll-fade-in" data-delay="2.4">#建設的な合意形成のための<br class="desktop-hidden"><span class="desktop-hidden"> </span>プラットフォーム</h3>
+                    <a class="button space-expand-button scroll-fade-in primary-border" data-delay="2.4" href="https://app.pol-is.jp/">
+                        <div class="text">使ってみる</div>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="hero-image-group">
+                    <div class="mockup scroll-fade-in" data-delay="2.4">
+                        <img class="frame" src="./images/common/smartphone-mockup.png">
+                        <div class="screen">
+                            <img class="screen-img" src="./images/hero/screen-hero.png">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="problems">
+            <div class="section-bg"></div>
+            <div class="problems-content">
+                <div class="section-title">
+                    <p class="text scroll-fade-in">PROBLEMS</p>
+                    <h2 class="text scroll-fade-in" data-delay="0.3">Polisが解決する問題</h2>
+                </div>
+                <div class="problems-overview">
+                    <div class="problems-text-group">
+                        <img class="problems-person-img" src="./images/problems/problems_person.png" alt="">
+                        <p class="problems-person-text text fade-in">SNS上での、不毛な議論に</br>疲れていませんか？</p>
+                    </div>
+
+                    <div class="problems-posts-group">
+
+                        <!-- １段目　左 -->
+
+                        <div class="post pop-in" style="top: 126px; left: 250px;" data-order="1">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #2CC073;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">女性の権利の侵害だ！</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 226px; left: 70px;" data-order="5">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #2C44C0;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">男性の扱いが不平等だ</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 329px; left: 100px;" data-order="9">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #2CC0C0;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">最近の若い子はみんなこうなの？</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 450px; left: 54px;" data-order="12">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #6E4CE9;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">××するのがマナーだと思います</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 550px; left: 150px;" data-order="3">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #EE5658;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">老害ですね</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 650px; left: 130px;" data-order="7">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #C67AF2;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">Z世代はこれだから</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <!-- １段目　右 -->
+
+                        <div class="post pop-in" style="top: 120px; right: 290px;" data-order="14">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #EBC764;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">このポストはAIだ</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 180px; right: 120px;" data-order="6">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #eb8150;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">過去にこんなこと言ってましたよね</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 270px; right: 150px;" data-order="2">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #E9A04C;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">○○な人への配慮が足りない</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 370px; right: 50px;" data-order="13">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #EBC764;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">新しい交通サービスは社会の敵</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 470px; right: 40px;" data-order="8">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #2CC073;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">某党はカルト団体ですからね</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 570px; right: 180px;" data-order="4">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #2CC0C0;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">ソースは？</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 670px; right: 210px;" data-order="10">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #2C44C0;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">それは某国の陰謀です</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <!-- 2段目 -->
+
+                        <div class="post pop-in" style="top: 180px; left: 134px;" data-order="16">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #6E4CE9;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">不遇な世代に配慮して欲しい</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 270px;left: 140px;" data-order="22">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #E883C3;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">近隣住民に配慮しろ！</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 390px;left: 30px;" data-order="24">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #EE5658;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">危険だから法律で禁止しろ</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 490px;left: 90px;"  data-order="16">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #C67AF2;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">外国人は排斥すべきだ！</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 600px;left: 100px;" data-order="20">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #ec814f;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">不謹慎だ！</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 690px;left: 230px;"  data-order="18">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #E9A04C;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">AIを使う人は信用できない</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 320px; right: 50px;" data-order="23">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #2CC073;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">日本人としての自覚が…</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 420px; right: 120px;" data-order="19">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #2C44C0;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">恵まれすぎでしょ</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 620px; right: 30px;" data-order="21">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #2CC0C0;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">もっと不幸な人もいるんですよ？</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 220px; right: 60px;" data-order="15">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #6E4CE9;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">××するのがマナーだと思います</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                        <div class="post pop-in" style="top: 520px; right: 60px;" data-order="17">
+                            <div class="post-icon-group">
+                                <div class="post-icon" style="background-color: #EE5658;"></div>
+                            </div>
+                            <div class="post-text-group">
+                                <p class="post-message">老害ですね</p>
+                                <p class="post-time">08:25</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="problems-close-message">
+                    <p class="text">
+                        そのモヤモヤ、</br>Polisなら解消できます。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="features">
+            <div class="section-bg"></div>
+            <div class="features-content">
+                <div class="section-title">
+                    <p class="text scroll-fade-in">FEATURE</p>
+                    <h2 class="text scroll-fade-in" data-delay="0.3">Polisの特徴</h2>
+                </div>
+
+                <div class="features-group">
+                    <div class="features-item scroll-fade-in">
+                        <div class="features-text-group">
+                            <p class="number scroll-fade-in from-left">#1</p>
+                            <h3 class="title scroll-fade-in" data-delay="0.6">
+                                反論ではなく、</br>新たな意見を投稿
+                            </h3>
+                            <p class="detail scroll-fade-in" data-delay="0.7">
+                                #Polisでは、他者の意見に対して返信を送ることはできません。直接反論を送るのではなく、「新たな視点」を投稿します。お互いの立場への理解が深まり、不毛な議論、いわゆるレスバ状態を回避します。
+                            </p>
+                        </div>
+                        <div class="feature-image-group">
+                            <div class="mockup scroll-fade-in" data-delay="0.9">
+                                <img class="frame" src="./images/common/smartphone-mockup.png">
+                                <div class="screen">
+                                    <img class="screen-img" src="./images/hero/screen-hero.png">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="features-item scroll-fade-in">
+                        <div class="features-text-group">
+                            <p class="number scroll-fade-in from-left">#2</p>
+                            <h3 class="title scroll-fade-in" data-delay="0.6">
+                                極論ではなく、</br>“合意できる意見”</br>にフォーカス
+                            </h3>
+                            <p class="detail scroll-fade-in" data-delay="0.7">
+                                Polisでは、バズらせるための極論には注目が集まりません。それぞれの立場の人々から、最も多く同意された”落とし所”となる意見がフォーカスされます。</br>これまでのSNSで注目されなかった、中間層の意見が見える化されます。
+                            </p>
+                        </div>
+                        <div class="feature-image-group">
+                            <div class="mockup scroll-fade-in" data-delay="0.9">
+                                <img class="frame" src="./images/common/smartphone-mockup.png">
+                                <div class="screen">
+                                    <img class="screen-img" src="./images/hero/screen-hero.png">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="features-item scroll-fade-in">
+                        <div class="features-text-group">
+                            <p class="number scroll-fade-in from-left">#3</p>
+                            <h3 class="title scroll-fade-in" data-delay="0.6">
+                                選んだ意見で、</br>自分の立ち位置を可視化
+                            </h3>
+                            <p class="detail scroll-fade-in" data-delay="0.7">
+                                同意した意見を元に、あなたがどの立ち位置にいるのかを可視化します。また、他の回答者の分布もわかるため、自己理解と他者理解を深めることができます。
+                            </p>
+                        </div>
+                        <div class="feature-image-group">
+                            <div class="mockup scroll-fade-in" data-delay="0.9">
+                                <img class="frame" src="./images/common/smartphone-mockup.png">
+                                <div class="screen">
+                                    <img class="screen-img" src="./images/hero/screen-hero.png">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="demo">
+            <div class="section-bg"></div>
+            <div class="demo-content">
+                <div class="demo-title scroll-fade-in">まずは体験してみましょう！</div>
+                <div class="demo-text scroll-fade-in" data-delay="0.3">＼ こんな話題が上がっています ／</div>
+
+                <div class="demo-article-group">
+                    <div class="article-item scroll-fade-in" data-delay="0.5">
+                        <img class="corner-bg" src="./images/common/corner-spaced.png" alt="">
+                        <div class="category-label">#お金・資産</div>
+                        <div class="article-window cat-financial">
+                            <div class="article-title-area">
+                                <div class="article-title">基礎控除額って最低賃金に合わせて自動的に引き上げるべき？</div>
+                            </div>
+
+                            <div class="article-footer">
+                                <div class="article-opinion-group">
+                                    <i class="bi bi-megaphone-fill"></i>
+                                    <div class="text">24</div>
+                                </div>
+                                <div class="article-vote-group">
+                                    <i class="bi bi-people-fill"></i>
+                                    <div class="text">24</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="article-item scroll-fade-in" data-delay="0.5">
+                        <img class="corner-bg" src="./images/common/corner-spaced.png" alt="">
+                        <div class="category-label">#政治・社会</div>
+                        <div class="article-window cat-politics">
+                            <div class="article-title-area">
+                                <div class="article-title">民泊は今後も続けるべき？</div>
+                            </div>
+
+                            <div class="article-footer">
+                                <div class="article-opinion-group">
+                                    <i class="bi bi-megaphone-fill"></i>
+                                    <div class="text">24</div>
+                                </div>
+                                <div class="article-vote-group">
+                                    <i class="bi bi-people-fill"></i>
+                                    <div class="text">24</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="article-item scroll-fade-in" data-delay="0.5">
+                        <img class="corner-bg" src="./images/common/corner-spaced.png" alt="">
+                        <div class="category-label">#お金・資産</div>
+                        <div class="article-window cat-financial">
+                            <div class="article-title-area">
+                                <div class="article-title">基礎控除額って最低賃金に合わせて自動的に引き上げるべき？</div>
+                            </div>
+
+                            <div class="article-footer">
+                                <div class="article-opinion-group">
+                                    <i class="bi bi-megaphone-fill"></i>
+                                    <div class="text">24</div>
+                                </div>
+                                <div class="article-vote-group">
+                                    <i class="bi bi-people-fill"></i>
+                                    <div class="text">24</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="demo-text scroll-fade-in">＼ 登録不要！無料で使える！ ／</div>
+                <a class="button space-expand-button scroll-fade-in secondary" data-delay="0.3" href="https://app.pol-is.jp/">
+                    <div class="text">使ってみる</div>
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+        <section id="info">
+            <div class="section-bg"></div>
+            <div class="info-content">
+                <div class="section-title">
+                    <p class="text scroll-fade-in">INFO & FAQ</p>
+                    <h2 class="text scroll-fade-in" data-delay="0">このサイトについて</h2>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-item scroll-fade-in" data-delay="0">
+                        <div class="info-title-group">
+                            <p>#</p>
+                            <h3>まず、Polisってなに？</h3>
+                        </div>
+                        <p class="detail">
+                            Polisは、The Computational Democracy Project社が開発・提供しているオープンソースプラットフォームです。参加者の意見を短文で投稿・投票し合うことで、多様な視点をリアルタイムに収集・分析できるオープンソースの会話プラットフォームです。機械学習を用いたクラスタリングにより、意見の分布や合意点が可視化され、大規模な合意形成や相互理解を促進します。
+                        </p>
+                        <a class="button space-expand-button primary-border" href="https://compdemocracy.org/Polis/"
+                            target="_brank">
+                            <div class="text">リンク</div>
+                            <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    </div>
+
+                    <div class="info-item scroll-fade-in" data-delay="0">
+                        <div class="info-title-group">
+                            <p>#</p>
+                            <h3>PolisとPolisJAPANの違いは？</h3>
+                        </div>
+                        <p class="detail">
+                            PolisJAPANは日本へのPolisの普及を目的としたプロジェクトです。</br>Polisのオープンソースライセンス(AGPL3)を継承し、日本でのユースケースに合わせたUI /
+                            UXを提供することで日本のユーザーに親しみやすい形でPolisの仕組みを提供します。</br>Polisの普及を志す有志メンバーにて運営しています。
+                        </p>
+                    </div>
+
+                    <div class="info-item scroll-fade-in" data-delay="0">
+                        <div class="info-title-group">
+                            <p>#</p>
+                            <h3>PolisJAPANは営利目的ですか？</h3>
+                        </div>
+                        <p class="detail">
+                            いいえ。PolisJAPANは営利目的ではありません。</br>Polisを日本へ普及することを目的とした有志プロジェクトです。</br></br>※
+                            現在はサーバー料金についても有志の自費にて運営しておりますが、</br>アクセス数増加により賄いきれなくなった場合は、サービス維持のためのアドセンスプログラムを</br>導入する可能性があります。
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer id="footer">
+        <div class="section-bg"></div>
+        <div class="footer-content">
+            <div class="contact-item scroll-fade-in">
+                <div class="contact-title-group">
+                    <h3 class="text">お問い合わせ</h3>
+                </div>
+                <p>
+                    ユーザーの皆さまの声を生かしてPolisの普及に努めてまいります。</br>ご意見、ご要望、ご不便に感じた点など、改善につながるお問い合わせを是非お寄せください。
+                </p>
+                <a class="button space-expand-button primary-border" href="https://compdemocracy.org/Polis/" target="_brank">
+                    <div class="text">お問い合わせはこちら</div>
+                    <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <div class="footer-info-item scroll-fade-in">
+                <div class="logo-group">
+                    <img class="logo" src="./images/common/logo-white.png">
+                    <div class="copyright mobile-hidden">Copyright © 2025 PolisJAPAN All Rights Reserved</div>
+                </div>
+
+                <div class="footer-info-group">
+                    <div class="sns-icon-group">
+                        <a href="https://compdemocracy.org/Polis/" target="_brank">
+                            <i class="sns-icon bi bi-twitter-x"></i>
+                        </a>
+                        <a href="https://compdemocracy.org/Polis/" target="_brank">
+                            <i class="sns-icon bi bi-instagram"></i>
+                        </a>
+                        <a href="https://compdemocracy.org/Polis/" target="_brank">
+                            <i class="sns-icon bi bi-github"></i>
+                        </a>
+                    </div>
+                    <div class="link-group">
+                        <a class="link-text with-border"
+                            href="https://compdemocracy.org/Polis/" target="_brank">利用規約</a>
+                        <a class="link-text with-border"
+                            href="https://compdemocracy.org/Polis/" target="_brank">個人情報の取り扱いについて</a>
+                        <a class="link-text"
+                            href="https://compdemocracy.org/Polis/" target="_brank">ライセンス表記</a>
+                    </div>
+                    <div class="copyright desktop-hidden">Copyright © 2025 PolisJAPAN All Rights Reserved</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./javascript/common.js" defer></script>
+    <script src="./javascript/script.js" defer></script>
+</body>
+
+</html>

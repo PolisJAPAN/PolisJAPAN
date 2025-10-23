@@ -1,0 +1,253 @@
+@use "../../common" as common;
+
+body#admin {
+    background-color: var(--color-light);
+
+    #main {
+        @include common.stack-top;
+        width: 100vw;
+        height: 100vh;
+    
+        overflow: scroll;
+        background-color: var(--color-bg-gray);
+        z-index: var(--z-index-grobal-content);
+        padding-top: 60px;
+
+        .hidden-input {
+            @include common.padding-8px;
+            @include common.letter-spacing-small;
+            @include common.line-spacing-small;
+            @include common.width-full;
+            @include common.height-fit;
+
+            letter-spacing: 1px;
+            box-sizing: border-box;
+            transition: border 0.3s;
+            border: 1px solid transparent;
+            border-radius: 8px;
+        }
+
+        .convert-container {
+            @include common.content;
+            @include common.relative;
+            @include common.width-full;
+            max-width: 80vw;
+
+            border-radius: 12px;
+            border: 1px solid #D3D1CB;
+            color: var(--color-font-dark-gray-2);
+            overflow: hidden;
+
+            margin-bottom: 16px;
+
+            height: 120px;
+            min-height: 120px;
+
+            .convert-header {
+                @include common.padding-16px;
+                @include common.padding-y-20px;
+                background-color:  #e9e8e6;
+                border-bottom: 1px solid #D3D1CB;
+                height: 60px;
+            }
+
+            .convert-content{
+                @include common.relative;
+                // @include common.height-fit;
+                @include common.width-full;
+                height: 60px;
+
+                #convert-html-textarea{
+                    @include common.height-fit;
+                    @include common.width-full;
+                    @include common.padding-16px;
+                    height: 60px;
+                    z-index: var(--z-index-local-over-1);
+                }
+            }
+
+            .conevert-button-row {
+                @include common.absolute;
+                @include common.row;
+                @include common.center;
+                @include common.align-center;
+                @include common.width-fit;
+                @include common.height-fit;
+                @include common.spacing-16px;
+                bottom: 12px;
+                right: 12px;
+                z-index: var(--z-index-local-over-2);
+
+                .convert-submit-button, .create-submit-button{
+                    border-radius: 8px;
+                    height: 40px;
+                }
+            }
+        }
+
+        .identify-container {
+            @include common.content;
+            @include common.relative;
+            @include common.width-full;
+            max-width: 80vw;
+
+            border-radius: 12px;
+            border: 1px solid var(--color-dark);
+            color: var(--color-font-dark-gray-2);
+            overflow: hidden;
+
+            margin-bottom: 16px;
+            height: 120px;
+            min-height: 120px;
+
+            .identify-header {
+                @include common.padding-16px;
+                @include common.padding-y-20px;
+                background-color:  var(--color-dark);
+                color: var(--color-light);
+                border-bottom: 1px solid var(--color-dark);;
+                height: 60px;
+            }
+
+            .identify-content{
+                @include common.relative;
+                @include common.width-full;
+                height: 60px;
+
+                #identify-html-textarea{
+                    @include common.height-fit;
+                    @include common.width-full;
+                    @include common.padding-16px;
+                    height: 60px;
+                    z-index: var(--z-index-local-over-1);
+                }
+            }
+            .identify-submit-button{
+                @include common.absolute;
+                border-radius: 8px;
+                height: 40px;
+
+                bottom: 12px;
+                right: 12px;
+
+                z-index: var(--z-index-local-over-2);
+            }
+        }
+
+        .theme-container {
+            @include common.content;
+            @include common.height-fit;
+            @include common.width-full;
+            @include common.stack;
+            @include common.stack-top;
+            @include common.align-center;
+            @include common.spacing-16px;
+            max-width: 80vw;
+
+            .theme-item {
+                @include common.width-full;
+                @include common.height-fit;
+                @include common.padding-32px;
+                @include common.stack;
+                @include common.spacing-32px;
+                border-radius: 12px;
+                border: 1px solid #D3D1CB;
+                color: var(--color-font-dark-gray-2);
+
+                .title-text {
+                    @include common.font-weight-black;
+                    @include common.font-size-small;
+                    color: #989898;
+                }
+
+                .theme-info {
+                    @include common.row;
+                    @include common.row-left;
+                    @include common.align-center;
+                    @include common.spacing-32px;
+
+                    .date-text {
+                        @include common.font-size-small;
+                        @include common.height-full;
+                        @include common.stack;
+                        @include common.center;
+                        @include common.align-center;
+                        color: #989898;
+                        height: 36px;
+                    }
+        
+                    .new-tag {
+                        @include common.font-weight-black;
+                        @include common.padding-8px;
+                        @include common.height-full;
+                        @include common.stack;
+                        @include common.center;
+                        @include common.align-center;
+                        @include common.font-size-small;
+                        color: var(--color-light);
+                        background-color: #ff4848;
+                        border-radius: 8px;
+                        display: none;
+                    }
+                }
+
+                #theme-title-textarea {
+                    @include common.font-weight-black;
+                    @include common.font-size-medium;
+                }
+                #theme-description-textarea {
+                    @include common.font-size-normal;
+                    @include common.line-spacing-medium;
+                }
+                #theme-comments-textarea {
+                    font-size: 16px;
+                    @include common.line-spacing-large;
+                }
+                #theme-category-select {
+                    // background-color: #dddddd;
+                    border-radius: 8px;
+                    @include common.padding-4px;
+                }
+
+                .button-row{
+                    @include common.row;
+                    @include common.row-right;
+                    @include common.align-center;
+                    @include common.width-full;
+                    @include common.spacing-16px;
+
+                    .edit-button{
+                        border-radius: 8px;
+                    }
+
+                    .approve-button{
+                        border-radius: 8px;
+                        
+                        &.primary {
+                            &.disabled {
+                                background-color: #dfdfe1;
+                                border: 1px solid #dfdfe1;
+    
+                                color: var(--color-font-dark-secondary);
+
+                                pointer-events: none;
+                                cursor: auto;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @media (max-width: 1024px) {
+
+    }
+    @media (max-width: 768px) {
+
+    }
+
+    @media (display-mode: standalone){
+
+    }
+}

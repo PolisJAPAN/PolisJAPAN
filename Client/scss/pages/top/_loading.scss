@@ -1,0 +1,61 @@
+@use "../../common" as common;
+
+#loading {
+    @include common.fixed;
+    @include common.stack;
+    @include common.center;
+    @include common.align-center;
+    
+    background-color: var(--color-light);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    z-index: var(--z-index-grobal-laoding);
+
+    opacity: 1.0;
+    transition: opacity ease-in 0.3s, filter ease-in 0.3s, scale ease-in 0.3s;
+
+    pointer-events: all;
+
+    opacity: 1;
+    filter: blur(0);
+    scale: 1.0;
+
+    &.show {
+        opacity: 0;
+        filter: blur(20px);
+        scale: 1.2;
+        pointer-events: none;
+    }
+
+    .secondary-bg {
+        @include common.absolute;
+        @include common.from-left;
+
+        background-color: var(--color-main);
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+    .loading-content {
+        .loading-logo {
+            @include common.from-left;
+
+            height: 66px;
+        }
+        .loading-logo-reverse {
+            @include common.absolute;
+            @include common.from-left;
+
+            height: 66px;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    }
+}

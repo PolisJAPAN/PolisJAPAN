@@ -1,0 +1,84 @@
+@use "../../common" as common;
+
+#hero {
+    @include common.font-color-light;
+
+    background-color: var(--color-main);
+    height: calc(100vh + 320px);
+
+    justify-content: center;
+
+    margin-top: 0;
+    padding-top: 0;
+    padding-bottom: 220px;
+
+    .hero-content {
+        @include common.content;
+        @include common.row;
+    }
+
+    .hero-text-group {
+        @include common.stack;
+        @include common.center;
+        @include common.spacing-16px;
+        @include common.fit;
+        @include common.margin-left-150px;
+
+        height: 100%;
+
+        h1 {
+            @include common.font-size-xx-large;
+            @include common.font-weight-black;
+            @include common.letter-spacing-medium;
+            @include common.width-fit;
+        }
+
+        h3 {
+            @include common.font-size-medium;
+            @include common.font-weight-bold;
+            @include common.letter-spacing-small;
+            @include common.line-spacing-medium;
+            @include common.margin-top-16px;
+        }
+
+        .button {
+            @include common.margin-top-24px;
+        }
+    }
+
+    .hero-image-group {
+        height: 100%;
+        @include common.row;
+        @include common.center;
+        @include common.fill;
+
+        .mockup {
+            @include common.relative;
+            @include common.stack;
+            @include common.center;
+            @include common.align-center;
+        }
+    }
+
+
+    @media (max-width: 1024px) {
+
+    }
+    @media (max-width: 768px) {
+        .hero-content {
+            @include common.stack;
+        }
+
+        .hero-text-group {
+            @include common.margin-left-32px;
+
+            h1 {
+                // @include common.font-size-x-large;
+            }
+
+            h3 {
+                // @include common.font-size-normal;
+            }
+        }
+    }
+}

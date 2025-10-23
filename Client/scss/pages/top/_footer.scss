@@ -1,0 +1,189 @@
+@use "../../common" as common;
+
+#footer {
+    color: var(--color-light);
+
+    .section-bg {
+        background-color: var(--color-dark);
+
+        height: calc(100% + 64px);
+
+        top: -64px;
+
+        z-index: var(--z-index-local-under-1);
+        border-radius: 0;
+    }
+
+    .footer-content {
+        @include common.content;
+        @include common.stack;
+        @include common.stack-top;
+        @include common.align-center;
+        @include common.spacing-32px;
+    }
+
+    .contact-item {
+        @include common.stack;
+        @include common.spacing-16px;
+        @include common.padding-64px;
+
+        width: 100%;
+        max-width: 920px;
+
+        background-color: var(--color-main);
+
+        border-radius: 32px;
+
+        filter: drop-shadow(0px 8px 16px rgba(9, 8, 39, 0.4));
+
+        .contact-title-group {
+            @include common.row;
+            @include common.row-left;
+            @include common.align-center;
+            @include common.spacing-8px;
+
+            h3 {
+                @include common.font-size-medium;
+                @include common.font-weight-black;
+                @include common.letter-spacing-small;
+            }
+        }
+
+        p {
+            @include common.text;
+            @include common.line-spacing-x-large;
+        }
+    }
+
+    .footer-info-item {
+        @include common.width-full;
+        @include common.height-fit;
+        @include common.row;
+        @include common.both;
+        @include common.margin-top-200px;
+
+        max-width: 920px;
+        
+        .logo-group {
+            @include common.stack;
+            @include common.both;
+            @include common.stack-left;
+            @include common.spacing-16px;
+            @include common.padding-right-32px;
+
+            border-right: 1px solid var(--color-light);
+
+            .logo {
+                height: 54px;
+                object-fit: contain;
+            }
+
+        }
+        .copyright {
+            @include common.inter;
+            @include common.font-size-small;
+            @include common.font-weight-light;
+            @include common.letter-spacing-small;
+        }
+
+        .footer-info-group {
+            @include common.stack;
+            @include common.both;
+        }
+
+        .sns-icon-group {
+            @include common.row;
+            @include common.row-right;
+            @include common.align-center;
+            @include common.spacing-16px;
+
+            .sns-icon {
+                font-size: var(--font-size-36px);
+                display: block;
+                width: 36px;
+                height: 36px;
+            }
+        }
+
+        .link-group {
+            @include common.row;
+            @include common.row-right;
+            @include common.align-center;
+            @include common.spacing-16px;
+
+            .link-text {
+                @include common.font-size-small;
+                @include common.letter-spacing-small;
+                
+                &.with-border {
+                    @include common.padding-right-16px;
+                    border-right: 1px solid var(--color-light);
+                }
+            }
+        }
+    }
+
+    @media (max-width: 1024px) {
+
+    }
+    @media (max-width: 768px) {
+        .footer-content {
+            @include common.padding-x-16px;
+        }
+
+        .contact-item {
+            @include common.padding-x-32px;
+            @include common.padding-y-64px;
+        }
+
+        .footer-info-item {
+            @include common.stack;
+            @include common.both;
+            @include common.spacing-16px;
+
+            @include common.padding-top-32px;
+            border-top: solid 1px #6d6d6d;
+
+            .logo-group {
+                border-right: none;
+                .logo {
+                    height: 40px;
+                }
+            }
+
+            .footer-info-group {
+                @include common.spacing-16px;
+            }
+
+            .sns-icon-group {
+                @include common.row-left;
+                @include common.padding-y-16px;
+
+                .sns-icon {
+                    font-size: var(--font-size-24px);
+                    width: 24px;
+                    height: 24px;
+                }
+            }
+
+            .link-group {
+                @include common.grid;
+                @include common.font-color-dark-secondary;
+                grid-template-columns: 2fr 3fr;
+
+                .link-text {
+                    @include common.width-fit;
+
+                    &.with-border {
+                        border-right: 1px solid var(--color-font-dark-secondary);
+                    }
+                }
+            }
+
+            .copyright {
+                @include common.padding-top-16px;
+                @include common.font-color-dark-secondary;
+            }
+        }
+    }
+} 

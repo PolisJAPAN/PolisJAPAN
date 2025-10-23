@@ -1,0 +1,187 @@
+@use "../../common" as common;
+
+#demo {
+    color: var(--color-light);
+
+    .section-bg {
+        background-color: var(--color-main);
+    }
+
+    .demo-content {
+        @include common.content;
+        @include common.stack;
+        @include common.stack-top;
+        @include common.align-center;
+        @include common.spacing-32px;
+
+        .demo-title {
+            @include common.text;
+            @include common.font-size-xx-large;
+            @include common.font-weight-black;
+        }
+    
+        .demo-text {
+            @include common.text;
+            @include common.font-size-large;
+            @include common.font-weight-black;
+            @include common.margin-top-180px;
+        }
+
+        .demo-article-group {
+            @include common.stack;
+            @include common.stack-top;
+            @include common.align-center;
+            @include common.spacing-16px;
+
+            .article-item {
+                @include common.row;
+                @include common.both;
+                @include common.align-center;
+                @include common.padding-16px;
+                @include common.spacing-16px;
+                @include common.relative;
+
+                height: 300px;
+                width: 100%;
+                max-width: 720px;
+                border-radius: 16px;
+        
+                background-color: var(--color-light);
+                color: var(--color-light);
+        
+                transition: filter 0.3s;
+        
+                filter: drop-shadow(0px 8px 32px rgba(9, 8, 39, 0.1));
+        
+                &:hover {
+                    filter: drop-shadow(0px 8px 16px rgba(9, 8, 39, 0.4));
+                }
+
+                .corner-bg {
+                    @include common.absolute;
+                }
+        
+                .category-label {
+                    @include common.text;
+                    @include common.text-center;
+                    @include common.font-size-small;
+                    @include common.font-weight-semibold;
+                    @include common.font-color-dark-secondary;
+                    @include common.absolute;
+
+                    top: 0px;
+                    left: 0px;
+        
+                    width: 205px;
+                    height: fit-content;
+        
+                    padding: 24px;
+                    z-index: var(--z-index-local-over-3);
+                }
+        
+                .corner-bg {
+                    top: 10px;
+                    left: 9px;
+        
+                    width: 205px;
+                    height: auto;
+        
+                    z-index: var(--z-index-local-over-2);
+                }
+        
+                .article-window {
+                    @include common.stack;
+                    @include common.both;
+                    @include common.align-center;
+                    @include common.spacing-8px;
+                    @include common.height-full;
+                    @include common.width-full;
+
+                    border-radius: 16px;
+                    
+                    &.cat-financial {
+                        background-image: linear-gradient(135deg, #00a6f9 0%, #00db99 100%);
+                    }
+        
+                    &.cat-politics {
+                        background-image: linear-gradient(135deg, #ff1833 0%, #fda336 100%);
+                    }
+
+                    .article-title-area {
+                        @include common.stack;
+                        @include common.center;
+                        @include common.align-center;
+                        @include common.fill;
+                        @include common.width-full;
+                        @include common.padding-x-64px;
+                        @include common.padding-top-32px;
+
+                        .article-title {
+                            @include common.text;
+                            @include common.width-fit;
+                            @include common.height-fit;
+                            @include common.font-size-large;
+                            @include common.font-weight-black;
+                            @include common.text-center;
+                            @include common.line-spacing-medium;
+
+                        }
+                    }
+
+                    .article-footer {
+                        @include common.row;
+                        @include common.row-right;
+                        @include common.align-center;
+                        @include common.fit;
+                        @include common.width-full;
+                        @include common.spacing-16px;
+                        @include common.padding-x-16px;
+                        @include common.padding-bottom-16px;
+
+                        .article-opinion-group {
+                            @include common.row;
+                            @include common.row-right;
+                            @include common.align-center;
+                            @include common.fit;
+                            @include common.spacing-8px;
+                            
+                            .text {
+                                @include common.font-size-normal;
+                                @include common.font-weight-semibold;
+                            }
+                        }
+
+                        .article-vote-group {
+                            @include common.row;
+                            @include common.row-right;
+                            @include common.align-center;
+                            @include common.fit;
+                            @include common.spacing-8px;
+
+                            .text {
+                                @include common.font-size-normal;
+                                @include common.font-weight-semibold;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    @media (max-width: 1024px) {
+    
+    }
+    @media (max-width: 768px) {
+        .demo-content {
+            .demo-title {
+                @include common.font-size-x-large;
+            }
+
+            .demo-article-group {
+                @include common.padding-16px;
+            }
+        }
+    }
+}

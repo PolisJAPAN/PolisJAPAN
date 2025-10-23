@@ -1,0 +1,13 @@
+{
+  "name": "PolisJAPAN",
+  "short_name": "PolisJAPAN",
+  "background_color": "#ffffffff",
+  "icons": [{
+      "src": "/images/polis-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }],
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone"
+}

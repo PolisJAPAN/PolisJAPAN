@@ -1,0 +1,129 @@
+@use "../../common" as common;
+
+body#detail {
+    #tab-group {
+        @include common.fixed;
+        @include common.row;
+        @include common.center;
+        @include common.align-center;
+        @include common.width-full;
+        @include common.padding-16px;
+        @include common.spacing-16px;
+    
+    
+        height: 72px;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: var(--z-index-grobal-menu);
+    
+        // background-color: var(--color-bg-gray);
+    
+        .back {
+            @include common.height-full;
+            @include common.row;
+            @include common.center;
+            @include common.align-center;
+            width: 48px;
+            
+            i {
+                font-size: var(--font-size-24px);
+            }
+        }
+    
+        .tab-wrapper {
+            @include common.relative;
+            @include common.width-full;
+            @include common.height-full;    
+            @include common.row;
+            @include common.center;
+            @include common.align-center;
+            
+            box-sizing: border-box;
+            max-width: 720px;
+    
+            .tab {
+                @include common.font-size-normal;
+                @include common.font-weight-semibold;
+                @include common.letter-spacing-small;
+                @include common.flex-1;
+                @include common.height-full;
+    
+                @include common.row;
+                @include common.center;
+                @include common.align-center;
+    
+                z-index: var(--z-index-local-over-2);
+                color: var(--color-dark);
+                width: 50%;
+    
+                transition: color 0.3s;
+    
+                &.active {
+                    color: var(--color-light)
+                }
+            }
+    
+            .tab-select {
+                @include common.absolute;
+                width: calc(50%);
+                background-color: var(--color-dark);
+                height: 40px;
+                border-radius: 20px;
+    
+                z-index: var(--z-index-local-over-1);
+    
+                transition: left 0.3s, border-radius 0.3s;
+    
+                &.on-conversations {
+                    left: 0px;
+                }
+                &.on-reports {
+                    left: calc(50%);
+                }
+            }
+        }
+    }
+    
+    #bottom-menu {
+        @include common.fixed;
+        @include common.row;
+        @include common.row-left;
+        @include common.align-center;
+        @include common.width-full;
+        @include common.height-fit;
+        @include common.padding-16px;
+        @include common.spacing-16px;
+        
+        bottom: 0;
+        left: 0;
+        right: 0;
+    
+        z-index: var(--z-index-grobal-menu);
+        pointer-events: auto;    /* ここが重要。背景へのヒットを遮断 */
+    
+        .help-button, .share-button {
+            @include common.spacing-8px;
+            @include common.padding-x-28px;
+            filter: drop-shadow(0px 8px 16px rgba(9, 8, 39, 0.5));
+            border: transparent;
+            i {
+                font-size: var(--font-size-24px);
+            }
+            pointer-events: all;
+
+            &:hover {
+                @include common.spacing-8px;
+            }
+        }
+    }
+
+    @media (display-mode: standalone){
+        #tab-group {
+            top: env(safe-area-inset-top);
+        }
+        #bottom-menu {
+            bottom: 1vh;
+        }
+    }
+}

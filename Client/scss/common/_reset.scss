@@ -1,0 +1,83 @@
+/* 
+=======================================
+_reset.scss
+---------------------------------------
+新規ページ構築時のスタイル初期化用
+======================================= 
+*/
+
+/* ボックスサイズを統一 */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* デフォルト余白を除去 */
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol,
+li,
+dl,
+dt,
+dd,
+figure,
+blockquote,
+fieldset,
+legend {
+    margin: 0;
+    padding: 0;
+}
+
+/* リストマーカーを消す */
+ul,
+ol {
+    list-style: none;
+}
+
+/* デフォルトのリンク装飾をリセット */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* 画像を親要素にフィット */
+img,
+video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* フォーム要素をリセット */
+button,
+input,
+select,
+textarea {
+    font: inherit;
+    color: inherit;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+/* ボタンのカーソル指定 */
+button {
+    cursor: pointer;
+}
+
+/* テーブルのスタイルリセット */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}

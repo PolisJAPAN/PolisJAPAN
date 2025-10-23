@@ -1,0 +1,253 @@
+/* 
+=======================================
+_font.scss
+---------------------------------------
+フォントに関するスタイル群
+======================================= 
+*/
+
+// フォントファミリー、ウェイト関連
+:root {
+    --basic-font-family: 
+        "Noto Sans JP", system-ui, -apple-system, "Segoe UI",
+        Roboto, "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans", "Yu Gothic", "YuGothic", Meiryo, sans-serif;
+
+    --inter-font-family: 
+        "Inter", system-ui, -apple-system, "Segoe UI",
+        Roboto, "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans", "Yu Gothic", "YuGothic", Meiryo, sans-serif;
+
+    font-family: var(--basic-font-family);
+    font-size: var(--font-size-normal);
+    color: var(--color-font-dark);
+    line-height: 1;
+    font-kerning: normal;
+    -webkit-font-smoothing: antialiased; /* macOS での視認性向上 */
+    text-rendering: optimizeLegibility;
+    font-synthesis-weight: none; /* 擬似ボールド抑止（対応ブラウザ） */
+    font-feature-settings: "palt" 1, "kern" 1;
+}
+
+// 使う想定のweightを全てクラス記載
+@mixin font-weight-light {
+    font-weight: 300;
+}
+.font-weight-light { @include font-weight-light; }
+
+
+@mixin font-weight-regular {
+    font-weight: 400;
+}
+.font-weight-regular { @include font-weight-regular; }
+
+
+@mixin font-weight-semibold {
+    font-weight: 600;
+}
+.font-weight-semibold { @include font-weight-semibold; }
+
+
+@mixin font-weight-bold {
+    font-weight: 700;
+}
+.font-weight-bold { @include font-weight-bold; }
+
+
+@mixin font-weight-black {
+    font-weight: 900;
+}
+.font-weight-black { @include font-weight-black; }
+
+
+@mixin inter {
+    font-family: var(--inter-font-family);
+}
+.inter { @include inter; }
+
+
+// フォントサイズ関連
+:root {
+    --font-size-8px: 8px;
+    --font-size-10px: 10px;
+    --font-size-11px: 11px;
+    --font-size-12px: 12px;
+    --font-size-13px: 13px;
+    --font-size-14px: 14px;
+    --font-size-16px: 16px;
+    --font-size-18px: 18px;
+    --font-size-20px: 20px;
+    --font-size-22px: 22px;
+    --font-size-24px: 24px;
+    --font-size-26px: 26px;
+    --font-size-28px: 28px;
+    --font-size-30px: 30px;
+    --font-size-34px: 34px;
+    --font-size-32px: 32px;
+    --font-size-36px: 36px;
+    --font-size-38px: 38px;
+    --font-size-40px: 40px;
+    --font-size-42px: 42px;
+    --font-size-44px: 44px;
+    --font-size-46px: 46px;
+    --font-size-48px: 48px;
+
+    --font-size-56px: 56px;
+    --font-size-64px: 64px;
+    --font-size-72px: 72px;
+    --font-size-80px: 80px;
+    --font-size-96px: 96px;
+    --font-size-120px: 120px;
+
+    --font-size-small : var(--font-size-14px);
+    --font-size-normal : var(--font-size-18px);
+    --font-size-medium : var(--font-size-24px);
+    --font-size-large : var(--font-size-32px);
+    --font-size-x-large : var(--font-size-48px);
+    --font-size-xx-large : var(--font-size-64px);
+
+    @media (max-width: 1024px) {
+
+    }
+    @media (max-width: 768px) {
+        --font-size-small : var(--font-size-13px);
+        --font-size-normal : var(--font-size-16px);
+        --font-size-medium : var(--font-size-18px);
+        --font-size-large : var(--font-size-24px);
+        --font-size-x-large : var(--font-size-32px);
+        --font-size-xx-large : var(--font-size-48px);
+    }
+}
+
+
+@mixin font-size-small {
+    font-size: var(--font-size-small);
+}
+.font-size-small { @include font-size-small; }
+
+
+@mixin font-size-normal {
+    font-size: var(--font-size-normal);
+}
+.font-size-normal { @include font-size-normal; }
+
+
+@mixin font-size-medium {
+    font-size: var(--font-size-medium);
+}
+.font-size-medium { @include font-size-medium; }
+
+
+@mixin font-size-large {
+    font-size: var(--font-size-large);
+}
+.font-size-large { @include font-size-large; }
+
+
+@mixin font-size-x-large {
+    font-size: var(--font-size-x-large);
+}
+.font-size-x-large { @include font-size-x-large; }
+
+
+@mixin font-size-xx-large {
+    font-size: var(--font-size-xx-large);
+}
+.font-size-xx-large { @include font-size-xx-large; }
+
+
+
+// カーニング関連
+:root {
+    --letter-spacing-0px : 0px;
+    --letter-spacing-1px : 1px;
+    --letter-spacing-2px : 2px;
+    --letter-spacing-3px : 3px;
+    --letter-spacing-4px : 4px;
+    --letter-spacing-8px : 8px;
+}
+
+
+@mixin letter-spacing-default {
+    letter-spacing: var(--letter-spacing-1px);
+}
+.letter-spacing-default { @include letter-spacing-default; }
+
+
+@mixin letter-spacing-small {
+    letter-spacing: var(--letter-spacing-2px);
+}
+.letter-spacing-small { @include letter-spacing-small; }
+
+
+@mixin letter-spacing-medium {
+    letter-spacing: var(--letter-spacing-4px);
+}
+.letter-spacing-medium { @include letter-spacing-medium; }
+
+
+@mixin letter-spacing-large {
+    letter-spacing: var(--letter-spacing-8px);
+}
+.letter-spacing-large { @include letter-spacing-large; }
+
+
+
+
+@mixin line-spacing-default {
+    line-height: 1;    
+}
+.line-spacing-default { @include line-spacing-default; }
+
+
+@mixin line-spacing-small {
+    line-height: 1.2;    
+}
+.line-spacing-small { @include line-spacing-small; }
+
+
+@mixin line-spacing-medium {
+    line-height: 1.4;    
+}
+.line-spacing-medium { @include line-spacing-medium; }
+
+
+@mixin line-spacing-large {
+    line-height: 1.6;    
+}
+.line-spacing-large { @include line-spacing-large; }
+
+
+@mixin line-spacing-x-large {
+    line-height: 1.8;    
+}
+.line-spacing-x-large { @include line-spacing-x-large; }
+
+
+
+
+
+
+@mixin font-color-dark {
+    color: var(--color-font-dark);
+}
+.font-color-dark { @include font-color-dark; }
+
+
+@mixin font-color-dark-secondary {
+    color: var(--color-font-dark-secondary);
+}
+.font-color-dark-secondary { @include font-color-dark-secondary; }
+
+
+@mixin font-color-light {
+    color: var(--color-font-light);
+}
+.font-color-light { @include font-color-light; }
+
+
+@mixin font-color-primary {
+    color: var(--color-main);
+}
+.font-color-primary { @include font-color-primary; }
+

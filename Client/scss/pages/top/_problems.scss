@@ -1,0 +1,215 @@
+@use "../../common" as common;
+
+#problems {
+    height: fit-content;
+
+    .section-bg {
+        background-color: var(--color-bg-gray);
+    }
+
+    .problems-content {
+        @include common.content;
+        @include common.stack;
+    }
+
+    .problems-overview {
+        @include common.stack;
+        @include common.center;
+        @include common.align-center;
+        @include common.relative;
+
+        height: 840px;
+
+        .problems-text-group{
+            @include common.stack;
+            @include common.center;
+            @include common.align-center;
+            @include common.spacing-16px;
+            @include common.relative;
+
+            z-index: var(--z-index-local-over-2);
+
+            .problems-person-img {
+                width: 420px;
+                height: 420px;
+                object-fit: cover;
+            }
+
+            .text {
+                font-size: var(--font-size-40px);
+            }
+
+            .problems-person-text {
+                @include common.absolute;
+                @include common.font-size-large;
+                @include common.font-weight-black;
+                @include common.letter-spacing-small;
+                @include common.text-center;
+
+                bottom: -16px;
+                z-index: var(--z-index-local-over-2);
+
+                &::before {
+                    content: "";
+                    @include common.absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+
+                    border-radius: 16px;
+                    filter: blur(10px);
+
+                    background-color: var(--color-light);
+
+                    z-index: var(--z-index-local-under-1);
+                }
+            }
+        }
+
+        .problems-posts-group {
+            @include common.absolute;
+            z-index: var(--z-index-local-over-1);
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+
+            .post {
+                background-color: var(--color-light);
+                border-radius: 16px;
+
+                width: fit-content;
+                height: fit-content;
+
+                position: absolute;
+
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+
+                padding: 12px 24px 12px 12px;
+                gap: 16px;
+                
+                filter: drop-shadow(0px 4px 8px rgba(0, 8, 16, 0.1));
+
+                .post-icon-group {
+                    @include common.stack;
+                    @include common.center;
+                    @include common.align-center;
+                    @include common.fit;
+                }
+
+                .post-icon {
+                    border-radius: 12px;
+                    background-color: var(--color-font-dark-secondary);
+
+                    width: 48px;
+                    height: 48px;
+                }
+
+                .post-text-group {
+                    @include common.stack;
+                    @include common.center;
+                    @include common.stack-right;
+                    @include common.fill;
+                    @include common.spacing-8px;
+                }
+
+                .post-message {
+                    @include common.font-weight-semibold;
+                }
+
+                .post-time {
+                    @include common.font-weight-semibold;
+                    @include common.font-size-small;
+
+                    color: var(--color-font-dark-secondary);
+                }
+
+                &.pop-in {
+                    opacity: 0;
+                    transform: translateY(30px) scale(0.8);
+                    will-change: opacity, transform;
+
+                    &.show {
+                        animation-name: popIn;
+                        animation-duration: var(--dur, 0.3s);
+                        animation-timing-function: cubic-bezier(0.2,1.6,0.44,1);
+                        animation-delay: var(--delay, 0s);
+                        animation-fill-mode: both;
+                    }
+                }
+
+                @keyframes popIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px) scale(0.8);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1.0);
+                    }
+                }
+
+            }
+        }
+    }
+
+    .problems-close-message {
+        @include common.width-full;
+        @include common.height-fit;
+        @include common.row;
+        @include common.center;
+
+        padding: 120px 0 200px 0;
+
+        .text {
+            @include common.font-size-x-large;
+            @include common.font-weight-black;
+            @include common.letter-spacing-small;
+            @include common.line-spacing-medium;
+            @include common.text-center;
+            @include common.margin-top-120px;
+        }
+    }
+
+    @media (max-width: 1024px) {
+    
+    }
+    @media (max-width: 768px) {
+        .problems-overview {
+
+            .problems-text-group{
+
+
+                .problems-person-img {
+
+                }
+
+                .text {
+                    font-size: var(--font-size-40px);
+                }
+
+                .problems-person-text {
+                    @include common.font-size-x-large;
+
+                    &::before {
+                        top: -10px;
+                        bottom: -10px;
+                        left: -10px;
+                        right: -10px;
+                    }
+                }
+            }
+
+            .problems-posts-group {
+                min-width: 720px;
+                right: auto;
+                left: auto;
+            }
+        }
+    }
+}

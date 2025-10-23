@@ -1,0 +1,415 @@
+@use "../../common" as common;
+
+#header {
+    @include common.row;
+    @include common.center;
+    @include common.align-center;
+}
+
+#menu {
+    @include common.content;
+    @include common.row;
+    @include common.padding-32px;
+
+    opacity: 1;
+    transition: opacity 0.3s;
+
+    &.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .menu-container {
+        @include common.row;
+        @include common.both;
+        @include common.align-center;
+        @include common.width-full;
+        @include common.padding-left-32px;
+        @include common.padding-right-32px;
+
+        background-color: var(--color-light);
+        border-radius: 12px;
+
+        height: 82px;
+
+        filter: drop-shadow(0px 16px 32px rgba(9, 8, 39, 0.4));
+
+        .menu-left {
+            @include common.row;
+            @include common.row-left;
+            @include common.align-center;
+            @include common.fit;
+
+            .logo {
+                width: 223px;
+                height: 42px;
+            }
+        }
+
+        .menu-right {
+            @include common.row;
+            @include common.row-right;
+            @include common.align-center;
+            @include common.fill;
+            @include common.spacing-16px;
+            @include common.height-full;
+
+            @include common.mobile-hidden;
+
+
+            .menu-button {
+                @include common.font-weight-bold;
+                @include common.padding-right-8px;
+                @include common.padding-left-8px;
+                @include common.relative;
+                @include common.height-full;
+
+                color: var(--color-font-dark);
+                cursor: pointer;
+
+                &::after {
+                    content: "";
+                    position: absolute;
+
+                    inset-inline: 0;
+                    bottom: 0;
+                    height: 8px;
+                    border-radius: 4px 4px 0 0;
+                    background-color: var(--color-dark);
+                    opacity: 0;
+
+                    transform: scaleY(0);
+                    transform-origin: bottom; // 中央起点
+                    transition: transform 0.3s, opacity 0.3s;
+                }
+
+                &:hover::after {
+                    transform: scaleY(1);
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 1024px) {
+
+    }
+    @media (max-width: 768px) {
+        @include common.padding-16px;
+    }
+
+}
+
+.menu-expand-button {
+    position: fixed;
+
+    top: 40px;
+    right: 40px;
+
+    padding: 24px;
+
+    opacity: 1;
+    transition: opacity 0.3s, padding 0.3s;
+
+    cursor: pointer;
+
+    z-index: var(--z-index-local-over-3);
+
+    &.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .btn-bg {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        border-radius: 16px;
+        background-color: var(--color-dark);
+
+        transition: all 0.2s ease-in-out;
+    }
+    
+    &:hover {
+        .btn-bg {
+            top: -10%;
+            bottom: -10%;
+            left: -10%;
+            right: -10%;
+        }
+    }
+
+    .btn-trigger {
+        --size : 20px;
+        position: relative;
+        width: var(--size);
+        height: calc(var(--size) * 0.88);
+        cursor: pointer;
+
+        display: inline-block;
+        transition: all .3s ease-in;
+        box-sizing: border-box;
+
+        span {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--color-light);
+            border-radius: 4px;
+
+            display: inline-block;
+            transition: all .3s ease-in;
+            box-sizing: border-box;
+
+            &:nth-of-type(1) {
+                top: 0;
+            }
+    
+            &:nth-of-type(2) {
+                top: calc(var(--size) * 0.4);
+            }
+    
+            &:nth-of-type(3) {
+                bottom: 0;
+            }
+        }
+    }
+
+    &.active {
+        .btn-bg {
+            background-color: var(--color-light);
+        }
+        .btn-trigger {
+            span {
+                background-color: var(--color-main);
+
+                &:nth-of-type(1) {
+                    -webkit-transform: translateY(calc(var(--size) * 0.4)) rotate(45deg);
+                    transform: translateY(calc(var(--size) * 0.4)) rotate(45deg);
+                }
+        
+                &:nth-of-type(2) {
+                    opacity: 0;
+                }
+        
+                &:nth-of-type(3) {
+                    -webkit-transform: translateY(calc(var(--size) * 0.4 * -1)) rotate(-45deg);
+                    transform: translateY(calc(var(--size) * 0.4 * -1)) rotate(-45deg);
+                }
+            }
+        }
+    }
+
+    @media (max-width: 1024px) {
+
+    }
+    @media (max-width: 768px) {
+        top: 16px;
+        right: 16px;
+
+        padding: 16px;
+
+        &.active {
+            padding: 18px;
+        }
+    }
+}
+
+.overlay-menu {
+    @include common.fixed ;
+    @include common.stack ;
+    @include common.center ;
+    @include common.align-center;
+    @include common.mask-reveal;
+    @include common.from-right;
+
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    background-color: var(--color-main);
+    z-index: var(--z-index-local-over-1);
+    pointer-events: none;
+    color: var(--color-light);
+
+    &.show {
+        pointer-events: auto;
+    }
+
+    .overlay-menu-content {
+        @include common.content;
+        @include common.row;
+    }
+
+    .ovarlay-menu-text-group {
+        @include common.stack ;
+        @include common.spacing-32px ;
+        @include common.fit ;
+        @include common.padding-left-200px;
+
+        .logo {
+            width: 223px;
+            height: 42px;
+        }
+
+        .ovarlay-menu-label-text {
+            @include common.text ;
+            @include common.font-size-small;
+            @include common.inter;
+            @include common.font-weight-regular;
+            @include common.letter-spacing-medium;
+            @include common.line-spacing-small;
+        }
+
+        .menu-jump-group {
+            @include common.stack ;
+            @include common.stack-left ;
+            @include common.spacing-8px;
+
+            .menu-jump-group-list {
+                @include common.stack;
+                @include common.stack-left;
+                @include common.spacing-8px;
+                @include common.margin-top-8px;
+
+                .overlay-menu-button-base {
+                    @include common.padding-left-24px;
+                    @include common.padding-8px;
+                    
+                    .overlay-menu-button {
+                        @include common.font-size-medium;
+                        @include common.font-weight-bold;
+                        @include common.letter-spacing-small;
+                        @include common.height-full;
+                        @include common.width-fit;
+                        @include common.padding-bottom-12px;
+                        @include common.relative;
+    
+                        color: var(--color-light);
+                        cursor: pointer;
+            
+                        &::after {
+                            content: "";
+                            position: absolute;
+            
+                            inset-inline: 0;
+                            bottom: 0;
+                            height: 2px;
+                            border-radius: 2px ;
+                            background-color: var(--color-light);
+                            opacity: 1;
+            
+                            transform: scaleX(0);
+                            transform-origin: left; // 中央起点
+                            transition: transform 0.3s;
+                        }
+            
+                        &:hover::after {
+                            transform: scaleX(1);
+                        }
+                    }
+                }
+            }
+        }
+
+        .menu-appication-group {
+            @include common.stack;
+            @include common.stack-left;
+            @include common.spacing-16px;
+        }
+
+        .menu-sns-group {
+            @include common.stack;
+            @include common.spacing-16px;
+
+            .sns-icon-group{
+                @include common.row;
+                @include common.row-left;
+                @include common.align-center;
+                @include common.spacing-24px;
+                @include common.padding-left-24px;
+
+                font-size: var(--font-size-28px);
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+
+        .menu-link-group {
+            @include common.row;
+            @include common.row-left;
+            @include common.align-center;
+            @include common.spacing-16px;
+
+            .link-text {
+                @include common.font-size-small;
+                @include common.letter-spacing-small;
+
+                &.with-border {
+                    @include common.padding-right-16px;
+                    border-right: 1px solid var(--color-light);
+                }
+            }
+        }
+
+        @media (max-width: 1024px) {
+
+        }
+        @media (max-width: 768px) {
+            @include common.padding-left-64px;
+
+            .menu-link-group {
+                @include common.stack;
+                @include common.stack-top;
+                @include common.stack-left;
+
+                .link-text {
+                    &.with-border {
+                        border-right: none;
+                    }
+                }
+            }
+        }
+    }
+
+    .ovarlay-menu-image-group {
+        @include common.row;
+        @include common.center;
+        @include common.fill;
+        @include common.mobile-hidden;
+
+        .mockup {
+            @include common.relative;
+            @include common.stack;
+            @include common.center;
+            @include common.align-center;
+        }
+    }
+
+    .copyright {
+        @include common.absolute;
+        @include common.inter;
+        @include common.font-size-small;
+        @include common.font-weight-light;
+        @include common.letter-spacing-small;
+        @include common.mobile-hidden;
+        
+        left: -150px;
+        transform: rotateZ(90deg);
+    }
+
+    @media (max-width: 1024px) {
+
+    }
+    @media (max-width: 768px) {
+        
+    }
+}
+
+
