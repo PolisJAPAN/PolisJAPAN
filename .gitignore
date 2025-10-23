@@ -4,3 +4,7 @@
 # すべての .vscode フォルダを中身ごと無視
 .vscode/
 **/.vscode/
+
+# Mac開発時の.DS_Storeはすべて無視
+.DS_Store
+**/.DS_Store/
