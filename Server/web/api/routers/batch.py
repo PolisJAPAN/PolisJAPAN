@@ -245,6 +245,7 @@ async def generate(request: Request, request_body:batch_schemas.BatchGenerateReq
         access_key(str) : アクセスキー
         url(str) : 参照URL
         html(str) : 参照HTML
+        theme(str) : テーマ(ユーザー設定)
 
     Returns:
         is_success(bool) : 処理が成功したか
@@ -272,7 +273,7 @@ async def generate(request: Request, request_body:batch_schemas.BatchGenerateReq
         page_title, main_tweet, reaction_tweet_list, background_detail = await service.get_info_from_twitter(request_body.html)
     
     # テーマを生成
-    theme_result = await service.generate_theme(page_title, main_tweet, reaction_tweet_list, background_detail)
+    theme_result = await service.generate_theme(request_body.theme, page_title, main_tweet, reaction_tweet_list, background_detail)
     Logger.debug_focused(json.dumps(theme_result, indent=4, ensure_ascii=False)) 
 
     # 3.DB更新処理実行

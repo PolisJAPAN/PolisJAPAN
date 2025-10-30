@@ -28,7 +28,8 @@ dependencies = [
     "langchain-openai (>=0.3.35,<0.4.0)",
     "langchain (>=0.3.27,<0.4.0)",
     "langchain-community (>=0.3.31,<0.4.0)",
-    "langgraph (>=0.6.8,<0.7.0)"
+    "langgraph (>=0.6.8,<0.7.0)",
+    "ddgs (>=9.6.1,<10.0.0)"
 ]
 
 

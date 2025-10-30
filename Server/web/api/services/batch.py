@@ -1,10 +1,10 @@
 import json
 from functools import partial
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse
 
 from langchain_core.output_parsers import PydanticOutputParser, StrOutputParser
-from langchain_core.runnables import (RunnableLambda, RunnableParallel, RunnableSerializable)
+from langchain_core.runnables import (RunnableLambda, RunnableParallel, RunnableSerializable, RunnableBranch)
 from langchain_openai import ChatOpenAI
 from langsmith import Client as LangSmithClient
 from pydantic import BaseModel, Field
@@ -405,7 +405,7 @@ class BatchService(CommonService):
         
         return output
 
-    async def generate_theme(self, page_title: str, main_tweet: dict, reaction_tweet_list: list[dict], background_detail: str) -> dict:
+    async def generate_theme(self, theme: Optional[str], page_title: str, main_tweet: dict, reaction_tweet_list: list[dict], background_detail: str) -> dict:
         """
         テーマ情報の生成を行う処理
 
@@ -425,6 +425,19 @@ class BatchService(CommonService):
                 f"## 意見{i+1}\n    {item['tweet_text']}"
                 for i, item in enumerate(inputs["reaction_tweet_list"])
             ])
+        
+        def _has_theme(input_dict: dict) -> bool:
+            """入力に theme が既に設定されているかを判定する。"""
+            theme_value = input_dict.get("theme")
+            return isinstance(theme_value, str) and len(theme_value.strip()) > 0
+
+        def _extract_existing_theme(input_dict: dict) -> str:
+            """既に存在する theme をそのまま返す。"""
+            return input_dict["theme"]
+
+        def _always_true(input_dict: dict) -> bool:
+            """常に True を返すプレディケート（フォールバック用）"""
+            return True
 
         # 1. LCELのエントリーポイントになるデータ
         def get_state(args: dict) -> dict:
@@ -438,7 +451,10 @@ class BatchService(CommonService):
 
         # 2. LCEL で直列化 処理は各チェイン内を参照
         full_chain = (state
-            .assign(theme=self.get_theme_chain())
+            .assign(theme=RunnableBranch(
+                (_has_theme, _extract_existing_theme),
+                (_always_true, self.get_theme_chain()),
+            ))
             .assign(axis_list=self.get_axis_chain())
             .assign(axises_and_comments=self.get_comments_by_axis_chain())
             .assign(description=self.get_description_chain())
@@ -451,6 +467,7 @@ class BatchService(CommonService):
             "main_tweet": main_tweet,
             "reaction_tweet_list": reaction_tweet_list,
             "background_detail": background_detail,
+            "theme": theme,
         })
         
         # DB保存用にコメントだけ整形

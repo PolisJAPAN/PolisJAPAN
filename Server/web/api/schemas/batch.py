@@ -133,15 +133,17 @@ class BatchGenerateRequest(CommonRequest):
     access_key: str = Field(min_length=1, max_length=256, description="アクセスキー")
     url: Optional[str] = Field(default=None, description="参照URL")
     html: Optional[str] = Field(default=None, description="参照HTML")
+    theme: Optional[str] = Field(default=None, description="テーマ(ユーザー設定)")
 
     @classmethod
     def parse(
         cls,
         access_key: str = Form(..., description="アクセスキー", examples=[""]),
         url: Optional[str] = Form(default=None, description="参照URL", examples=[""]),
-        html: Optional[str] = Form(default=None, description="参照HTML", examples=[""])
+        html: Optional[str] = Form(default=None, description="参照HTML", examples=[""]),
+        theme: Optional[str] = Form(default=None, description="テーマ(ユーザー設定)", examples=[""])
     ):
-        return BatchGenerateRequest(access_key=access_key, url=url, html=html)
+        return BatchGenerateRequest(access_key=access_key, url=url, html=html, theme=theme)
 
 # レスポンス
 class BatchGenerateResponse(CommonRequest):
@@ -159,5 +161,4 @@ class BatchGenerateErrorResponses(APIErrorResponses):
         description: str = 'バッチ実行に必要なアクセスキーが不正です。'
 
     api_errors = [InvalidAccessKeyError]
-
-
+    

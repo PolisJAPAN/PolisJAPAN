@@ -3,9 +3,9 @@ from typing import Optional, Union
 from fastapi import Header
 
 USER_AUTH_EXCLUDE_LIST: dict[str, Union[str, list]] = {
-    "debug" : "ALL",
     "admin" : "ALL",
     "batch" : "ALL",
+    "theme" : "ALL",
     "user" : [
         "mail_check",
         "create",
