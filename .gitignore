@@ -13,3 +13,7 @@
 /configs/development/
 /configs/localhost/
 /configs/production/
+
+
+node_modules/
+**/node_modules/
