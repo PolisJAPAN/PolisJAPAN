@@ -157,7 +157,6 @@ async def post_draft(request: Request, request_body:theme_schemas.ThemePostDraft
     Args:
         access_key(str) : アクセスキー
         theme(str) : テーマ(ユーザー設定)
-        axis(str) : 対立軸(ユーザー設定)
         comments(str) : コメント(ユーザー設定)
         description(str) : 説明(ユーザー設定)
         category(int) : カテゴリ(ユーザー設定)

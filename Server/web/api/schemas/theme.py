@@ -129,7 +129,6 @@ class ThemePostDraftRequest(CommonRequest):
     """theme/post_draft API用リクエスト定義"""
     access_key: str = Field(min_length=1, max_length=256, description="アクセスキー")
     theme: str = Field(description="テーマ(ユーザー設定)")
-    axis: str = Field(description="対立軸(ユーザー設定)")
     comments: str = Field(description="コメント(ユーザー設定)")
     description: str = Field(description="説明(ユーザー設定)")
     category: int = Field(description="カテゴリ(ユーザー設定)")
@@ -139,12 +138,11 @@ class ThemePostDraftRequest(CommonRequest):
         cls,
         access_key: str = Form(..., description="アクセスキー", examples=[""]),
         theme: str = Form(..., description="テーマ(ユーザー設定)", examples=[""]),
-        axis: str = Form(..., description="対立軸(ユーザー設定)", examples=[""]),
         comments: str = Form(..., description="コメント(ユーザー設定)", examples=[""]),
         description: str = Form(..., description="説明(ユーザー設定)", examples=[""]),
         category: int = Form(..., description="カテゴリ(ユーザー設定)", examples=[""])
     ):
-        return ThemePostDraftRequest(access_key=access_key, theme=theme, axis=axis, comments=comments, description=description, category=category)
+        return ThemePostDraftRequest(access_key=access_key, theme=theme, comments=comments, description=description, category=category)
 
 # レスポンス
 class ThemePostDraftResponse(CommonRequest):
