@@ -34,11 +34,11 @@ _components.scss
         @include font.letter-spacing-small;
         @include font.font-weight-semibold;
         
-        padding-bottom: 3%;
+        padding-bottom: 4px;
     }
 
     i {
-        padding-bottom: 2%;
+        padding-bottom: 4px;
     }
 
     gap: 4px;
@@ -514,6 +514,8 @@ _components.scss
         @include layout.stack-top;
         @include layout.align-center;
 
+        overflow: hidden;
+
         max-width: 430px;
 
         --bottom-space-size: 64px;
@@ -542,44 +544,176 @@ _components.scss
             @include layout.stack-top;
             @include layout.align-center;
         }
-        .modal-close-button {
-            @include layout.width-full;
+    }
 
-            @include font.font-weight-black;
-            @include font.letter-spacing-small;
-            @include font.font-size-medium;
+    &.simple-annouce-modal {
+        .modal-window {
+            .modal-content {
+                .modal-content-icon {
+                    font-size: var(--font-size-72px);
+                    color: #1F7CFF;
+                }
 
-            height: 48px;
+                .modal-title {
+                    @include font.font-weight-black;
+                    @include font.letter-spacing-small;
+                    @include font.line-spacing-medium;
+                    @include layout.text-center;
+                    font-size: var(--font-size-24px);
+                    color: var(--color-font-dark-gray-2);
+                }
+                .modal-text {
+                    @include font.line-spacing-medium;
+                    @include layout.text-center;
+                    font-size : var(--font-size-18px);
 
-            .text {
-                @include layout.padding-bottom-0px;
+                    color: var(--color-font-dark-gray);
+                }
+
+                .modal-close-button {
+                    @include layout.width-full;
+
+                    @include font.font-weight-black;
+                    @include font.letter-spacing-small;
+                    @include font.font-size-medium;
+
+                    height: 48px;
+
+                    .text {
+                        @include layout.padding-bottom-0px;
+                    }
+                }
             }
         }
     }
 
-    &.simple-annouce-modal {
-        .modal-content-icon {
-            font-size: var(--font-size-72px);
-            color: #1F7CFF;
-        }
 
-        .modal-title {
-            @include font.font-weight-black;
-            @include font.letter-spacing-small;
-            @include font.line-spacing-medium;
-            @include layout.text-center;
-            font-size: var(--font-size-24px);
-            color: var(--color-font-dark-gray-2);
-        }
-        .modal-text {
-            @include font.line-spacing-medium;
-            @include layout.text-center;
-            font-size : var(--font-size-18px);
+    &.full-screen-modal {
 
-            color: var(--color-font-dark-gray);
+        &.show {
+            pointer-events: auto;
+            
+            .modal-window {
+                transform: translateY(5dvh);
+            }
+        }
+        .modal-window {
+            max-width: 1280px;
+            height: calc(100dvh);
+            @include layout.padding-y-16px;
+            pointer-events: auto;
+
+            .modal-content {
+                .modal-title {
+                    @include font.font-weight-black;
+                    @include font.letter-spacing-small;
+                    @include font.line-spacing-medium;
+                    @include layout.text-center;
+                    font-size: var(--font-size-24px);
+                    color: var(--color-font-dark-gray-2);
+                }
+                .modal-text {
+                    @include font.line-spacing-medium;
+                    @include layout.text-center;
+                    font-size : var(--font-size-18px);
+        
+                    color: var(--color-font-dark-gray);
+                }
+        
+                .modal-close-button {
+                    @include layout.absolute;
+                    @include layout.padding-16px;
+                    top: 0;
+                    left: 0;
+        
+                    color: var(--color-font-dark-secondary);
+        
+                    i {
+                        display: block;
+                        @include layout.height-fit;
+                        font-size: var(--font-size-36px);
+                        
+                    }
+                }
+            }
         }
     }
 }
+
+@mixin skelton-element {
+    --var-skelton-gradient : linear-gradient(90deg, #e5e7eb 0%, #cecece 50%, #e5e7eb 100%);
+    background-color: #e5e7eb;
+    background-image: var(--var-skelton-gradient);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 2s linear infinite;
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* スケルトンを被せるトリガークラス */
+div {
+    &.skeleton-loading {
+        position: relative;
+
+        & > * {
+            visibility: hidden;
+        }
+
+        /* 擬似要素でオーバーレイ生成 */
+        &::after {
+            @include skelton-element;
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-radius: 8px;
+        }
+    }
+}
+
+textarea {
+    &.skeleton-loading {
+        @include skelton-element;
+        color: transparent !important;
+        border-color: transparent !important;
+        &::placeholder {
+            color: transparent !important;
+        }
+        resize: none;
+    }
+}
+
+#loading-block-overlay {
+    @include layout.fixed;
+    z-index: var(--z-index-grobal-laoding);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    pointer-events: none;
+
+    display: none;
+    
+    &.show {
+        pointer-events: all;
+        display: block;
+    }
+}
+
+
 
 
 

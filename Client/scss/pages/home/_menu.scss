@@ -91,7 +91,7 @@ body#home {
 
         z-index: var(--z-index-grobal-menu);
 
-        .help-button {
+        .help-button, .create-button {
             @include common.spacing-8px;
             filter: drop-shadow(0px 4px 8px rgba(9, 8, 39, 0.25));
             border: transparent;

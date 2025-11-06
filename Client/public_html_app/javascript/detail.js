@@ -476,7 +476,7 @@ function sortByGroupAgreeRate(list, groupName) {
 async function initializeArticles() {
     const conversationId = getConversationId();
     // CSVからデータをパース
-    const csvJson = await loadCsvAsJson(`/csv/${conversationId}-comment-groups.csv`)
+    const csvJson = await loadCsvAsJson(`/csv/report/report_${conversationId}.csv`)
 
     // 各グラフ表示用のリストに加工
     const displayData = csvJson.map((rowData) => {

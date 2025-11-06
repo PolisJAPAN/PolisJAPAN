@@ -1,4 +1,14 @@
 // ==============================
+// 定数
+// ==============================
+
+/**　API通信先エンドポイント */
+const API_URL = "https://api.pol-is.jp/"
+
+/**　ロボットアクセス避けの操作キー */
+const USER_ACCESS_KEY = "UbtWv4Kcjbn4Bk0fTn"
+
+// ==============================
 // Cookie操作関連
 // ==============================
 
@@ -34,6 +44,53 @@ function setCookie(name, value, days = 365) {
 function deleteCookie(name) {
     document.cookie = `${encodeURIComponent(name)}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
 }
+
+// ==============================
+// localStorage操作関連
+// ==============================
+
+/**
+ * 指定キーのlocalStorage値を取得する。
+ * @param {string} key - 取得したいキー名。
+ * @returns {string|null} - 見つかった場合は値、存在しない場合はnull。
+ */
+function getLocalStorage(key) {
+    try {
+        const value = localStorage.getItem(key);
+        return value !== null ? value : null;
+    } catch (_error) {
+        console.error(_error);
+        return null;
+    }
+}
+
+/**
+ * 指定キーでlocalStorageに保存（更新）する。
+ * @param {string} key - 保存するキー名。
+ * @param {string} value - 保存する値。
+ * @returns {void}
+ */
+function setLocalStorage(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (_error) {
+        console.error(_error);
+    }
+}
+
+/**
+ * 指定キーのlocalStorageを削除する。
+ * @param {string} key - 削除するキー名。
+ * @returns {void}
+ */
+function deleteLocalStorage(key) {
+    try {
+        localStorage.removeItem(key);
+    } catch (_error) {
+        console.error(_error);
+    }
+}
+
 
 
 // ==============================
@@ -168,18 +225,45 @@ async function fetchJsonPost(url, data, options = {}) {
 /**
  * class="auto-resize" を持つtextareaの高さを内容に合わせて自動調整する。
  * 初期化時と入力イベントで高さを更新する。
+ * @param {function} onResize - リサイズ時のコールバック
  * @returns {void}
  */
-function autoResizeTextareas() {
+function autoResizeTextareas(onResize = null) {
+    const textareas = document.querySelectorAll('textarea.auto-resize');
+    textareas.forEach(textarea => {
+        const resize = () => {
+            textarea.style.height = 'auto'; // 一旦リセット
+            textarea.style.height = `${textarea.scrollHeight + 16}px`; // 実際の内容に合わせる
+            
+            if (!onResize) {return}
+
+            onResize()
+        };
+
+        // 入力時に高さ更新
+        textarea.addEventListener('input', resize);
+
+        // 初期表示時にも一度実行
+        resize();
+    });
+};
+
+/**
+ * class="auto-resize" を持つtextareaの高さを内容に合わせて自動調整する。
+ * 初期化時と入力イベントで高さを更新する。
+ * @returns {void}
+ */
+function syncTextareas(onResize = null) {
     const textareas = document.querySelectorAll('textarea.auto-resize');
     textareas.forEach(textarea => {
         const resize = () => {
             textarea.style.height = 'auto'; // 一旦リセット
             textarea.style.height = `${textarea.scrollHeight}px`; // 実際の内容に合わせる
-        };
+            
+            if (!onResize) {return}
 
-        // 入力時に高さ更新
-        textarea.addEventListener('input', resize);
+            onResize()
+        };
 
         // 初期表示時にも一度実行
         resize();
@@ -385,6 +469,20 @@ async function copyText(text) {
     }
     return legacyCopy(text);
 };
+
+// ==============================
+// ローディング関連
+// ==============================
+
+/**
+ * API通信時のローディング画面を切り替え
+ * @param {bool} isLoading
+ * @returns {void}
+ */
+function setLoadingOverlay(isLoading) {
+    const overlay = document.querySelector("#loading-block-overlay");
+    overlay.classList.toggle("show", isLoading)
+}
 
 
 // ==============================
@@ -646,8 +744,10 @@ class ModalManager {
         // 必要な要素取得
         this.modalRoot = document.querySelector(this.rootSel);
         if (!this.modalRoot) return; // 画面にない場合は何もしない
+        
+        this.modalWindow = this.modalRoot.querySelector(this.windowSel);
+        if (!this.modalWindow) return; // 画面にない場合は何もしない
 
-        this.modalWindow = this.modalRoot.querySelectorAll(this.windowSel);
         this.closeBtn = this.modalRoot.querySelector(this.closeBtnSel);
 
         // 閉じるボタン
@@ -657,6 +757,7 @@ class ModalManager {
 
         // 背景クリックで閉じる
         this.modalRoot.addEventListener("click", this.closeModal);
+        this.modalWindow.addEventListener("click", (event) => {event.stopPropagation()});
     };
 
     // ============ 表示系 ============
@@ -694,4 +795,159 @@ class ModalManager {
         if (!this.modalRoot) return;
         this.modalRoot.classList.remove("show");
     };
+}
+
+/**
+ * 引数として渡されたinputからvalueを一括抽出
+ * @param {Array} inputElements - 抽出対象インプット配列
+ * @returns {Array}
+ */
+function getMultiInputValues(inputElements) {
+    if (!inputElements) {
+        return [];
+    }
+
+    return inputElements.map((inputElement) => {
+        if (!inputElement) {
+            return "";
+        }
+        return inputElement.value ?? "";
+    }).filter((value) => value !== "");
+}
+
+/**
+ * 引数として渡されたinputにvalueを一括セット
+ * @param {Array} inputElements - セット対象インプット配列
+ * @param {Array} inputValueList - セット内容配列
+ * @returns {void}
+ */
+function setMultiInputValues(inputElements, inputValueList) {
+    if (!inputElements) {
+        return;
+    }
+
+    inputElements.forEach((element, index) => {
+        element.value = "";
+    });
+
+    inputValueList.forEach((inputValue, index) => {
+        if (!inputElements[index]) return;
+        inputElements[index].value = inputValue ?? "";
+    });
+}
+
+
+// ==============================
+// ボタン式セレクトの管理クラス
+// ==============================
+
+class CustomSelectManager {
+    /**
+     * @param {HTMLElement} containerElement - 選択肢ボタン群を内包するコンテナ
+     * @param {string} optionSelector - 各ボタンのセレクタ（例: ".category-select-button"）
+     * @param {string} dataIdentifier - 価値取得に使う data-* のキー（例: "value" → data-value）
+     */
+    constructor(options = {}) {
+        this.containerElement = options.containerElement;
+        this.optionSelector = options.optionSelector;
+        this.dataIdentifier = options.dataIdentifier;
+    }
+
+    /**
+     * 現在 active の値を取得
+     * @returns {string|null}
+     */
+    getSelectedValue() {
+        if (!this.containerElement) return null;
+
+        const activeOptionElement = this.containerElement.querySelector(`${this.optionSelector}.active`);
+        if (!activeOptionElement) return null;
+
+        const selectedValue = activeOptionElement.dataset[this.dataIdentifier];
+        return selectedValue ?? null;
+    }
+
+    /**
+     * 指定した値を active に設定し、それ以外からは active を外す
+     * 元コードのロジックをそのまま踏襲
+     * @param {string|number} targetValue
+     * @returns {void}
+     */
+    setSelectedValue(targetValue) {
+        if (!this.containerElement) return;
+
+        const optionNodeList = this.containerElement.querySelectorAll(`${this.optionSelector}`);
+
+        optionNodeList.forEach((element, index) => {
+            // 対象のオプションのvalueを取得
+            const optionValue = element.dataset[this.dataIdentifier];
+
+            // 対象値とオプション値が合致しているかどうか？
+            const shouldActivate = (optionValue === String(targetValue));
+
+            element.classList.toggle("active", shouldActivate);
+        });
+    }
+
+    /**
+     * クリックで選択を切り替えるハンドラをバインド
+     * onChange が関数なら選択値を渡して呼び出す
+     * 元コードのイベント処理（各要素へ addEventListener）をそのまま踏襲
+     * @param {(value: string) => void|null} onChange
+     * @returns {void}
+     */
+    bindSelect() {
+        // コンテナ不在の場合スキップ
+        if (!this.containerElement) return;
+
+        // イベントデリゲーションで click を一括処理（元コードのコメントを維持）
+        function handleContainerClick(eventObject) {
+            console.log("クリックされました");
+
+            // 実際にクリックされた要素を取得（元コード通り e.target を使用）
+            const clickedElement = eventObject.target;
+
+            // クリックされた要素の値を取得（元コード通り data-* を直接参照）
+            const clickedValue = clickedElement.dataset[this.dataIdentifier];
+            if (!clickedValue) return;
+
+            this.setSelectedValue(clickedValue);
+
+            // コールバック
+            this.onChangeCallbacks.forEach((onChange) => {
+                if (typeof onChange === "function") {
+                    onChange(clickedValue);
+                }
+            })
+        }
+
+        // this を保持したまま元の関数構造を維持
+        const boundHandleContainerClick = handleContainerClick.bind(this);
+
+        this.containerElement
+            .querySelectorAll(`${this.optionSelector}`)
+            .forEach((element) => {
+                element.addEventListener("click", boundHandleContainerClick);
+            });
+    }
+
+    /**
+     * 変更時のハンドラを追加。複数格納でき、変更時に同時実行
+     * @param {(value: string) => void|null} onChange
+     * @returns {void}
+     */
+    addOnChange(onChange) {
+        if (!this.onChangeCallbacks) {
+            this.onChangeCallbacks = [];
+        }
+        this.onChangeCallbacks.push(onChange);
+    }
+
+    /**
+     * 変更時のハンドラをクリア
+     * @returns {void}
+     */
+    clearOnChange() {
+        this.onChangeCallbacks = [];
+    }
 }

@@ -174,6 +174,11 @@
 }
 .row-bottom { @include row-bottom; }
 
+@mixin row-wrap {
+    flex-wrap: wrap;
+}
+.row-wrap { @include row-wrap; }
+
 
 @mixin stack {
     display: flex;
@@ -239,6 +244,8 @@
 
 // 位置調整用のスタイル
 @mixin spacing-0px   { gap: 0px;   }
+@mixin spacing-1px   { gap: 1px;   }
+@mixin spacing-2px   { gap: 2px;   }
 @mixin spacing-4px   { gap: 4px;   }
 @mixin spacing-8px   { gap: 8px;   }
 @mixin spacing-12px  { gap: 12px;  }
@@ -262,6 +269,8 @@
 @mixin spacing-280px { gap: 280px; }
 @mixin spacing-320px { gap: 320px; }
 .spacing-0px   { @include spacing-0px;   }
+.spacing-1px   { @include spacing-1px;   }
+.spacing-2px   { @include spacing-2px;   }
 .spacing-4px   { @include spacing-4px;   }
 .spacing-8px   { @include spacing-8px;   }
 .spacing-12px  { @include spacing-12px;  }
@@ -286,6 +295,8 @@
 .spacing-320px { @include spacing-320px; }
 
 @mixin padding-0px   { padding: 0px; }
+@mixin padding-1px   { padding: 1px; }
+@mixin padding-2px   { padding: 2px; }
 @mixin padding-4px   { padding: 4px; }
 @mixin padding-8px   { padding: 8px; }
 @mixin padding-12px  { padding: 12px; }
@@ -309,6 +320,8 @@
 @mixin padding-280px { padding: 280px; }
 @mixin padding-320px { padding: 320px; }
 .padding-0px   { @include padding-0px; }
+.padding-1px   { @include padding-1px; }
+.padding-2px   { @include padding-2px; }
 .padding-4px   { @include padding-4px; }
 .padding-8px   { @include padding-8px; }
 .padding-12px  { @include padding-12px; }
@@ -333,6 +346,8 @@
 .padding-320px { @include padding-320px; }
 
 @mixin margin-0px   { margin: 0px; }
+@mixin margin-1px   { margin: 1px; }
+@mixin margin-2px   { margin: 2px; }
 @mixin margin-4px   { margin: 4px; }
 @mixin margin-8px   { margin: 8px; }
 @mixin margin-12px  { margin: 12px; }
@@ -356,6 +371,8 @@
 @mixin margin-280px { margin: 280px; }
 @mixin margin-320px { margin: 320px; }
 .margin-0px   { @include margin-0px; }
+.margin-1px   { @include margin-1px; }
+.margin-2px   { @include margin-2px; }
 .margin-4px   { @include margin-4px; }
 .margin-8px   { @include margin-8px; }
 .margin-12px  { @include margin-12px; }
@@ -380,6 +397,8 @@
 .margin-320px { @include margin-320px; }
 
 @mixin padding-x-0px   { padding-right: 0px;   padding-left: 0px; }
+@mixin padding-x-1px   { padding-right: 1px;   padding-left: 1px; }
+@mixin padding-x-2px   { padding-right: 2px;   padding-left: 2px; }
 @mixin padding-x-4px   { padding-right: 4px;   padding-left: 4px; }
 @mixin padding-x-8px   { padding-right: 8px;   padding-left: 8px; }
 @mixin padding-x-12px  { padding-right: 12px;  padding-left: 12px; }
@@ -403,6 +422,8 @@
 @mixin padding-x-280px { padding-right: 280px; padding-left: 280px; }
 @mixin padding-x-320px { padding-right: 320px; padding-left: 320px; }
 .padding-x-0px   { @include padding-x-0px; }
+.padding-x-1px   { @include padding-x-1px; }
+.padding-x-2px   { @include padding-x-2px; }
 .padding-x-4px   { @include padding-x-4px; }
 .padding-x-8px   { @include padding-x-8px; }
 .padding-x-12px  { @include padding-x-12px; }
@@ -427,6 +448,8 @@
 .padding-x-320px { @include padding-x-320px; }
 
 @mixin margin-x-0px   { margin-right: 0px;   margin-left: 0px; }
+@mixin margin-x-1px   { margin-right: 1px;   margin-left: 1px; }
+@mixin margin-x-2px   { margin-right: 2px;   margin-left: 2px; }
 @mixin margin-x-4px   { margin-right: 4px;   margin-left: 4px; }
 @mixin margin-x-8px   { margin-right: 8px;   margin-left: 8px; }
 @mixin margin-x-12px  { margin-right: 12px;  margin-left: 12px; }
@@ -450,6 +473,8 @@
 @mixin margin-x-280px { margin-right: 280px; margin-left: 280px; }
 @mixin margin-x-320px { margin-right: 320px; margin-left: 320px; }
 .margin-x-0px   { @include margin-x-0px; }
+.margin-x-1px   { @include margin-x-1px; }
+.margin-x-2px   { @include margin-x-2px; }
 .margin-x-4px   { @include margin-x-4px; }
 .margin-x-8px   { @include margin-x-8px; }
 .margin-x-12px  { @include margin-x-12px; }
@@ -474,6 +499,8 @@
 .margin-x-320px { @include margin-x-320px; }
 
 @mixin padding-y-0px   { padding-top: 0px;   padding-bottom: 0px; }
+@mixin padding-y-1px   { padding-top: 1px;   padding-bottom: 1px; }
+@mixin padding-y-2px   { padding-top: 2px;   padding-bottom: 2px; }
 @mixin padding-y-4px   { padding-top: 4px;   padding-bottom: 4px; }
 @mixin padding-y-8px   { padding-top: 8px;   padding-bottom: 8px; }
 @mixin padding-y-12px  { padding-top: 12px;  padding-bottom: 12px; }
@@ -497,6 +524,8 @@
 @mixin padding-y-280px { padding-top: 280px; padding-bottom: 280px; }
 @mixin padding-y-320px { padding-top: 320px; padding-bottom: 320px; }
 .padding-y-0px   { @include padding-y-0px; }
+.padding-y-1px   { @include padding-y-1px; }
+.padding-y-2px   { @include padding-y-2px; }
 .padding-y-4px   { @include padding-y-4px; }
 .padding-y-8px   { @include padding-y-8px; }
 .padding-y-12px  { @include padding-y-12px; }
@@ -521,6 +550,8 @@
 .padding-y-320px { @include padding-y-320px; }
 
 @mixin margin-y-0px   { margin-top: 0px;   margin-bottom: 0px; }
+@mixin margin-y-1px   { margin-top: 1px;   margin-bottom: 1px; }
+@mixin margin-y-2px   { margin-top: 2px;   margin-bottom: 2px; }
 @mixin margin-y-4px   { margin-top: 4px;   margin-bottom: 4px; }
 @mixin margin-y-8px   { margin-top: 8px;   margin-bottom: 8px; }
 @mixin margin-y-12px  { margin-top: 12px;  margin-bottom: 12px; }
@@ -544,6 +575,8 @@
 @mixin margin-y-280px { margin-top: 280px; margin-bottom: 280px; }
 @mixin margin-y-320px { margin-top: 320px; margin-bottom: 320px; }
 .margin-y-0px   { @include margin-y-0px; }
+.margin-y-1px   { @include margin-y-1px; }
+.margin-y-2px   { @include margin-y-2px; }
 .margin-y-4px   { @include margin-y-4px; }
 .margin-y-8px   { @include margin-y-8px; }
 .margin-y-12px  { @include margin-y-12px; }
@@ -569,6 +602,8 @@
 
 
 @mixin padding-top-0px   { padding-top: 0px;   }
+@mixin padding-top-1px   { padding-top: 1px;   }
+@mixin padding-top-2px   { padding-top: 2px;   }
 @mixin padding-top-4px   { padding-top: 4px;   }
 @mixin padding-top-8px   { padding-top: 8px;   }
 @mixin padding-top-12px  { padding-top: 12px;  }
@@ -592,6 +627,8 @@
 @mixin padding-top-280px { padding-top: 280px; }
 @mixin padding-top-320px { padding-top: 320px; }
 .padding-top-0px   { @include padding-top-0px; }
+.padding-top-1px   { @include padding-top-1px; }
+.padding-top-2px   { @include padding-top-2px; }
 .padding-top-4px   { @include padding-top-4px; }
 .padding-top-8px   { @include padding-top-8px; }
 .padding-top-12px  { @include padding-top-12px; }
@@ -616,6 +653,8 @@
 .padding-top-320px { @include padding-top-320px; }
 
 @mixin margin-top-0px   { margin-top: 0px;   }
+@mixin margin-top-1px   { margin-top: 1px;   }
+@mixin margin-top-2px   { margin-top: 2px;   }
 @mixin margin-top-4px   { margin-top: 4px;   }
 @mixin margin-top-8px   { margin-top: 8px;   }
 @mixin margin-top-12px  { margin-top: 12px;  }
@@ -639,6 +678,8 @@
 @mixin margin-top-280px { margin-top: 280px; }
 @mixin margin-top-320px { margin-top: 320px; }
 .margin-top-0px   { @include margin-top-0px; }
+.margin-top-1px   { @include margin-top-1px; }
+.margin-top-2px   { @include margin-top-2px; }
 .margin-top-4px   { @include margin-top-4px; }
 .margin-top-8px   { @include margin-top-8px; }
 .margin-top-12px  { @include margin-top-12px; }
@@ -664,6 +705,8 @@
 
 
 @mixin padding-left-0px   { padding-left: 0px;   }
+@mixin padding-left-1px   { padding-left: 1px;   }
+@mixin padding-left-2px   { padding-left: 2px;   }
 @mixin padding-left-4px   { padding-left: 4px;   }
 @mixin padding-left-8px   { padding-left: 8px;   }
 @mixin padding-left-12px  { padding-left: 12px;  }
@@ -687,6 +730,8 @@
 @mixin padding-left-280px { padding-left: 280px; }
 @mixin padding-left-320px { padding-left: 320px; }
 .padding-left-0px   { @include padding-left-0px; }
+.padding-left-1px   { @include padding-left-1px; }
+.padding-left-2px   { @include padding-left-2px; }
 .padding-left-4px   { @include padding-left-4px; }
 .padding-left-8px   { @include padding-left-8px; }
 .padding-left-12px  { @include padding-left-12px; }
@@ -711,6 +756,8 @@
 .padding-left-320px { @include padding-left-320px; }
 
 @mixin margin-left-0px   { margin-left: 0px;   }
+@mixin margin-left-1px   { margin-left: 1px;   }
+@mixin margin-left-2px   { margin-left: 2px;   }
 @mixin margin-left-4px   { margin-left: 4px;   }
 @mixin margin-left-8px   { margin-left: 8px;   }
 @mixin margin-left-12px  { margin-left: 12px;  }
@@ -734,6 +781,8 @@
 @mixin margin-left-280px { margin-left: 280px; }
 @mixin margin-left-320px { margin-left: 320px; }
 .margin-left-0px   { @include margin-left-0px; }
+.margin-left-1px   { @include margin-left-1px; }
+.margin-left-2px   { @include margin-left-2px; }
 .margin-left-4px   { @include margin-left-4px; }
 .margin-left-8px   { @include margin-left-8px; }
 .margin-left-12px  { @include margin-left-12px; }
@@ -759,6 +808,8 @@
 
 
 @mixin padding-right-0px   { padding-right: 0px;   }
+@mixin padding-right-1px   { padding-right: 1px;   }
+@mixin padding-right-2px   { padding-right: 2px;   }
 @mixin padding-right-4px   { padding-right: 4px;   }
 @mixin padding-right-8px   { padding-right: 8px;   }
 @mixin padding-right-12px  { padding-right: 12px;  }
@@ -782,6 +833,8 @@
 @mixin padding-right-280px { padding-right: 280px; }
 @mixin padding-right-320px { padding-right: 320px; }
 .padding-right-0px   { @include padding-right-0px; }
+.padding-right-1px   { @include padding-right-1px; }
+.padding-right-2px   { @include padding-right-2px; }
 .padding-right-4px   { @include padding-right-4px; }
 .padding-right-8px   { @include padding-right-8px; }
 .padding-right-12px  { @include padding-right-12px; }
@@ -806,6 +859,8 @@
 .padding-right-320px { @include padding-right-320px; }
 
 @mixin margin-right-0px   { margin-right: 0px;   }
+@mixin margin-right-1px   { margin-right: 1px;   }
+@mixin margin-right-2px   { margin-right: 2px;   }
 @mixin margin-right-4px   { margin-right: 4px;   }
 @mixin margin-right-8px   { margin-right: 8px;   }
 @mixin margin-right-12px  { margin-right: 12px;  }
@@ -829,6 +884,8 @@
 @mixin margin-right-280px { margin-right: 280px; }
 @mixin margin-right-320px { margin-right: 320px; }
 .margin-right-0px   { @include margin-right-0px; }
+.margin-right-1px   { @include margin-right-1px; }
+.margin-right-2px   { @include margin-right-2px; }
 .margin-right-4px   { @include margin-right-4px; }
 .margin-right-8px   { @include margin-right-8px; }
 .margin-right-12px  { @include margin-right-12px; }
@@ -853,6 +910,8 @@
 .margin-right-320px { @include margin-right-320px; }
 
 @mixin padding-bottom-0px   { padding-bottom: 0px;   }
+@mixin padding-bottom-1px   { padding-bottom: 1px;   }
+@mixin padding-bottom-2px   { padding-bottom: 2px;   }
 @mixin padding-bottom-4px   { padding-bottom: 4px;   }
 @mixin padding-bottom-8px   { padding-bottom: 8px;   }
 @mixin padding-bottom-12px  { padding-bottom: 12px;  }
@@ -876,6 +935,8 @@
 @mixin padding-bottom-280px { padding-bottom: 280px; }
 @mixin padding-bottom-320px { padding-bottom: 320px; }
 .padding-bottom-0px   { @include padding-bottom-0px; }
+.padding-bottom-1px   { @include padding-bottom-1px; }
+.padding-bottom-2px   { @include padding-bottom-2px; }
 .padding-bottom-4px   { @include padding-bottom-4px; }
 .padding-bottom-8px   { @include padding-bottom-8px; }
 .padding-bottom-12px  { @include padding-bottom-12px; }
@@ -900,6 +961,8 @@
 .padding-bottom-320px { @include padding-bottom-320px; }
 
 @mixin margin-bottom-0px   { margin-bottom: 0px;   }
+@mixin margin-bottom-1px   { margin-bottom: 1px;   }
+@mixin margin-bottom-2px   { margin-bottom: 2px;   }
 @mixin margin-bottom-4px   { margin-bottom: 4px;   }
 @mixin margin-bottom-8px   { margin-bottom: 8px;   }
 @mixin margin-bottom-12px  { margin-bottom: 12px;  }
@@ -923,6 +986,8 @@
 @mixin margin-bottom-280px { margin-bottom: 280px; }
 @mixin margin-bottom-320px { margin-bottom: 320px; }
 .margin-bottom-0px   { @include margin-bottom-0px; }
+.margin-bottom-1px   { @include margin-bottom-1px; }
+.margin-bottom-2px   { @include margin-bottom-2px; }
 .margin-bottom-4px   { @include margin-bottom-4px; }
 .margin-bottom-8px   { @include margin-bottom-8px; }
 .margin-bottom-12px  { @include margin-bottom-12px; }

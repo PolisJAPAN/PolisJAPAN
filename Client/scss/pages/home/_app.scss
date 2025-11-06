@@ -137,14 +137,11 @@ body#home {
                             cursor: pointer;
                             font-size: 14px;
                             
-
                             &:hover {
                                 background-color: #f0f0f0;
                             }
                         }
-                
                     }
-            
                 }
             }
         }
@@ -156,6 +153,7 @@ body#home {
             @include common.height-fit;
             @include common.padding-16px;
             @include common.spacing-16px;
+            @include common.width-full;
             max-width: 720px;
         }
     
@@ -166,9 +164,9 @@ body#home {
             @include common.padding-16px;
             @include common.spacing-16px;
             @include common.relative;
+            @include common.width-full;
     
             height: 200px;
-            width: 100%;
             border-radius: 12px;
     
             background-color: var(--color-light);
@@ -227,29 +225,45 @@ body#home {
                 @include common.width-full;
     
                 border-radius: 12px;
-                
+    
+                // 社会・政治
                 &.cat-1 {
-                    background-image: linear-gradient(135deg, #00a6f9 0%, #00db99 100%);
+                    background-image: linear-gradient(135deg, #fa3517 0%, #e1580e 100%);
                 }
     
+                // お金・資産
                 &.cat-2 {
-                    background-image: linear-gradient(135deg, #ff1833 0%, #fda336 100%);
+                    background-image: linear-gradient(135deg, #e99928 0%, #fdc136 100%);
                 }
     
+                // 男女・性別
                 &.cat-3 {
                     background-image: linear-gradient(135deg, #71a8ff 0%, #ff70d7 100%);
                 }
     
+                // 外国人問題
                 &.cat-4 {
                     background-image: linear-gradient(135deg, #00ffc4 0%, #00c08f 100%);
                 }
     
+                // テクノロジー
                 &.cat-5 {
-                    background-image: linear-gradient(135deg, #6058f5 0%, #ffc5ff 100%);
+                    background-image: linear-gradient(135deg, #7a58f5 0%, #e156e1 100%);
                 }
     
+                // 医療・福祉
                 &.cat-6 {
                     background-image: linear-gradient(135deg, #6fffae 0%, #cc7bff 100%);
+                }
+
+                // 生活
+                &.cat-7 {
+                    background-image: linear-gradient(135deg, #f5a158 0%, #aaea43 100%);
+                }
+    
+                // その他
+                &.cat-8 {
+                    background-image: linear-gradient(135deg, #6e706f 0%, #9a989b 100%);
                 }
     
                 .article-title-area {
@@ -313,6 +327,791 @@ body#home {
             }
         }
     }
+
+    .slide-modal{
+        transition: transform 0.3s, background-color 0.3s;
+
+        &.full-screen-modal {
+            background-color: transparent;
+
+            &.show {
+                background-color: var(--color-main);
+
+                .label-group {
+                    opacity: 1;
+                }
+
+                .modal-window {
+                    transform: translateY(11dvh);
+                }
+            }
+
+            .label-group {
+                @include common.absolute;
+                @include common.padding-16px;
+                top: 0;
+                right: 0;
+                left: 0;
+                opacity: 0;
+
+                .label-header {
+                    @include common.row;
+                    @include common.both;
+                    @include common.align-center;
+                    @include common.width-full;
+                    @include common.height-fit;
+
+                    .modal-title {
+                        @include common.font-weight-black;
+                        @include common.letter-spacing-small;
+                        @include common.line-spacing-medium;
+                        @include common.text-center;
+                        @include common.font-size-medium;
+                        @include common.fill;
+                        @include common.padding-right-32px;
+                        color: var(--color-light);
+                    }
+
+                    .modal-close-button {
+                        color: var(--color-light);
+
+                        i {
+                            display: block;
+                            @include common.height-fit;
+                            font-size: var(--font-size-36px);
+                            
+                        }
+                    }
+                }
+
+                .modal-text {
+                    @include common.line-spacing-medium;
+                    @include common.text-center;
+                    @include common.font-size-normal;
+                    color: var(--color-light);
+                }
+            }
+
+            .modal-window {
+                @include common.relative;
+                @include common.padding-32px;
+                z-index: var(--z-index-local-over-1);
+                height: calc(100dvh);
+
+                .modal-scroll-area {
+                    height: calc(100dvh);
+                    max-height: calc(100dvh);
+                    overflow-y: scroll;
+                }
+
+                .modal-content{
+                    @include common.relative;
+                    @include common.stack;
+                    @include common.align-center;
+                    @include common.spacing-32px;
+                    @include common.height-fit;
+                    z-index: var(--z-index-local-over-2);
+                    padding-bottom: calc(11dvh + 120px);
+
+                    .modal-inner-content-group {
+                        @include common.stack;
+                        @include common.center;
+                        @include common.align-center;
+                        @include common.spacing-16px;
+                        @include common.width-full;
+                        @include common.height-fit;
+                        
+                        &.hidden {
+                            display: none;
+                        }
+                    }
+
+                    .modal-section-title {
+                        @include common.font-weight-bold;
+                        @include common.letter-spacing-small;
+                        @include common.text-center;
+                        @include common.font-size-medium;
+                        @include common.margin-top-16px;
+                    }
+
+                    .modal-description {
+                        @include common.line-spacing-medium;
+                        @include common.text-center;
+                        @include common.font-size-small;
+
+                        color: var(--color-font-dark-secondary)
+                    }
+
+                    .mode-button-row {
+                        @include common.row;
+                        @include common.center;
+                        @include common.spacing-8px;
+                    }
+
+                    .modal-stepper {
+                        @include common.stack;
+                        @include common.center;
+                        @include common.align-center;
+                        @include common.width-full;
+                        @include common.height-fit;
+                        @include common.spacing-8px;
+
+                        .modal-stepper-header {
+                            @include common.row;
+                            @include common.row-left;
+                            @include common.align-center;
+                            @include common.width-full;
+                            @include common.spacing-8px;
+                            height: 32px;
+
+                            .check-base {
+                                @include common.stack;
+                                @include common.center;
+                                @include common.align-center;
+    
+                                width: 32px;
+                                height: 32px;
+                                border-radius: 50%;
+    
+                                background-color: var(--color-font-dark-secondary-2);
+                                color: var(--color-light);
+    
+                                i {
+                                    @include common.padding-bottom-1px;
+                                    font-size: 28px;
+                                    display: none;
+                                }
+    
+                                .check-number {
+                                    @include common.font-weight-semibold;
+                                    @include common.text-center;
+                                    @include common.font-size-normal;
+                                    @include common.padding-bottom-4px;
+                                    display: block;
+                                }
+                            }
+    
+                            .modal-stepper-status {
+                                @include common.row;
+                                @include common.center;
+                                @include common.align-center;
+                                @include common.height-fit;
+                                @include common.letter-spacing-small;
+                                @include common.text-center;
+                                @include common.font-size-small;
+    
+                                border: 1px solid var(--color-font-dark-secondary-2);
+                                background-color: var(--color-font-dark-secondary-2);
+                                border-radius: 2px;
+                                color: var(--color-light);
+                                width: 72px;
+                                height: 22px;
+                                // display: none;
+
+                                .task-text {
+                                    display: block;
+                                }
+                                .complete-text {
+                                    display: none;
+                                }
+                            }
+    
+                            .modal-stepper-title {
+                                @include common.font-weight-regular;
+                                @include common.letter-spacing-small;
+                                @include common.text-center;
+                                @include common.font-size-medium;
+                                @include common.padding-bottom-4px;
+    
+                                color: var(--color-font-dark-secondary-2);
+                            }
+                        }
+
+                        .modal-stepper-content {
+                            @include common.relative;
+                            @include common.stack;
+                            @include common.stack-top;
+                            @include common.align-center;
+                            @include common.width-full;
+                            @include common.spacing-16px;
+                            @include common.padding-top-8px;
+                            @include common.padding-left-32px;
+
+                            max-height: 16px;
+                            height: fit-content;
+                            transition: max-height 300ms ease;
+                            will-change: max-height;
+
+                            overflow-y: hidden;
+
+                            &.show {
+                                .modal-stepper-content-wrapper {
+                                    opacity: 1;
+                                    pointer-events: auto;
+                                }
+                            }
+                            
+                            .modal-stepper-content-wrapper {
+                                @include common.relative;
+                                @include common.stack;
+                                @include common.center;
+                                @include common.align-center;
+                                @include common.width-full;
+                                @include common.height-fit;
+                                @include common.spacing-16px;
+
+                                opacity: 0;
+                                pointer-events: none;
+                                transition: opacity 0.3s;
+                            }
+
+                            &::after {
+                                content: "";
+                                @include common.absolute;
+                                @include common.height-full;
+
+                                top: 0;
+                                left: 16px;
+                                bottom: 0;
+
+                                width: 2px;
+                                border-radius: 1px;
+
+                                background-color: var(--color-font-dark-secondary-2);
+
+                                transform: translateX(-50%);
+                            }
+
+                            .next-button, .post-button {
+                                width: 100%;
+                                height: 40px;
+
+                                border-radius: 8px;
+
+                                &:disabled {
+                                    border-color: var(--color-font-dark-secondary-2);
+                                    background-color: var(--color-font-dark-secondary-2);
+                                }
+
+                                .text {
+                                    @include common.padding-bottom-2px;
+                                }
+
+                                &.secondary-border {
+                                    border: 1px solid var(--color-font-dark-gray);
+                                    color: var(--color-font-dark-gray);
+                                }
+                            }
+
+                            .hidden-input {
+                                @include common.padding-x-4px;
+                                @include common.padding-top-16px;
+                                @include common.padding-bottom-16px;
+                                @include common.line-spacing-large;
+                                @include common.width-full;
+                                @include common.height-fit;
+
+                                box-sizing: border-box;
+                                transition: border 0.3s;
+                                border-bottom: 1px solid var(--color-font-dark-secondary-2);
+                                border-radius: 0;
+                                resize: none;
+
+                                &::placeholder {
+                                    color: var(--color-font-dark-secondary);
+                                }
+
+                                &:focus {
+                                    border-bottom: 1px solid var(--color-main);
+                                }
+                            }
+                            .input-group {
+                                @include common.stack;
+                                @include common.center;
+                                @include common.align-center;
+                                @include common.width-full;
+                                @include common.height-fit ;
+                                @include common.spacing-4px;
+                                @include common.relative;
+
+                                .clear-button {
+                                    @include common.absolute;
+                                    @include common.padding-x-0px;
+                                    @include common.padding-y-0px;
+                                    right: 0;
+                                    top: 0;
+    
+                                    color: #fa5792;
+    
+                                    border-radius: 4px;
+                                    border: 1px solid #fa5792;
+    
+                                    height: 18px;
+
+                                    opacity: 0;
+                                    pointer-events: none;
+                                    transition: opacity 0.3s;
+                                    will-change: opacity;
+    
+                                    .text {
+                                        @include common.font-weight-regular;
+                                        @include common.letter-spacing-small;
+                                        @include common.text-center;
+                                        @include common.font-size-small;
+                                    }
+    
+                                    i {
+                                        @include common.padding-bottom-2px;
+                                        font-size: var(--font-size-16px);
+                                    }
+                                }
+
+                                &:focus-within {
+                                    .clear-button {
+                                        opacity: 1;
+                                        pointer-events: all;
+                                    }
+                                }
+                            }
+
+
+                            .ai-generate-button {
+                                @include common.relative;
+                                overflow: hidden;
+                                width: 100%;
+                                height: 40px;
+                                
+                                .text {
+                                    @include common.padding-bottom-2px;
+                                }
+                                
+                                border-radius: 8px;
+
+                                &.secondary-border {
+                                    @include common.relative;
+                                    border: 2px solid transparent;
+                                    color: var(--color-font-dark-gray);
+                                    box-sizing: border-box;
+
+                                    // 疑似要素でグラデーションボーダーを作成
+                                    &::before {
+                                        content: "";
+                                        position: absolute;
+                                        inset: 0;
+                                        border-radius: inherit; // 親と同じ角丸を適用
+                                        padding: 2px; // ボーダーの太さ
+                                        background: linear-gradient(to right, #7f88ff, #de28c6);
+                                        -webkit-mask:
+                                            linear-gradient(#fff 0 0) content-box,
+                                            linear-gradient(#fff 0 0);
+                                        -webkit-mask-composite: xor;
+                                        mask-composite: exclude;
+                                        pointer-events: none; // クリックをブロックしない
+                                        z-index: 1;
+                                    }
+                                }
+
+                                .normal-label {
+                                    @include common.row;
+                                    @include common.center;
+                                    @include common.align-center;
+                                    @include common.spacing-16px;
+                                    @include common.width-full;
+                                    @include common.height-full;
+                                    @include common.absolute;
+                                    top: 0;
+                                    bottom: 0;
+                                    left: 0;
+                                    right: 0;
+
+                                    transition: transform 0.3s, opacity 0.8s;
+                                    transform: translateY(0);
+                                    opacity: 1;
+                                    will-change: transform, opacity;
+
+
+                                    i, .text {
+                                        display: block
+                                    }
+                                }
+                                .loading-label {
+                                    @include common.row;
+                                    @include common.center;
+                                    @include common.align-center;
+                                    @include common.spacing-16px;
+                                    @include common.width-full;
+                                    @include common.height-full;
+                                    @include common.absolute;
+                                    top: 0;
+                                    bottom: 0;
+                                    left: 0;
+                                    right: 0;
+
+                                    transition: transform 0.3s, opacity 0.8s;
+                                    transform: translateY(36px);
+                                    opacity: 0;
+                                    will-change: transform, opacity;
+
+                                    .loading-text{
+                                        @include common.font-size-normal;
+                                        @include common.letter-spacing-small;
+                                        @include common.font-weight-semibold;
+                                        display: block;
+
+                                        &::after {
+                                            content: "";
+                                            animation: dots steps(4) 2s infinite;
+                                            display: inline-block;
+                                            width: 1em;
+                                            text-align: left;
+                                        }
+
+                                        @keyframes dots {
+                                            0%   { content: ""; }
+                                            25%  { content: "."; }
+                                            50%  { content: ".."; }
+                                            75%  { content: "..."; }
+                                        }
+                                    }
+
+                                    .ring-loader {
+                                        width: 24px; 
+                                        height: 24px;
+                                        border: 2px solid #f0f0f0;
+                                        border-radius: 50%;
+                                        position: relative;
+                                        display: block;
+    
+                                        &::after {
+                                            content: ''; 
+                                            position: absolute;
+                                            top: -2px;
+                                            left: -2px;
+                                            width: 24px;
+                                            height: 24px;
+                                            border: 2px solid transparent;
+                                            border-top-color: #7f88ff;
+                                            border-radius: 50%;
+                                            box-sizing: border-box;
+                                            animation: ring-rotate 4s ease-in-out infinite;
+                                        }
+                                    }
+                                    @keyframes ring-rotate { 
+                                        25% { 
+                                            border-top-color: #fb50e4;
+                                        } 
+                                        40% {
+                                            transform: rotate(360deg); 
+                                        } 
+                                        50% {
+                                            transform: rotate(360deg); 
+                                            border-top-color: #7f88ff;
+                                        } 
+                                        75% { 
+                                            border-top-color: #fb50e4;
+                                        } 
+                                        90% { 
+                                            transform: rotate(720deg); 
+                                        } 
+                                        100% { 
+                                            transform: rotate(720deg); 
+                                            border-top-color: #7f88ff;
+                                        } 
+                                    }
+                                }
+
+                                .complete-label {
+                                    @include common.row;
+                                    @include common.center;
+                                    @include common.align-center;
+                                    @include common.spacing-16px;
+                                    @include common.width-full;
+                                    @include common.height-full;
+                                    @include common.absolute;
+                                    top: 0;
+                                    bottom: 0;
+                                    left: 0;
+                                    right: 0;
+
+                                    transition: transform 0.3s, opacity 0.8s;
+                                    transform: translateY(36px);
+                                    opacity: 0;
+                                    will-change: transform, opacity;
+
+                                    i, .text {
+                                        display: block
+                                    }
+
+                                    .complete-text {
+                                        background: linear-gradient(90deg, #fb50e4, #7f88ff);
+                                        background-clip: text;
+                                        -webkit-background-clip: text;
+                                        color: transparent;
+                                        -webkit-text-fill-color: transparent;
+
+                                        animation: gradientToSolid 1s forwards;
+
+                                        @keyframes gradientToSolid {
+                                            0% {
+                                                background: none;
+                                                -webkit-background-clip: unset;
+                                                -webkit-text-fill-color: var(--color-font-dark-gray); /* 単色に変化 */
+                                            }
+                                            100% {
+                                                background: linear-gradient(90deg, #fb50e4, #7f88ff);
+                                                background-clip: text;
+                                                -webkit-background-clip: text;
+                                                -webkit-text-fill-color: transparent;
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                                &.loading {
+                                    pointer-events: none;
+
+                                    .normal-label {
+                                        transform: translateY(-36px);
+                                        opacity: 0;
+                                    }
+                                    .loading-label {
+                                        transform: translateY(0);
+                                        opacity: 1;
+                                    }
+                                    .complete-label {
+                                        transform: translateY(36px);
+                                        opacity: 0;
+                                    }
+                                }
+
+                                &.complete {
+                                    pointer-events: none;
+
+                                    .normal-label {
+                                        transform: translateY(-36px);
+                                        opacity: 0;
+                                    }
+                                    .loading-label {
+                                        transform: translateY(-36px);
+                                        opacity: 0;
+                                    }
+                                    .complete-label {
+                                        transform: translateY(0px);
+                                        opacity: 1;
+
+                                        .complete-text {
+                                            animation: gradientToSolid 1s forwards;
+                                        }
+                                    }
+                                }
+                            }
+
+                            .modal-content-description {
+                                @include common.width-full;
+                                @include common.font-weight-semibold;
+                                font-size: 14px;
+                                color: var(--color-font-dark-gray)
+                            }
+                            
+                            #category-select {
+                                @include common.row;
+                                @include common.row-wrap;
+                                @include common.width-full;
+                                @include common.height-fit;
+                                @include common.spacing-16px;
+                                @include common.center;
+                                @include common.padding-y-8px;
+
+                                .category-select-button {
+                                    @include common.relative;
+                                    box-sizing: content-box;
+                                    z-index: var(--z-index-local-over-2);
+
+                                    .text {
+                                        pointer-events: none;
+                                    }
+    
+                                    &.active {
+                                        border: 1px solid var(--color-main);
+                                        background-color: var(--color-light);
+                                        color: var(--color-main);
+
+                                        box-shadow: 0 0 0 2px var(--color-main);
+                                    }
+                                }
+                            }
+
+                        }
+
+                        &.complete {
+                            .modal-stepper-header {
+                                .check-base {
+                                    background-color: var(--color-main);
+                        
+                                    i {
+                                        display: block;
+                                    }
+                        
+                                    .check-number {
+                                        display: none;
+                                    }
+                                }
+                        
+                                .modal-stepper-status {
+                                    border: 1px solid var(--color-main);
+                                    background-color: transparent;
+                                    color: var(--color-main);
+
+                                    .task-text {
+                                        display: none;
+                                    }
+                                    .complete-text {
+                                        display: block;
+                                    }
+                                }
+                    
+                                .modal-stepper-title {
+                                    color: var(--color-main);
+                                    @include common.font-weight-regular;
+                                }
+
+                                .clear-button {
+                                    display: flex;
+                                }
+                            }
+
+                            .modal-stepper-content {
+                                &::after {
+                                    background-color: var(--color-main);
+                                }
+
+                                .next-button, .post-button {
+                                    display: none;
+                                }
+                            }
+                        }
+
+                        &.current {
+                            .modal-stepper-header {
+                                .check-base {
+                                    background-color: var(--color-main);
+                        
+                                    i {
+                                        display: none;
+                                    }
+                                    
+                                    .check-number {
+                                        display: block;
+                                    }
+                                }
+                        
+                                .modal-stepper-status {
+                                    border: 1px solid var(--color-main);
+                                    background-color: var(--color-main);
+                                    color: var(--color-light);
+
+                                    .task-text {
+                                        display: block;
+                                    }
+                                    .complete-text {
+                                        display: none;
+                                    }
+                                }
+                    
+                                .modal-stepper-title {
+                                    color: var(--color-main);
+                                    @include common.font-weight-bold;
+                                }
+                            }
+
+                            .modal-stepper-content {
+                                &::after {
+                                    background-color: var(--color-main);
+                                }
+                            }
+                        }
+
+                        .input-label-text {
+                            @include common.font-weight-black;
+                            @include common.font-size-small;
+                            @include common.width-full;
+                            @include common.height-fit;
+                            @include common.row;
+                            @include common.row-left;
+                            color: #989898;
+                        }
+                    }
+
+                }
+                .complete-overlay {
+                    @include common.absolute;
+                    @include common.stack;
+                    @include common.center;
+                    @include common.align-center;
+                    top: 0;
+                    bottom: 0;
+                    right: 0;
+                    left: 0;
+                    background-color: var(--color-light);
+
+                    z-index: var(--z-index-local-over-5);
+                    opacity: 0;
+                    pointer-events: none;
+                    transition: opacity 0.3s;
+
+                    &.show {
+                        opacity: 1;
+                        pointer-events: auto;
+                    }
+
+                    .complete-overlay-content {
+                        @include common.stack;
+                        @include common.center;
+                        @include common.align-center;
+                        @include common.spacing-8px;
+
+                        .modal-content-icon {
+                            font-size: var(--font-size-72px);
+                            color: #1F7CFF;
+                        }
+
+                        .modal-title {
+                            @include common.font-weight-black;
+                            @include common.letter-spacing-small;
+                            @include common.line-spacing-medium;
+                            @include common.text-center;
+                            font-size: var(--font-size-24px);
+                            color: var(--color-font-dark-gray-2);
+                        }
+                        .modal-text {
+                            @include common.line-spacing-medium;
+                            @include common.text-center;
+                            font-size : var(--font-size-18px);
+
+                            color: var(--color-font-dark-gray);
+                        }
+
+                        .complete-close-button {
+                            @include common.width-full;
+
+                            @include common.font-weight-black;
+                            @include common.letter-spacing-small;
+                            @include common.font-size-medium;
+
+                            @include common.margin-top-8px;
+
+                            height: 48px;
+
+                            .text {
+                                @include common.padding-bottom-0px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     
     @media (max-width: 1024px) {
 
@@ -323,11 +1122,28 @@ body#home {
                 max-width: 100%;
             }
         }
+
+        .slide-modal{
+            &.full-screen-modal {
+                .modal-window {
+                    @include common.padding-16px;
+                }
+            }
+        }
     }
 
     @media (display-mode: standalone){
         #main {
             padding-top: calc(120px + env(safe-area-inset-top));
+        }
+        .slide-modal {
+            padding-top: calc(env(safe-area-inset-top));
+            
+            &.full-screen-modal {
+                .label-group {
+                    top: calc(env(safe-area-inset-top));
+                }
+            }
         }
     }
 }

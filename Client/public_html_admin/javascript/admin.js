@@ -152,9 +152,14 @@ async function requestAdminEditAPI(target_t_draft_id) {
 async function requestBatchGenerateAPI() {
     // アクセスキー
     const accessKeyInput = document.querySelector('#identify-html-textarea');
+    const themeInput = document.querySelector('#convert-theme-textarea');
     const htmlInput = document.querySelector('#convert-html-textarea');
 
     if (accessKeyInput.value === undefined || accessKeyInput.value === "")
+    {
+        return;
+    }
+    if (themeInput.value === undefined)
     {
         return;
     }
@@ -166,6 +171,7 @@ async function requestBatchGenerateAPI() {
     const url = 'https://api.pol-is.jp/batch/generate';
     const payload = { 
         access_key: accessKeyInput.value,
+        theme: themeInput.value,
         html: htmlInput.value,
     };
 

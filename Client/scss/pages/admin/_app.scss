@@ -40,8 +40,8 @@ body#admin {
 
             margin-bottom: 16px;
 
-            height: 120px;
-            min-height: 120px;
+            height: 180px;
+            min-height: 180px;
 
             .convert-header {
                 @include common.padding-16px;
@@ -55,9 +55,9 @@ body#admin {
                 @include common.relative;
                 // @include common.height-fit;
                 @include common.width-full;
-                height: 60px;
+                height: 120px;
 
-                #convert-html-textarea{
+                #convert-html-textarea, #convert-theme-textarea{
                     @include common.height-fit;
                     @include common.width-full;
                     @include common.padding-16px;

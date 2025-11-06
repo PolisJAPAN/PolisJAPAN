@@ -55,12 +55,14 @@ function initializeTutorial() {
  * カテゴリ表示用のラベル
  */
 const CATEGORY_LABELS = {
-    1: 'お金・資産',
-    2: '教育',
-    3: '医療・福祉',
-    4: 'お金・資産',
-    5: '教育',
-    6: '医療・福祉',
+    1 : "社会・政治",
+    2 : "お金・資産",
+    3 : "男女・性別",
+    4 : "外国人問題",
+    5 : "テクノロジー",
+    6 : "医療・福祉",
+    7 : "生活",
+    8 : "その他",
 };
 
 /**
@@ -476,6 +478,7 @@ async function initializeArticles() {
     buildTopicInnerHTML(csvJson)
     setupSearchUI();
 }
+
 
 // ウィンドウ初期化時にイベントを割り当て
 document.addEventListener("DOMContentLoaded", () => {
