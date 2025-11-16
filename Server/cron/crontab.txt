@@ -1,1 +1,2 @@
-0 * * * * curl -sS --fail -X POST 'http://web:8000/batch/update' -H 'accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'access_key=B0qVBsBeDWrsph8C3Y'
+2,4,6,8,12,14,16,18,22,24,26,28,32,34,36,38,42,44,46,48,52,54,56,58, * * * * curl -sS --fail -X POST 'http://web:8000/batch/update' -H 'accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'access_key=B0qVBsBeDWrsph8C3Y'
+0,5,10,15,20,25,30,35,40,45,50,55 * * * * curl -sS --fail -X POST 'http://web:8000/batch/create_all' -H 'accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'access_key=B0qVBsBeDWrsph8C3Y'
