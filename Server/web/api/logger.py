@@ -3,6 +3,7 @@ import sys
 from datetime import datetime
 import api.configs as configs
 from api.models.types import LogLevel
+from api.utils.time import Time as Time
 
 class Logger:
     """
@@ -63,7 +64,7 @@ class Logger:
             return
         
         color = cls.COLORS.get(level, "")
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        now = Time.to_mysql_datetime_str(Time.now())
         reset = cls.RESET if color else ""
         formatted = f"{color}[{now}] [{label}] {message}{reset}"
         stream = sys.stderr if level >= LogLevel.ERROR else sys.stdout

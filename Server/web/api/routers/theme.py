@@ -91,7 +91,7 @@ async def generate_comments(request: Request, request_body:theme_schemas.ThemeGe
         raise theme_schemas.ThemeGenerateCommentsErrorResponses.InvalidAccessKeyError
     
     # テーマ・背景情報・対立軸から、コメントを対立軸ごとに生成
-    comments: list[str] = await service.generate_comments_for_axes(request_body.theme, request_body.axis.split(","))
+    comments: list[str] = await service.generate_comments_for_axes(request_body.theme, request_body.axis.split(configs.constants.SPLITTER))
 
     # 3.DB更新処理実行
     # なし
@@ -131,7 +131,7 @@ async def generate_descriptions(request: Request, request_body:theme_schemas.The
         raise theme_schemas.ThemeGenerateCommentsErrorResponses.InvalidAccessKeyError
     
     # テーマ・背景情報・対立軸、コメントから説明の生成を実施
-    description : str = await service.generate_description(request_body.theme, request_body.axis.split(","), request_body.comments.split(","))
+    description : str = await service.generate_description(request_body.theme, request_body.axis.split(configs.constants.SPLITTER), request_body.comments.split(configs.constants.SPLITTER))
 
     # 3.DB更新処理実行
     try:
@@ -187,6 +187,7 @@ async def post_draft(request: Request, request_body:theme_schemas.ThemePostDraft
             theme_description = request_body.description,
             theme_comments = request_body.comments,
             theme_category = request_body.category,
+            post_status = types.PostStatus.APPROVED.value,
         )
         await service.db_session.commit()
     except Exception as e:

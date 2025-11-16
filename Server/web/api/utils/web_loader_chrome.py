@@ -6,7 +6,13 @@ from typing import List, Optional
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.common.exceptions import (ElementClickInterceptedException, ElementNotInteractableException, JavascriptException, StaleElementReferenceException, TimeoutException)
+from selenium.common.exceptions import (
+        ElementClickInterceptedException, 
+        ElementNotInteractableException, 
+        JavascriptException, 
+        StaleElementReferenceException, 
+        TimeoutException,
+    )
 from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -300,6 +306,58 @@ class WebLoaderChrome:
             raise RuntimeError(f"click timeout: selector={selector}, by={by}, reason={e}")
         except Exception as e:
             raise RuntimeError(f"click failed: selector={selector}, by={by}, reason={e}")
+    
+    def click_button_contains_text(self, text_keyword: str, timeout: int = 15) -> None:
+        """
+        内部テキストに指定キーワードを含むボタンをクリックする。
+
+        Args:
+            text_keyword (str): ボタンに含まれるべき文字列。
+            timeout (int): 要素待機秒数。
+
+        Raises:
+            RuntimeError: 該当ボタンが見つからない・クリックできない場合。
+        """
+        drv = self._driver
+
+        try:
+            # XPath: ボタンまたはロール=button の要素で内部テキストに部分一致
+            xpath_selector = (
+                f"//button[contains(normalize-space(.), '{text_keyword}')]"
+                f" | //*[@role='button' and contains(normalize-space(.), '{text_keyword}')]"
+            )
+
+            # ボタンが見えるまで待機
+            target_element = WebDriverWait(drv, timeout).until(
+                EC.visibility_of_element_located(("xpath", xpath_selector))
+            )
+
+            # 中央にスクロール
+            drv.execute_script(
+                "arguments[0].scrollIntoView({block:'center', inline:'center'});",
+                target_element
+            )
+
+            # クリック可能になるまで待つ
+            WebDriverWait(drv, timeout).until(
+                EC.element_to_be_clickable(("xpath", xpath_selector))
+            )
+
+            # 通常のクリック
+            try:
+                ActionChains(drv).move_to_element(target_element).pause(0.05).click(target_element).perform()
+            except (ElementClickInterceptedException, StaleElementReferenceException):
+                # 1回だけ再取得して再クリック
+                target_element = drv.find_element("xpath", xpath_selector)
+                drv.execute_script(
+                    "arguments[0].scrollIntoView({block:'center', inline:'center'});",
+                    target_element
+                )
+                ActionChains(drv).move_to_element(target_element).pause(0.05).click(target_element).perform()
+
+        except Exception as e:
+            raise RuntimeError(f"click_button_contains_text failed: text='{text_keyword}', reason={e}")
+
     
     def fill_input(self, by: str, selector: str, text: str, with_enter: bool = False, timeout: int = 15, clear_first: bool = True) -> None:
         """

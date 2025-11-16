@@ -173,17 +173,20 @@ class ThemeService(CommonService):
         """
         テーマに基づいてDuckDuckGo検索を実行し、概要を返す。
         """
-        search_result = DuckDuckGoSearchResults(backend="news", output_format="list").run(inputs['theme'])
-        
-        output_lines = []
-        for news_item in search_result:
-            title = news_item.get("title", "").strip()
-            snippet = news_item.get("snippet", "").strip()
-            formatted_text = f"##{title}\n- {snippet}"
-            output_lines.append(formatted_text)
-        result_text = "\n\n".join(output_lines)
-        
-        Logger.debug(result_text)
+        try:
+            search_result = DuckDuckGoSearchResults(backend="news", output_format="list").run(inputs['theme'])
+            
+            output_lines = []
+            for news_item in search_result:
+                title = news_item.get("title", "").strip()
+                snippet = news_item.get("snippet", "").strip()
+                formatted_text = f"##{title}\n- {snippet}"
+                output_lines.append(formatted_text)
+            result_text = "\n\n".join(output_lines)
+            
+            Logger.debug(result_text)
+        except Exception as e:
+            return ""
 
         return result_text
     

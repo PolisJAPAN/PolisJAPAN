@@ -48,7 +48,7 @@ async def info(request: Request, request_body:admin_schemas.AdminInfoRequest = D
         raise admin_schemas.AdminInfoErrorResponses.InvalidIPAddressError
     
     # DBから有効な下書き情報一覧を取得
-    t_draft_list = await cruds.TDraft.select_by_post_status(service.db_session, types.PostStatus.GENERATED.value)
+    t_draft_list = await cruds.TDraft.select_all(service.db_session)
 
     # 3.DB更新処理実行
     # なし

@@ -28,4 +28,8 @@ RUN poetry install --no-root --no-interaction --no-ansi
 
 COPY . .
 
+# ライセンス一覧をビルド時に生成
+RUN  poetry run pip-licenses --format=html --with-urls --with-authors --with-license-file --output-file=THIRD_PARTY_LICENSES.html
+COPY THIRD_PARTY_LICENSES.html /app/THIRD_PARTY_LICENSES.html
+
 ENTRYPOINT ["poetry", "run", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--reload"]

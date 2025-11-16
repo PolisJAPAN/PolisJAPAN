@@ -162,3 +162,52 @@ class BatchGenerateErrorResponses(APIErrorResponses):
 
     api_errors = [InvalidAccessKeyError]
     
+
+
+# ###########################################################################
+# batch/delete API用スキーマ
+# ###########################################################################
+
+# リクエスト
+class BatchDeleteRequest(CommonRequest):
+    """batch/delete API用リクエスト定義"""
+    access_key: str = Field(min_length=1, max_length=256, description="アクセスキー")
+    t_draft_id: int = Field(ge=1, le=256, description="下書きID")
+
+    @classmethod
+    def parse(
+        cls,
+        access_key: str = Form(..., description="アクセスキー", examples=[""]),
+        t_draft_id: int = Form(..., description="下書きID", examples=[""])
+    ):
+        return BatchDeleteRequest(access_key=access_key, t_draft_id=t_draft_id)
+
+# レスポンス
+class BatchDeleteResponse(CommonRequest):
+    """batch/delete API用レスポンス定義"""
+    is_success: bool = Field(description="処理が成功したか")
+
+# APIエラー管理
+class BatchDeleteErrorResponses(APIErrorResponses):
+    """batch/delete API用エラー管理クラス"""
+
+    # 固有エラー定義
+    class InvalidAccessKeyError(ApiError):
+        status_code: int = 481
+        message: str = 'アクセスキーが不正です'
+        description: str = 'バッチ実行に必要なアクセスキーが不正です。'
+
+    # 固有エラー定義
+    class ThemeNotFoundError(ApiError):
+        status_code: int = 482
+        message: str = '対象のテーマが見つかりません。'
+        description: str = '指定したテーマは存在していません。'
+
+    # 固有エラー定義
+    class DraftNotFoundError(ApiError):
+        status_code: int = 483
+        message: str = '対象のテーマの下書きが見つかりません。'
+        description: str = '指定したテーマは下書きが存在していません。'
+
+    api_errors = [InvalidAccessKeyError, ThemeNotFoundError, DraftNotFoundError]
+

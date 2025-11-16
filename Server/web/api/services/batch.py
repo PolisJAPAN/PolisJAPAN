@@ -136,7 +136,10 @@ class BatchService(CommonService):
             
             # ログイン済みの場合
             # 新規テーマ作成画面に移動
-            web_loader_chrome.click(By.XPATH, "/html/body/div/div/div[2]/div/div[2]/div/div[1]/button")
+            web_loader_chrome.click_button_contains_text("Create new conversation")
+            Logger.debug("テーマ作成画面ボタンをクリック1")
+            web_loader_chrome.click_button_contains_text("Create Conversation")
+            Logger.debug("テーマ作成画面ボタンをクリック2")
             web_loader_chrome.wait_for(By.CSS_SELECTOR, '[data-testid^="top"]', 15, True)
             Logger.debug("テーマ作成画面を開く")
             

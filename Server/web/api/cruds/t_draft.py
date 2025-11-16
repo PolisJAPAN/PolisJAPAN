@@ -30,6 +30,7 @@ class TDraft(CommonCruds[tables.TDraft]):
         theme_description: str,
         theme_comments: str,
         theme_category: int,
+        post_status: int = types.PostStatus.GENERATED.value,
     ) -> tables.TDraft:
         """
         TDraft用の新規登録メソッド。
@@ -58,7 +59,7 @@ class TDraft(CommonCruds[tables.TDraft]):
             "theme_category" : theme_category,
             "conversation_id" : "",
             "report_id" : "",
-            "post_status" : types.PostStatus.GENERATED.value,
+            "post_status" : post_status,
         }
         result = await cls._insert(db, obj)
         return result
@@ -81,6 +82,25 @@ class TDraft(CommonCruds[tables.TDraft]):
         }
         
         return await cls._select_list(db, where)
+    
+    @classmethod
+    async def select_by_conversation_id(cls, db: AsyncSession, conversation_id: str) -> tables.TDraft:
+        """
+        投稿ステータスを指定して1件を取得する。
+
+        Args:
+            db (AsyncSession): 非同期DBセッション。
+            conversation_id (str): 対象会話ID
+
+        Returns:
+            list[tables.TDraft]: 該当する下書きオブジェクトのリスト。
+        """
+        
+        where = {
+            "conversation_id" : conversation_id
+        }
+        
+        return await cls._select(db, where)
     
     @classmethod
     async def update_post_status(
@@ -216,5 +236,36 @@ class TDraft(CommonCruds[tables.TDraft]):
         if theme_category != None:
             set["theme_category"] = theme_category
 
+        result = await cls.update(db, t_draft, set)
+        return result
+    
+    @classmethod
+    async def update_post_info(
+        cls,
+        db: AsyncSession,
+        t_draft: tables.TDraft,
+        conversation_id: str,
+        report_id: str,
+        post_status: int,
+    ) -> tables.TDraft:
+        """
+        指定した下書きの投稿ステータスを更新する。
+
+        Args:
+            db (AsyncSession): 非同期DBセッション。
+            t_draft (tables.TDraft): 更新対象の下書きオブジェクト。
+            conversation_id (str): Polis上での管理ID
+            report_id (str): Polis上でのレポート管理ID
+            post_status (int): 更新する投稿ステータスコード。
+
+        Returns:
+            tables.TDraft: 更新後の下書きオブジェクト。
+        """
+
+        set = {
+            "conversation_id" : conversation_id,
+            "report_id" : report_id,
+            "post_status" : post_status,
+        }
         result = await cls.update(db, t_draft, set)
         return result

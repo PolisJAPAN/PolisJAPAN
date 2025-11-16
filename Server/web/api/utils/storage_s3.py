@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import Any, Mapping, Optional
+import time
+from typing import Any, Mapping, Optional, Sequence
 
 import aioboto3
+import boto3
 from botocore.config import Config
 from botocore.exceptions import BotoCoreError, ClientError
 
@@ -115,6 +117,40 @@ class StorageS3:
         return self._client
 
     # ---- methods ----
+    async def exists(self, key: str) -> bool:
+        """
+        指定キーのオブジェクトが S3 バケットに存在するかを確認する。
+
+        Args:
+            key (str): 存在確認対象のオブジェクトキー（prefixを除いた相対パス）。
+
+        Returns:
+            bool: 存在する場合は True、存在しない場合は False。
+
+        Raises:
+            StorageS3Error: 通信エラー、ネットワーク障害など（404 以外の場合）。
+        """
+        full_object_key = self._full_key(key)
+
+        try:
+            await self._exist_client().head_object(
+                Bucket=self.bucket,
+                Key=full_object_key
+            )
+            return True
+
+        except ClientError as e:
+            # オブジェクトが存在しない場合
+            error_code = e.response.get("Error", {}).get("Code")
+            if error_code in ("404", "NoSuchKey", "NotFound"):
+                return False
+
+            # その他の ClientError はエラーとして扱う
+            raise StorageS3Error(f"exists failed: {e}") from e
+
+        except BotoCoreError as e:
+            raise StorageS3Error(f"exists failed: {e}") from e
+    
     async def get_bytes(self, key: str) -> bytes:
         """
         指定キーのオブジェクトをバイト列として取得する。
@@ -190,3 +226,48 @@ class StorageS3:
         if not self.base_prefix:
             return key
         return f"{self.base_prefix.rstrip('/')}/{key}"
+
+    async def delete_object(self, key: str) -> None:
+        """
+        指定キーのオブジェクトを削除する。
+
+        Args:
+            key (str): 削除対象のオブジェクトキー（prefixを除いた相対パス）。
+
+        Raises:
+            StorageS3Error: 通信エラー、アクセス権エラー、ネットワーク障害など。
+        """
+        full_object_key = self._full_key(key)
+
+        try:
+            await self._exist_client().delete_object(
+                Bucket=self.bucket,
+                Key=full_object_key
+            )
+        except (BotoCoreError, ClientError) as e:
+            raise StorageS3Error(f"delete_object failed: {e}") from e
+        
+    async def clear_cache(self, distribution_id: str, paths: Sequence[str]):
+        """
+        aioboto3 を使用して CloudFront のキャッシュ無効化を非同期で実行する。
+
+        :param distribution_id: CloudFront ディストリビューション ID
+        :param paths: 無効化したいパスのリスト（例：['/index.html', '/static/*']）
+        """
+
+        # CallerReference は一意である必要があるため timestamp を利用
+        caller_reference = f"invalidation-{int(time.time())}"
+
+        async with self._session.client("cloudfront") as client:
+            response = await client.create_invalidation(
+                DistributionId=distribution_id,
+                InvalidationBatch={
+                    "Paths": {
+                        "Quantity": len(paths),
+                        "Items": list(paths),
+                    },
+                    "CallerReference": caller_reference,
+                },
+            )
+
+        return response
