@@ -337,16 +337,27 @@ function buildTopicInnerHTML(displayDataList, label) {
                     </div>
                 </div>
                 <div class="graph-group">
-                    <div class="caption"></i>回答の割合</div>
+                    <div class="caption">回答の割合</div>
                     <div class="graph-container">
+                        <div class="data-text-group">
+                            <div class="data-text positive"><span class="percent">賛成</span>${(data.totalAgreeRate) * 100}<span class="percent">%</span></div>
+                            <div class="data-text negative"><span class="percent">反対</span>${(data.totalDisagreeRate) * 100}<span class="percent">%</span></div>
+                            <div class="data-text neutral"><span class="percent">わからない/どちらでもない</span>${(data.totalPassRate) * 100}<span class="percent">%</span></div>
+                        </div>
                         <div class="graph-item">
                             <div class="graph-bar positive" style="width:${(data.totalAgreeRate) * 100}%"></div>
                             <div class="graph-bar negative" style="width:${(data.totalDisagreeRate) * 100}%"></div>
                             <div class="graph-bar neutral" style="width:${(data.totalPassRate) * 100}%"></div>
                         </div>
                     </div>
+                    <div class="caption">グループ別の回答割合</div>
                     <div class="group-graph-container">
                         ${groupHtml}
+                    </div>
+                    <div class="graph-sample">
+                        <div class="graph-sample-element"><div class="graph-sample-square agree"></div><div class="graph-sample-text">賛成</div></div>
+                        <div class="graph-sample-element"><div class="graph-sample-square disagree"></div><div class="graph-sample-text">反対</div></div>
+                        <div class="graph-sample-element"><div class="graph-sample-square pass"></div><div class="graph-sample-text">わからない/どちらでもない</div></div>
                     </div>
                 </div>
             </div>
@@ -376,6 +387,8 @@ function buildTopicInnerHTML(displayDataList, label) {
  * @returns {string} - 生成されたHTML文字列。
  */
 function getGroupCommentsInnerHTML(displayDataList, label, groupName) {
+    console.log(displayDataList);
+    
     const listHtml = displayDataList.map(data => {
         // 表示対象データを取得
         const targetData = data.groupData.find(g => g.groupName === groupName)
@@ -398,6 +411,11 @@ function getGroupCommentsInnerHTML(displayDataList, label, groupName) {
                 <div class="graph-group">
                     <div class="caption"></i>回答の割合</div>
                     <div class="graph-container">
+                        <div class="data-text-group">
+                            <div class="data-text positive"><span class="percent">賛成</span>${(data.totalAgreeRate) * 100}<span class="percent">%</span></div>
+                            <div class="data-text negative"><span class="percent">反対</span>${(data.totalDisagreeRate) * 100}<span class="percent">%</span></div>
+                            <div class="data-text neutral"><span class="percent">わからない/どちらでもない</span>${(data.totalPassRate) * 100}<span class="percent">%</span></div>
+                        </div>
                         <div class="graph-item">
                             <div class="graph-bar positive" style="width:${(targetData.agreeRate) * 100}%"></div>
                             <div class="graph-bar negative" style="width:${(targetData.disagreeRate) * 100}%"></div>
@@ -593,8 +611,7 @@ function bindClipBoardCopy() {
         ev.preventDefault();
         
         const conversationId = getConversationId();
-        const origin = window.location.origin;
-        const text = `${origin}/detail/?conversation_id=${conversationId}`;
+        const text = `https://share.pol-is.jp/ogp?conversation_id=${conversationId}`;
 
         const isSuccess = await copyText(text);
 

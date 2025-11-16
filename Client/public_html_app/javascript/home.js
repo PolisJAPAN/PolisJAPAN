@@ -491,6 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
             bindSort();
             sortArticles(currentSort);
             updateArticleVisible(currentCategory, currentWords);
+            BindHorizontalScroll();
         }, 500
     )
 });

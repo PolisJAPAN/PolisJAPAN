@@ -37,9 +37,18 @@ services:
       - NPM_CONFIG_UPDATE_NOTIFIER=false
       - NPM_CONFIG_FUND=false
       - NPM_CONFIG_AUDIT=false
+    # command: >
+    #   sh -c "
+    #     npx -y sass --watch --no-source-map /src/style.scss /out/style.css &
+    #     npx -y sass --watch --no-source-map /src/style.scss /out_app/style.css &
+    #     npx -y sass --watch --no-source-map /src/style.scss /out_admin/style.css
+    #   "
     command: >
-      sh -c "
-        npx -y sass --watch --no-source-map /src/style.scss /out/style.css &
-        npx -y sass --watch --no-source-map /src/style.scss /out_app/style.css&
-        npx -y sass --watch --no-source-map /src/style.scss /out_admin/style.css
-      "
+      sh -lc '
+        set -e
+        mkdir -p /out /out_app /out_admin
+        npx --yes sass@1.79.5 --no-source-map --watch --poll /src/style.scss:/out/style.css &
+        npx --yes sass@1.79.5 --no-source-map --watch --poll /src/style.scss:/out_app/style.css &
+        npx --yes sass@1.79.5 --no-source-map --watch --poll /src/style.scss:/out_admin/style.css &
+        wait -n
+      '

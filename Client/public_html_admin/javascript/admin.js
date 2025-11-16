@@ -72,6 +72,7 @@ async function requestAdminApproveAPI(target_t_draft_id) {
         
         mergeToTDraftList(result.t_draft);
         buildThemeInnerHTML();
+        location.reload();
         
         return result.t_draft;
     } catch (err) {
@@ -121,7 +122,7 @@ async function requestAdminEditAPI(target_t_draft_id) {
 
     payload.theme_name = theme_name;
     payload.theme_description = theme_description;
-    payload.theme_comments = theme_comments.replace(/\n/g, "#####");
+    payload.theme_comments = theme_comments.replace(/\n/g, "###br###");
     payload.theme_category = Number(theme_category);
 
     try {
@@ -220,6 +221,42 @@ async function requestBatchCreateAPI() {
 };
 
 
+/**
+ * テーマ削除APIを呼び出す。
+ * 
+ * @async
+ * @returns {Promise<Array<Object>|undefined>} レスポンスJSON
+ */
+async function requestBatchDeleteAPI(target_t_draft_id) {
+    // アクセスキー
+    const accessKeyInput = document.querySelector('#identify-html-textarea');
+
+    if (accessKeyInput.value === undefined || accessKeyInput.value === "")
+    {
+        return;
+    }
+
+    const url = `https://api.pol-is.jp/batch/delete`;
+    const payload = {
+        access_key : accessKeyInput.value,
+        t_draft_id: target_t_draft_id,
+    };
+
+    try {
+        const result = await fetchJsonPost(url, payload);
+        console.log('取得結果:', result);
+        console.log(result["is_success"]);
+
+        location.reload();
+
+        return result;
+    } catch (err) {
+        console.error('通信エラー:', err.message);
+    }
+};
+
+
+
 // ==============================
 // テーマ一覧関連
 // ==============================
@@ -245,7 +282,9 @@ function buildThemeInnerHTML() {
     container.innerHTML = '';
     console.log(tDraftList)
 
-    const html = tDraftList.map(item => {
+    const sortedTDraftList = [...tDraftList].sort((a, b) => b.id - a.id);
+
+    const html = sortedTDraftList.map(item => {
         if(!item || !item.id)
         {
             return "";
@@ -254,7 +293,7 @@ function buildThemeInnerHTML() {
         // DOMに当てはめる各要素をCSVJSONの要素から取り出し。
         const theme_name = item.theme_name;
         const theme_description = item.theme_description;
-        const theme_comments = item.theme_comments.replace(/#####/g, "\n");
+        const theme_comments = item.theme_comments.replace(/###br###/g, "\n");
         const theme_category = item.theme_category;
         const create_date = item.create_date;
         const post_status = item.post_status;
@@ -296,7 +335,8 @@ function buildThemeInnerHTML() {
                 </div>
                 <div class="button-row">
                     <button class="edit-button button secondary">更新</button>
-                    <button class="approve-button button primary ${post_status > 2 ? "disabled" : ""}">承認</button>
+                    <button class="delete-button button primary">削除</button>
+                    <button class="approve-button button primary ${post_status >= 2 ? "disabled" : ""}">承認</button>
                 </div>
             </div>
     `;
@@ -312,6 +352,7 @@ function buildThemeInnerHTML() {
 
         const theme_parent = document.querySelector(`.theme-item[data-id="${item.id}"]`);
         const edit_button = theme_parent.querySelector(`.edit-button`);
+        const delete_button = theme_parent.querySelector(`.delete-button`);
         const approve_button = theme_parent.querySelector(`.approve-button`);
 
         edit_button.addEventListener('click', (e) => {
@@ -319,6 +360,12 @@ function buildThemeInnerHTML() {
             
             e.preventDefault();
             requestAdminEditAPI(item.id);
+        });
+        delete_button.addEventListener('click', (e) => {
+            console.log("fetch開始");
+            
+            e.preventDefault();
+            requestBatchDeleteAPI(item.id);
         });
         approve_button.addEventListener('click', (e) => {
             console.log("fetch開始");

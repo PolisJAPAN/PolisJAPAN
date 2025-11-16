@@ -1,0 +1,180 @@
+@use "../../common" as common;
+
+#terms, #policy, #license {
+    #footer {
+        .section-bg {
+            height: calc(100% + 0px);
+            top: 0px;
+        }
+
+        .footer-content {
+            .footer-info-item {
+                @include common.padding-top-16px;
+                @include common.margin-top-16px;
+            }
+        }
+    }
+
+    #main{
+        background-color: var(--color-main);
+    }
+
+    #menu {
+        .menu-container {
+            .menu-right {
+                .button {
+                    border-radius: 8px;
+                }
+            }
+        }
+    }
+
+    #terms-content, #policy-content, #license-content {
+        margin-top: calc(128px + 146px + 32px);
+        color: var(--color-font-dark);
+
+        .section-bg {
+            background-color: var(--color-light);
+        }
+
+        .content-wrapper {
+            @include common.content;
+            @include common.stack;
+            @include common.stack-top;  
+            @include common.align-center;
+            @include common.spacing-32px;
+
+            .text-card {
+                @include common.stack;
+                @include common.center;
+                @include common.align-center;
+                @include common.padding-32px;
+                @include common.margin-x-16px;
+                @include common.spacing-16px;
+                background-color: var(--color-bg-gray);
+                border-radius: 32px;
+
+                .content-text {
+                    @include common.padding-32px;
+
+                    h2 {
+                        @include common.font-weight-black;
+                        @include common.font-size-medium;
+                        @include common.line-spacing-large;
+                        @include common.margin-top-48px;
+                        @include common.margin-bottom-8px;
+
+                        .title{
+                            display: inline-block;
+                            &::first-letter {
+                                color: var(--color-main);
+                            }
+                        }
+                    }
+                    h3 {
+                        @include common.font-weight-semibold;
+                        @include common.font-size-sub-small;
+                        @include common.line-spacing-large;
+                        @include common.margin-top-8px;
+                    }
+                    p {
+                        @include common.font-size-sub-small;
+                        @include common.line-spacing-x-large;
+                    }
+                    ul {
+                        li {
+                            @include common.padding-left-16px;
+                            @include common.font-size-sub-small;
+                            @include common.line-spacing-x-large;
+
+                            p {
+                                @include common.padding-left-32px;
+                            }
+                        }
+                    }
+                    a {
+                        @include common.font-size-sub-small;
+                        @include common.line-spacing-x-large;
+                        color: var(--color-main);
+                    }
+
+                    .author {
+                        @include common.margin-top-32px;
+                    }
+
+                    .library-group {
+                        @include common.padding-top-48px;
+                        @include common.padding-bottom-8px;
+                        @include common.text-center;
+
+                        .library-name {
+                            @include common.font-weight-black;
+                            @include common.font-size-medium;
+                            @include common.line-spacing-large;
+                        }
+                        .library-version {
+                            @include common.font-size-sub-small;
+                            @include common.line-spacing-x-large;
+                        }
+                        .library-license {
+                            @include common.font-size-sub-small;
+                            @include common.line-spacing-x-large;
+                        }
+                        .library-license-detail {
+                            @include common.font-size-sub-small;
+                            @include common.line-spacing-x-large;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @media (max-width: 1024px) {
+    
+    }
+    @media (max-width: 768px) {
+        #terms-content {
+            @include common.padding-top-0px;
+        }
+
+        #menu {
+            .menu-container {
+                .menu-left {
+                    flex-shrink: 1;
+                    .logo {
+                        width: 100%;
+                        object-fit: contain;
+                    }
+                }
+                .menu-right {
+                    @include common.row;
+                    @include common.padding-left-16px;
+
+                    .space-expand-button{
+                        padding: 14px 16px;
+                    }
+                }
+            }
+        }
+        #footer {
+            .footer-info-item {
+                border-top: solid 1px transparent;
+            }
+        }
+
+        #terms-content {
+            .content-wrapper {
+                
+                .text-card {
+                    @include common.padding-32px;
+        
+                    .content-text {
+                        @include common.padding-0px;
+                    }
+                }
+            }
+        }
+    }
+}
+

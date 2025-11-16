@@ -15,6 +15,8 @@ let commentInputList = null;
 let descriptionInput = null;
 let categorySelect = null;
 
+const splitter = "###br###"
+
 // ==============================
 // API実行メソッド
 // ==============================
@@ -59,7 +61,7 @@ async function requestThemeGenerateAxisAPI() {
         syncStepperInputValidation();
         syncTextareas(() => {syncAccordionHeight();});
 
-        setLocalStorage(`${mode}_CREATE_DRAFT_AXIS`, getMultiInputValues(axisInputList).join(","));
+        setLocalStorage(`${mode}_CREATE_DRAFT_AXIS`, getMultiInputValues(axisInputList).join(splitter));
         
         return result;
     } catch (err) {
@@ -85,7 +87,7 @@ async function requestThemeGenerateCommentsAPI() {
     const payload = {
         access_key : access_key,
         theme : theme,
-        axis : axis.join(","),
+        axis : axis.join(splitter),
     };
 
     const button = parentNode.querySelector(`#comments-stepper`).querySelector('.ai-generate-button');
@@ -111,7 +113,7 @@ async function requestThemeGenerateCommentsAPI() {
         syncStepperInputValidation();
         syncTextareas(() => {syncAccordionHeight();});
 
-        setLocalStorage(`${mode}_CREATE_DRAFT_COMMENTS`, getMultiInputValues(commentInputList).join(","));
+        setLocalStorage(`${mode}_CREATE_DRAFT_COMMENTS`, getMultiInputValues(commentInputList).join(splitter));
 
         return result;
     } catch (err) {
@@ -143,8 +145,8 @@ async function requestThemeGenerateDescriptionsAPI() {
     const payload = {
         access_key : access_key,
         theme : theme,
-        axis : axis.join(","),
-        comments : comments.join(","),
+        axis : axis.join(splitter),
+        comments : comments.join(splitter),
     };
 
     try {
@@ -190,7 +192,7 @@ async function requestThemeGenerateDescriptionsAPI() {
 async function requestThemePostDraftAPI(onComplete) {
     const access_key = USER_ACCESS_KEY;
     const theme = themeInput.value;
-    const comments = getMultiInputValues(commentInputList);
+    const comments = getMultiInputValues(commentInputList).join(splitter);
 
     const description = descriptionInput.value;
     const category = categorySelectManager.getSelectedValue();
@@ -472,8 +474,8 @@ function restoreDraft(){
     const categoryDraft = getLocalStorage(`${mode}_CREATE_DRAFT_CATEGORY`);
 
     if (themeDraft) {themeInput.value = themeDraft;}
-    if (axisDraft) {setMultiInputValues(axisInputList, axisDraft.split(","));}
-    if (commentsDraft) {setMultiInputValues(commentInputList, commentsDraft.split(","));}
+    if (axisDraft) {setMultiInputValues(axisInputList, axisDraft.split(splitter));}
+    if (commentsDraft) {setMultiInputValues(commentInputList, commentsDraft.split(splitter));}
     if (descriptionDraft) {descriptionInput.value = descriptionDraft;}
     if (categorySelectManager) {categorySelectManager.setSelectedValue(categoryDraft);}
 }
@@ -489,12 +491,12 @@ function bindDraftRecorder(){
     });
     axisInputList.forEach((input) => {
         input.addEventListener("input", (e) => {
-            setLocalStorage(`${mode}_CREATE_DRAFT_AXIS`, getMultiInputValues(axisInputList).join(","));
+            setLocalStorage(`${mode}_CREATE_DRAFT_AXIS`, getMultiInputValues(axisInputList).join(splitter));
         });
     });
     commentInputList.forEach((input) => {
         input.addEventListener("input", (e) => {
-            setLocalStorage(`${mode}_CREATE_DRAFT_COMMENTS`, getMultiInputValues(commentInputList).join(","));
+            setLocalStorage(`${mode}_CREATE_DRAFT_COMMENTS`, getMultiInputValues(commentInputList).join(splitter));
         });
     });
     descriptionInput.addEventListener("input", (e) => {
@@ -683,19 +685,20 @@ function initializeStepperInputValidation() {
         // 各 input にイベントを付与
         targetInputs.forEach((inputElement) => {
             inputElement.addEventListener("input", () => {
-                checkInputsFilled(modalStepper);
+                // checkInputsFilled(modalStepper);
+                syncStepperInputValidation();
             });
         });
         
         if (targetSelects.length){
             categorySelectManager.addOnChange(() => {
-                checkInputsFilled(modalStepper);
+                // checkInputsFilled(modalStepper);
+                syncStepperInputValidation();
             })
         }
-
-        // 初期状態もチェック
-        checkInputsFilled(modalStepper);
     });
+
+    syncStepperInputValidation();
 }
 
 /**
@@ -726,6 +729,9 @@ function syncStepperInputValidation() {
     const modalSteppers = parentNode.querySelectorAll(".modal-stepper");
     if (!modalSteppers.length) return;
 
+    console.log("ステッパーのinputを検収");
+
+    let allStepperFilledArray = []
     modalSteppers.forEach((modalStepper) => {
         const targetInputs = modalStepper.querySelectorAll(".target-input");
         const targetSelects = modalStepper.querySelectorAll(".target-select");
@@ -735,7 +741,21 @@ function syncStepperInputValidation() {
         if (!nextButton) return;
 
         // 初期状態もチェック
-        checkInputsFilled(modalStepper);
+        const allFilled = checkInputsFilled(modalStepper);
+
+        const allStepperFilled = allStepperFilledArray.every(value => value === true);
+        const aiGenerateButton = modalStepper.querySelector('.ai-generate-button');
+
+        if (aiGenerateButton) {
+            if (allStepperFilled) {
+                aiGenerateButton.removeAttribute("disabled");
+            } else {
+                aiGenerateButton.setAttribute("disabled", "true");
+            }
+        }
+
+        // 過去ステッパーが全て満たされているかを記録
+        allStepperFilledArray.push(allFilled)
     });
 }
 
@@ -790,6 +810,8 @@ function checkInputsFilled(modalStepper) {
     }
 
     syncPostButtonValidation();
+
+    return allFilled;
 };
 
 /**
@@ -1095,48 +1117,6 @@ const aiAssistModeHtml =`
                 <div class="input-group">
                     <textarea id="comment-textarea-8" class="comment-input hidden-input auto-resize target-input" rows="1" placeholder="意見を入力"></textarea>
                     <button class="button secondary-border clear-button" data-target="comment-textarea-8">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </div>
-                <div class="input-group">
-                    <textarea id="comment-textarea-9" class="comment-input hidden-input auto-resize target-input" rows="1" placeholder="意見を入力"></textarea>
-                    <button class="button secondary-border clear-button" data-target="comment-textarea-9">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </div>
-                <div class="input-group">
-                    <textarea id="comment-textarea-10" class="comment-input hidden-input auto-resize target-input" rows="1" placeholder="意見を入力"></textarea>
-                    <button class="button secondary-border clear-button" data-target="comment-textarea-10">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </div>
-                <div class="input-group">
-                    <textarea id="comment-textarea-11" class="comment-input hidden-input auto-resize target-input" rows="1" placeholder="意見を入力"></textarea>
-                    <button class="button secondary-border clear-button" data-target="comment-textarea-11">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </div>
-                <div class="input-group">
-                    <textarea id="comment-textarea-12" class="comment-input hidden-input auto-resize target-input" rows="1" placeholder="意見を入力"></textarea>
-                    <button class="button secondary-border clear-button" data-target="comment-textarea-12">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </div>
-                <div class="input-group">
-                    <textarea id="comment-textarea-13" class="comment-input hidden-input auto-resize target-input" rows="1" placeholder="意見を入力"></textarea>
-                    <button class="button secondary-border clear-button" data-target="comment-textarea-13">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </div>
-                <div class="input-group">
-                    <textarea id="comment-textarea-14" class="comment-input hidden-input auto-resize target-input" rows="1" placeholder="意見を入力"></textarea>
-                    <button class="button secondary-border clear-button" data-target="comment-textarea-14">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </div>
-                <div class="input-group">
-                    <textarea id="comment-textarea-15" class="comment-input hidden-input auto-resize target-input" rows="1" placeholder="意見を入力"></textarea>
-                    <button class="button secondary-border clear-button" data-target="comment-textarea-15">
                         <i class="bi bi-x"></i>
                     </button>
                 </div>

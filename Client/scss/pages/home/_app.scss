@@ -50,6 +50,10 @@ body#home {
                     @include common.align-center;
                     @include common.width-fit;
                     @include common.spacing-8px;
+
+                    & > .category-button:last-child {
+                        margin-right: 80px;
+                    }
         
                     .category-button {
                         @include common.padding-12px;
@@ -154,6 +158,7 @@ body#home {
             @include common.padding-16px;
             @include common.spacing-16px;
             @include common.width-full;
+            @include common.padding-bottom-120px;
             max-width: 720px;
         }
     
@@ -228,7 +233,7 @@ body#home {
     
                 // 社会・政治
                 &.cat-1 {
-                    background-image: linear-gradient(135deg, #fa3517 0%, #e1580e 100%);
+                    background-image: linear-gradient(135deg, #fa3517 0%, #fcb80c 100%);
                 }
     
                 // お金・資産
@@ -243,7 +248,7 @@ body#home {
     
                 // 外国人問題
                 &.cat-4 {
-                    background-image: linear-gradient(135deg, #00ffc4 0%, #00c08f 100%);
+                    background-image: linear-gradient(135deg, #289dda 0%, #1ee3eb 100%);
                 }
     
                 // テクノロジー
@@ -253,17 +258,17 @@ body#home {
     
                 // 医療・福祉
                 &.cat-6 {
-                    background-image: linear-gradient(135deg, #6fffae 0%, #cc7bff 100%);
+                    background-image: linear-gradient(135deg, #0c9351 0%, #59ab84 100%);
                 }
 
                 // 生活
                 &.cat-7 {
-                    background-image: linear-gradient(135deg, #f5a158 0%, #aaea43 100%);
+                    background-image: linear-gradient(135deg, #ffa648 0%, #fee153 100%);
                 }
     
                 // その他
                 &.cat-8 {
-                    background-image: linear-gradient(135deg, #6e706f 0%, #9a989b 100%);
+                    background-image: linear-gradient(135deg, #8349ff 0%, #d481fe 100%);
                 }
     
                 .article-title-area {
@@ -687,27 +692,32 @@ body#home {
                                 
                                 border-radius: 8px;
 
-                                &.secondary-border {
-                                    @include common.relative;
-                                    border: 2px solid transparent;
-                                    color: var(--color-font-dark-gray);
-                                    box-sizing: border-box;
+                                @include common.relative;
+                                border: 2px solid transparent;
+                                color: var(--color-font-dark-gray);
+                                box-sizing: border-box;
 
-                                    // 疑似要素でグラデーションボーダーを作成
+                                // 疑似要素でグラデーションボーダーを作成
+                                &::before {
+                                    content: "";
+                                    position: absolute;
+                                    inset: 0;
+                                    border-radius: inherit; // 親と同じ角丸を適用
+                                    padding: 2px; // ボーダーの太さ
+                                    background: linear-gradient(to right, #7f88ff, #de28c6);
+                                    -webkit-mask:
+                                        linear-gradient(#fff 0 0) content-box,
+                                        linear-gradient(#fff 0 0);
+                                    -webkit-mask-composite: xor;
+                                    mask-composite: exclude;
+                                    pointer-events: none; // クリックをブロックしない
+                                    z-index: 1;
+                                }
+
+                                &:disabled{
+                                    color: var(--color-font-dark-secondary);
                                     &::before {
-                                        content: "";
-                                        position: absolute;
-                                        inset: 0;
-                                        border-radius: inherit; // 親と同じ角丸を適用
-                                        padding: 2px; // ボーダーの太さ
-                                        background: linear-gradient(to right, #7f88ff, #de28c6);
-                                        -webkit-mask:
-                                            linear-gradient(#fff 0 0) content-box,
-                                            linear-gradient(#fff 0 0);
-                                        -webkit-mask-composite: xor;
-                                        mask-composite: exclude;
-                                        pointer-events: none; // クリックをブロックしない
-                                        z-index: 1;
+                                        background: linear-gradient(to right, #848484, #bcbcbc);
                                     }
                                 }
 

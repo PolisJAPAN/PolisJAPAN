@@ -59,6 +59,7 @@ body#detail {
                 .caption {
                     @include common.font-size-small;
                     @include common.letter-spacing-default;
+                    @include common.text-center;
                     color: var(--color-font-dark-gray);
 
                     i {
@@ -135,15 +136,82 @@ body#detail {
                     @include common.padding-x-16px;
                     @include common.padding-top-8px;
                     @include common.padding-bottom-32px;
+
+                    .graph-sample {
+                        @include common.row;
+                        @include common.center;
+                        @include common.align-center;
+                        @include common.width-full;
+                        @include common.height-fit;
+                        @include common.spacing-16px;
+                        @include common.padding-top-16px;
+    
+                        .graph-sample-element {
+                            @include common.row;
+                            @include common.center;
+                            @include common.align-center;
+                            @include common.width-fit;
+                            @include common.height-fit;
+                            @include common.spacing-4px;
+    
+                            .graph-sample-square{
+                                width: 16px;
+                                height: 16px;
+    
+                                
+                                &.agree{
+                                    background-color: var(--color-graph-positive)
+                                }
+                                &.disagree {
+                                    background-color: var(--color-graph-negative)
+                                }
+                                &.pass {
+                                    background-color: var(--color-graph-neutral)
+                                }
+                            }
+                            .graph-sample-text{
+                                @include common.font-size-small;
+                                @include common.font-weight-semibold;
+                                @include common.letter-spacing-default;
+                                @include common.line-spacing-medium;
+                                color: var(--color-font-dark-secondary)
+                            }
+                        }
+                    }
                 }
+
+                .data-text-group {
+                    .data-text {
+                        @include common.font-weight-black;
+                        @include common.letter-spacing-default;
+                        @include common.font-size-medium;
+
+                        .percent {
+                            @include common.font-weight-black;
+                            @include common.letter-spacing-default;
+                            @include common.line-spacing-medium;
+
+                            @include common.font-size-small;
+                        }
+
+                        &.positive {
+                            color: var(--color-graph-positive);
+                        }
+                        &.negative {
+                            color: var(--color-graph-negative);
+                        }
+                        &.neutral {
+                            color: var(--color-graph-neutral);
+                        }
+                    }
+                }
+
                 .graph-container {
                     @include common.stack ;
                     @include common.center;
                     @include common.height-fit;
                     @include common.width-full;
-
-                    overflow: hidden;
-                    border-radius: 8px;
+                    @include common.margin-bottom-16px;
 
                     .graph-item {
                         @include common.row;
@@ -152,6 +220,9 @@ body#detail {
                         overflow: hidden;
                         background-color: var(--color-graph-nothing);
                         box-sizing: border-box;
+
+                        overflow: hidden;
+                        border-radius: 8px;
 
                         .graph-bar {
                             @include common.height-full;
@@ -170,6 +241,32 @@ body#detail {
                             &.neutral {
                                 background-color: var(--color-graph-neutral);
                                 z-index: var(--z-index-local-over-1);
+                            }
+                        }
+                    }
+                    
+                    .data-text-group {
+                        @include common.row;
+                        @include common.center;
+                        @include common.align-center;
+                        @include common.row-wrap;
+                        @include common.width-full;
+                        @include common.height-fit;
+                        @include common.spacing-8px;
+                        @include common.padding-bottom-16px;
+
+                        .data-text {
+                            @include common.font-weight-black;
+                            @include common.letter-spacing-default;
+                            @include common.font-size-x-large;
+
+                            .percent {
+                                @include common.font-weight-black;
+                                @include common.letter-spacing-default;
+                                @include common.line-spacing-medium;
+
+                                @include common.font-size-medium;
+                                @include common.padding-right-8px;
                             }
                         }
                     }
@@ -209,40 +306,16 @@ body#detail {
                             @include common.letter-spacing-default;
                             color: var(--color-font-dark-gray);
                         }
+                    }
 
-                        .data-text-group {
-                            @include common.stack;
-                            @include common.stack-bottom;
-                            @include common.spacing-4px;
-                            @include common.height-full;
+                    .data-text-group {
+                        @include common.stack;
+                        @include common.stack-bottom;
+                        @include common.spacing-4px;
+                        @include common.height-full;
 
-                            height: 100px;
-                            max-height: 30vw;
-
-                            .data-text {
-                                @include common.font-weight-black;
-                                @include common.letter-spacing-default;
-                                @include common.font-size-medium;
-
-                                .percent {
-                                    @include common.font-weight-black;
-                                    @include common.letter-spacing-default;
-                                    @include common.line-spacing-medium;
-
-                                    @include common.font-size-small;
-                                }
-
-                                &.positive {
-                                    color: var(--color-graph-positive);
-                                }
-                                &.negative {
-                                    color: var(--color-graph-negative);
-                                }
-                                &.neutral {
-                                    color: var(--color-graph-neutral);
-                                }
-                            }
-                        }
+                        height: 100px;
+                        max-height: 30vw;
                     }
                 }
             }

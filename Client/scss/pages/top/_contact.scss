@@ -1,0 +1,161 @@
+@use "../../common" as common;
+
+#contact {
+    #footer {
+        .section-bg {
+            height: calc(100% + 0px);
+            top: 0px;
+        }
+
+        .footer-content {
+            .footer-info-item {
+                @include common.padding-top-16px;
+                @include common.margin-top-16px;
+            }
+        }
+    }
+
+    #main{
+        background-color: var(--color-main);
+    }
+
+    #menu {
+        .menu-container {
+            .menu-right {
+                .button {
+                    border-radius: 8px;
+                }
+            }
+        }
+    }
+
+    #contact-form {
+        margin-top: calc(128px + 146px + 32px);
+        color: var(--color-font-dark);
+
+        .section-bg {
+            background-color: var(--color-light);
+        }
+
+        .contact-content {
+            @include common.content;
+            @include common.stack;
+            @include common.stack-top;
+            @include common.align-center;
+            @include common.spacing-32px;
+
+            .contact-form-wrapper, .contact-confirm-wrapper, .contact-complete-wrapper {
+                @include common.stack;
+                @include common.stack-top;
+                @include common.align-center;
+                @include common.width-full;
+                @include common.height-fit;
+                @include common.padding-32px;
+                @include common.padding-y-64px;
+                @include common.spacing-32px;
+
+                max-width: calc(100vw - 32px);
+
+                border: 1px solid var(--color-font-dark-secondary-2);
+                border-radius: 8px;
+
+                display: none;
+                &.show {
+                    display: flex;
+                }
+
+                .contact-input-group {
+                    @include common.stack;
+                    @include common.stack-top;
+                    // @include common.align-center;
+                    @include common.width-full;
+                    @include common.height-fit;
+                    // @include common.padding-y-16px;
+                    @include common.spacing-8px;
+
+                    .contact-input-label {
+                        @include common.font-weight-black;
+                        @include common.font-size-normal;
+                    }
+                    .contact-input {
+                        @include common.padding-x-8px;
+                        @include common.padding-y-16px;
+                        @include common.line-spacing-medium;
+                        border: 1px solid var(--color-font-dark-secondary-2);
+                        border-radius: 4px;
+                    }
+                    .contact-input-description {
+                        @include common.font-size-small;
+                        color: var(--color-font-dark-secondary);
+                    }
+
+                    .contact-input-confirm {
+                        @include common.font-size-normal;
+                        @include common.line-spacing-medium;
+                    }
+                }
+                #contact-back-button {
+                    @include common.padding-4px;
+                    border-color: transparent;
+                }
+            }
+            .contact-complete-wrapper {
+                .contact-complete-icon {
+                    font-size: var(--font-size-72px);
+                    color: #1F7CFF;
+                }
+
+                .contact-complete-title {
+                    @include common.font-weight-black;
+                    @include common.letter-spacing-small;
+                    @include common.line-spacing-medium;
+                    @include common.text-center;
+                    font-size: var(--font-size-24px);
+                    color: var(--color-font-dark-gray-2);
+                }
+                .contact-complete-text {
+                    @include common.line-spacing-medium;
+                    @include common.text-center;
+                    font-size : var(--font-size-18px);
+
+                    color: var(--color-font-dark-gray);
+                }
+            }
+        }
+    }
+
+    @media (max-width: 1024px) {
+    
+    }
+    @media (max-width: 768px) {
+        #contact-form {
+            @include common.padding-top-0px;
+        }
+
+        #menu {
+            .menu-container {
+                .menu-left {
+                    flex-shrink: 1;
+                    .logo {
+                        width: 100%;
+                        object-fit: contain;
+                    }
+                }
+                .menu-right {
+                    @include common.row;
+                    @include common.padding-left-16px;
+
+                    .space-expand-button{
+                        padding: 14px 16px;
+                    }
+                }
+            }
+        }
+        #footer {
+            .footer-info-item {
+                border-top: solid 1px transparent;
+            }
+        }
+    }
+}
+

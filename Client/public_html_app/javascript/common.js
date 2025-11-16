@@ -314,6 +314,8 @@ async function loadCsvAsJson(url, { encoding = 'utf-8', delimiter = 'auto' } = {
     const buf = await res.arrayBuffer();
     const text = new TextDecoder(encoding).decode(buf);
     const { rows, headers } = parseCSV(text, delimiter);
+    console.log(rows);
+    
     // ヘッダーをキーにしてオブジェクト化
     return rows.map(r => {
         const obj = {};
@@ -380,7 +382,11 @@ function parseCSV(text, delimiter = 'auto') {
     }
     // 最終フィールド/行を反映
     row.push(field);
-    rows.push(row);
+    // 全てのフィールドが空でなければ行を追加
+    if (! row.every((cell) => cell == ""))
+    {
+        rows.push(row);
+    }
 
     // ヘッダー抽出（BOM除去）
     const headers = (rows.shift() || []).map(h => h.replace(/^\uFEFF/, '').trim());
@@ -950,4 +956,20 @@ class CustomSelectManager {
     clearOnChange() {
         this.onChangeCallbacks = [];
     }
+}
+
+
+
+function BindHorizontalScroll() {
+    const scrollTargetElements = document.querySelectorAll('.scroll-horizontal');
+
+    scrollTargetElements.forEach((targetElement) => {
+        targetElement.addEventListener('wheel', (event) => {
+            // 元の縦スクロールを無効化
+            event.preventDefault();
+
+            // 横方向にスクロールさせる
+            targetElement.scrollLeft += event.deltaY;
+        }, { passive: false }); // preventDefault のために passive を false
+    });
 }
