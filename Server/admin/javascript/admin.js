@@ -2,6 +2,18 @@
 // API実行関連
 // ==============================
 
+/**
+ * 管理情報一覧を取得するAPIを呼び出す。
+ * 
+ * #identify-html-textarea から access_key を読み取り、`/admin/info` へPOST。
+ * 成功時はキーをCookieへ保存し、取得した `t_draft_list` を返す。
+ * 空入力時は何もせず終了する。
+ * 
+ * 依存: fetchJsonPost, setCookie
+ * 
+ * @async
+ * @returns {Promise<Array<Object>|undefined>} - 下書き配列 `t_draft_list`。失敗・未入力時は undefined。
+ */
 async function requestAdminInfoAPI() {
     const input = document.querySelector('#identify-html-textarea');
 
@@ -26,6 +38,19 @@ async function requestAdminInfoAPI() {
     }
 };
 
+/**
+ * 指定IDの下書きを承認するAPIを呼び出す。
+ * 
+ * #identify-html-textarea から access_key を読み取り、`/admin/approve` へPOST。
+ * 成功時は返却された `t_draft` を `tDraftList` にマージし、一覧DOMを再描画する。
+ * 空入力時は何もせず終了する。
+ * 
+ * 依存: fetchJsonPost, mergeToTDraftList, buildThemeInnerHTML
+ * 
+ * @async
+ * @param {number|string} target_t_draft_id - 承認対象の下書きID。
+ * @returns {Promise<Object|undefined>} - 更新後の `t_draft`。失敗・未入力時は undefined。
+ */
 async function requestAdminApproveAPI(target_t_draft_id) {
     // アクセスキー
     const input = document.querySelector('#identify-html-textarea');
@@ -46,7 +71,8 @@ async function requestAdminApproveAPI(target_t_draft_id) {
         console.log('取得結果:', result);
         
         mergeToTDraftList(result.t_draft);
-        getThemeInnerHTML();
+        buildThemeInnerHTML();
+        location.reload();
         
         return result.t_draft;
     } catch (err) {
@@ -54,6 +80,19 @@ async function requestAdminApproveAPI(target_t_draft_id) {
     }
 };
 
+/**
+ * 指定IDの下書きを更新するAPIを呼び出す。
+ * 
+ * 画面上の該当 `.theme-item` から各入力値を収集し、`/admin/edit` へPOST。
+ * 成功時は返却された `t_draft` を `tDraftList` にマージし、一覧DOMを再描画する。
+ * 空入力時は何もせず終了する。
+ * 
+ * 依存: fetchJsonPost, mergeToTDraftList, buildThemeInnerHTML
+ * 
+ * @async
+ * @param {number|string} target_t_draft_id - 更新対象の下書きID。
+ * @returns {Promise<Object|undefined>} - 更新後の `t_draft`。失敗・未入力時は undefined。
+ */
 async function requestAdminEditAPI(target_t_draft_id) {
     // アクセスキー
     const input = document.querySelector('#identify-html-textarea');
@@ -83,7 +122,7 @@ async function requestAdminEditAPI(target_t_draft_id) {
 
     payload.theme_name = theme_name;
     payload.theme_description = theme_description;
-    payload.theme_comments = theme_comments.replace(/\n/g, "#####");
+    payload.theme_comments = theme_comments.replace(/\n/g, "###br###");
     payload.theme_category = Number(theme_category);
 
     try {
@@ -91,7 +130,7 @@ async function requestAdminEditAPI(target_t_draft_id) {
         console.log('取得結果:', result);
                 
         mergeToTDraftList(result.t_draft);
-        getThemeInnerHTML();
+        buildThemeInnerHTML();
         
         return result.t_draft;
     } catch (err) {
@@ -99,12 +138,29 @@ async function requestAdminEditAPI(target_t_draft_id) {
     }
 };
 
+/**
+ * バッチ生成APIを呼び出す。
+ * 
+ * #identify-html-textarea の access_key と、#convert-html-textarea の HTML を
+ * 収集して `/batch/generate` へPOST。成功時は `t_draft` を返す。
+ * 入力が空の場合は何もせず終了する。
+ * 
+ * 依存: fetchJsonPost
+ * 
+ * @async
+ * @returns {Promise<Object|undefined>} - 生成結果の `t_draft`。失敗・未入力時は undefined。
+ */
 async function requestBatchGenerateAPI() {
     // アクセスキー
     const accessKeyInput = document.querySelector('#identify-html-textarea');
+    const themeInput = document.querySelector('#convert-theme-textarea');
     const htmlInput = document.querySelector('#convert-html-textarea');
 
     if (accessKeyInput.value === undefined || accessKeyInput.value === "")
+    {
+        return;
+    }
+    if (themeInput.value === undefined)
     {
         return;
     }
@@ -116,6 +172,7 @@ async function requestBatchGenerateAPI() {
     const url = 'https://api.pol-is.jp/batch/generate';
     const payload = { 
         access_key: accessKeyInput.value,
+        theme: themeInput.value,
         html: htmlInput.value,
     };
 
@@ -124,7 +181,7 @@ async function requestBatchGenerateAPI() {
         console.log('取得結果:', result);
         
         // mergeToTDraftList(result.t_draft);
-        // getThemeInnerHTML();
+        // buildThemeInnerHTML();
         
         return result.t_draft;
     } catch (err) {
@@ -132,6 +189,18 @@ async function requestBatchGenerateAPI() {
     }
 };
 
+/**
+ * バッチ一括作成APIを呼び出す。
+ * 
+ * #identify-html-textarea の access_key を用いて `/batch/create_all` へPOST。
+ * レスポンスはログ出力のみを行う（返却値なし）。
+ * 入力が空の場合は何もせず終了する。
+ * 
+ * 依存: fetchJsonPost
+ * 
+ * @async
+ * @returns {Promise<void>} - 通信完了時に解決。
+ */
 async function requestBatchCreateAPI() {
     const input = document.querySelector('#identify-html-textarea');
 
@@ -152,21 +221,70 @@ async function requestBatchCreateAPI() {
 };
 
 
+/**
+ * テーマ削除APIを呼び出す。
+ * 
+ * @async
+ * @returns {Promise<Array<Object>|undefined>} レスポンスJSON
+ */
+async function requestBatchDeleteAPI(target_t_draft_id) {
+    // アクセスキー
+    const accessKeyInput = document.querySelector('#identify-html-textarea');
+
+    if (accessKeyInput.value === undefined || accessKeyInput.value === "")
+    {
+        return;
+    }
+
+    const url = `https://api.pol-is.jp/batch/delete`;
+    const payload = {
+        access_key : accessKeyInput.value,
+        t_draft_id: target_t_draft_id,
+    };
+
+    try {
+        const result = await fetchJsonPost(url, payload);
+        console.log('取得結果:', result);
+        console.log(result["is_success"]);
+
+        location.reload();
+
+        return result;
+    } catch (err) {
+        console.error('通信エラー:', err.message);
+    }
+};
+
+
+
 // ==============================
 // テーマ一覧関連
 // ==============================
 
 let tDraftList = []
 
-// JSON配列から記事HTML文字列を組み立て、innerHTMLで挿入
-function getThemeInnerHTML() {
+/**
+ * 取得済みの `tDraftList` をもとに、テーマ一覧のHTMLを構築・差し替えする。
+ * 
+ * `.theme-container` 内へ各 `.theme-item` を生成し、編集/承認ボタンに
+ * イベントを割り当てる。作成日を日本語表記へ整形し、テキストエリアの
+ * 自動リサイズ初期化も行う。
+ * 
+ * 依存: formatIsoToJapaneseDate, autoResizeTextareas, requestAdminEditAPI, requestAdminApproveAPI
+ * 
+ * @returns {void}
+ * @throws {Error} - 親要素 `.theme-container` が見つからない場合。
+ */
+function buildThemeInnerHTML() {
     // 生成用の親要素取得
     const container = document.querySelector('.theme-container');
     if (!container) throw new Error(`親要素が見つかりません: .theme-container`);
     container.innerHTML = '';
     console.log(tDraftList)
 
-    const html = tDraftList.map(item => {
+    const sortedTDraftList = [...tDraftList].sort((a, b) => b.id - a.id);
+
+    const html = sortedTDraftList.map(item => {
         if(!item || !item.id)
         {
             return "";
@@ -175,7 +293,7 @@ function getThemeInnerHTML() {
         // DOMに当てはめる各要素をCSVJSONの要素から取り出し。
         const theme_name = item.theme_name;
         const theme_description = item.theme_description;
-        const theme_comments = item.theme_comments.replace(/#####/g, "\n");
+        const theme_comments = item.theme_comments.replace(/###br###/g, "\n");
         const theme_category = item.theme_category;
         const create_date = item.create_date;
         const post_status = item.post_status;
@@ -217,7 +335,8 @@ function getThemeInnerHTML() {
                 </div>
                 <div class="button-row">
                     <button class="edit-button button secondary">更新</button>
-                    <button class="approve-button button primary ${post_status > 2 ? "disabled" : ""}">承認</button>
+                    <button class="delete-button button primary">削除</button>
+                    <button class="approve-button button primary ${post_status >= 2 ? "disabled" : ""}">承認</button>
                 </div>
             </div>
     `;
@@ -233,6 +352,7 @@ function getThemeInnerHTML() {
 
         const theme_parent = document.querySelector(`.theme-item[data-id="${item.id}"]`);
         const edit_button = theme_parent.querySelector(`.edit-button`);
+        const delete_button = theme_parent.querySelector(`.delete-button`);
         const approve_button = theme_parent.querySelector(`.approve-button`);
 
         edit_button.addEventListener('click', (e) => {
@@ -240,6 +360,12 @@ function getThemeInnerHTML() {
             
             e.preventDefault();
             requestAdminEditAPI(item.id);
+        });
+        delete_button.addEventListener('click', (e) => {
+            console.log("fetch開始");
+            
+            e.preventDefault();
+            requestBatchDeleteAPI(item.id);
         });
         approve_button.addEventListener('click', (e) => {
             console.log("fetch開始");
@@ -252,6 +378,14 @@ function getThemeInnerHTML() {
     autoResizeTextareas();
 }
 
+/**
+ * 単一の `t_draft` を `tDraftList` にマージする。
+ * 
+ * 既存IDがなければ末尾へ追加、存在する場合は同じインデックスを上書きする。
+ * 
+ * @param {Object} tDraft - マージ対象の下書きオブジェクト（`id` を必須と想定）。
+ * @returns {void}
+ */
 function mergeToTDraftList(tDraft) {
     const index = tDraftList.findIndex(item => item.id === tDraft.id);
 
@@ -265,15 +399,40 @@ function mergeToTDraftList(tDraft) {
     tDraftList[index] = tDraft;
 }
 
+/**
+ * テーマ一覧の取得と描画を行う高位関数。
+ * 
+ * `requestAdminInfoAPI()` で一覧を取得し、`tDraftList` に反映後、
+ * DOMを `buildThemeInnerHTML()` で再構築する。
+ * 
+ * 依存: requestAdminInfoAPI, buildThemeInnerHTML
+ * 
+ * @async
+ * @returns {Promise<void>} - 処理完了時に解決。
+ */
 async function buildThemeElements() {
     const tDraftListTemp = await requestAdminInfoAPI();
     tDraftList = tDraftListTemp;
     console.log(tDraftList);
     
-    getThemeInnerHTML();
+    buildThemeInnerHTML();
 }
 
+/**
+ * リサイズの更新間隔を管理するタイマー
+ */
 let resizeTimer = null;
+
+/**
+ * ウィンドウのリサイズ終了を検知し、テキストエリアの高さ再計算を行う。
+ * 
+ * 300ms のデバウンスで `autoResizeTextareas()` を呼び出す。
+ * 初期化の競合を避けるため、1秒後にイベントバインドを開始する。
+ * 
+ * 依存: autoResizeTextareas
+ * 
+ * @returns {void}
+ */
 function bindWindowResize() {
     setTimeout(() => {
         window.addEventListener('resize', () => {
@@ -295,6 +454,16 @@ function bindWindowResize() {
 // 認証関連
 // ==============================
 
+/**
+ * 認証ボタンとaccess_key入力の初期化を行う。
+ * 
+ * クリック時に `buildThemeElements()` を呼び出すほか、
+ * Cookie の `admin_access_key` があれば入力へ復元して自動実行する。
+ * 
+ * 依存: buildThemeElements, getCookie
+ * 
+ * @returns {void}
+ */
 function bindIdentifyButton() {
     // クリック
     const button = document.querySelector('#identify-submit-button');

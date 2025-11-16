@@ -2,16 +2,35 @@
 // Cookie操作関連
 // ==============================
 
+/**
+ * 指定名のCookie値を取得する。
+ * @param {string} name - 取得したいCookieのキー名。
+ * @returns {string|null} - 見つかった場合はデコード済みの値、存在しない場合はnull。
+ */
 function getCookie(name) {
     const m = document.cookie.match(new RegExp('(?:^|; )' + encodeURIComponent(name) + '=([^;]*)'));
     return m ? decodeURIComponent(m[1]) : null;
 }
+
+/**
+ * 指定名でCookieを保存（更新）する。SameSite=Lax、path=/ を付与する。
+ * @param {string} name - 保存するCookieのキー名。
+ * @param {string} value - 保存するCookieの値（自動でURLエンコードされる）。
+ * @param {number} [days=365] - 有効期限（日数）。現在時刻からの相対日数で設定。
+ * @returns {void}
+ */
 function setCookie(name, value, days = 365) {
     const d = new Date();
     d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
     // HTTPS運用なら Secure を付与してください
     document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}; expires=${d.toUTCString()}; path=/; SameSite=Lax`;
 }
+
+/**
+ * 指定名のCookieを削除する。過去日時のexpiresを設定して無効化する。
+ * @param {string} name - 削除するCookieのキー名。
+ * @returns {void}
+ */
 function deleteCookie(name) {
     document.cookie = `${encodeURIComponent(name)}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
 }
@@ -21,18 +40,33 @@ function deleteCookie(name) {
 // 汎用処理
 // ==============================
 
-// 数値に正規化（"13" -> 13, null/undefined/NaN -> 0）
-const toInt = (v) => {
+/**
+ * 値を整数に正規化する。"13" 等の数値文字列は数値化し、無効値は 0 にフォールバックする。
+ * @param {unknown} v - 変換対象の値。
+ * @returns {number} - 有効な整数値。NaN/undefined/nullは0。
+ */
+function toInt(v) {
     const n = typeof v === "number" ? v : parseInt(v, 10);
     return Number.isFinite(n) ? n : 0;
 };
 
-const toNum = (v) => {
+/**
+ * 値を数値型に正規化する。小数も許容し、無効値は 0 にフォールバックする。
+ * @param {unknown} v - 変換対象の値。
+ * @returns {number} - 有効な数値。NaN/undefined/nullは0。
+ */
+function toNum(v) {
     const n = typeof v === "number" ? v : Number(v);
     return Number.isFinite(n) ? n : 0;
 };
 
-const getRandomInt = (min, max) => {
+/**
+ * 指定範囲の整数乱数を返す。両端を含む閉区間 [min, max] を生成する。
+ * @param {number} min - 生成範囲の下限（小数は切り上げ）。
+ * @param {number} max - 生成範囲の上限（小数は切り捨て）。
+ * @returns {number} - min以上max以下の整数。
+ */
+function getRandomInt(min, max) {
     // min, max を整数に丸める
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -42,8 +76,13 @@ const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-// theme-color を動的に変更する関数
-const setThemeColor = (colorHEX, delayTime) => {
+/**
+ * <meta name="theme-color"> のcontentを動的に更新する。タグが無ければ生成する。
+ * @param {string} colorHEX - 設定する色（例: "#ffffff"）。
+ * @param {number} delayTime - 設定を行うまでの遅延ミリ秒。
+ * @returns {void}
+ */
+function setThemeColor(colorHEX, delayTime) {
     let metaTag = document.querySelector("meta[name='theme-color']");
 
     setTimeout(() => {
@@ -59,7 +98,13 @@ const setThemeColor = (colorHEX, delayTime) => {
     }, delayTime);
 };
 
-const formatIsoToJapaneseDate = (isoString) => {
+/**
+ * ISO8601文字列を "YYYY年M月D日" の日本語表記に変換する。
+ * 無効または空文字の場合は空文字を返す。
+ * @param {string} isoString - ISO8601形式の日時文字列。
+ * @returns {string} - 日本語日付表記。無効時は ''。
+ */
+function formatIsoToJapaneseDate(isoString) {
     if (!isoString) return '';
 
     const date = new Date(isoString);
@@ -73,13 +118,15 @@ const formatIsoToJapaneseDate = (isoString) => {
 };
 
 /**
- * 指定URLへフォームPOST通信し、JSONを取得する非同期メソッド
- * @param {string} url - 通信先URL
- * @param {Object|FormData} data - POSTするデータ（オブジェクトまたはFormData）
- * @param {Object} [options={}] - オプション（例: ヘッダー追加など）
- * @returns {Promise<Object>} - JSONオブジェクトを返すPromise
+ * 指定URLへForm POSTし、JSONレスポンスを取得する。
+ * dataがオブジェクトの場合はFormDataへ自動変換する。
+ * @param {string} url - 送信先URL。
+ * @param {Object|FormData} data - POSTするデータ。オブジェクトまたはFormData。
+ * @param {RequestInit} [options={}] - fetchオプション（headers等を上書き可能）。
+ * @returns {Promise<Object>} - パース済みJSONオブジェクト。
+ * @throws {Error} - HTTPエラーやJSONパース失敗時。
  */
-const fetchJsonPost = async (url, data, options = {}) => {
+async function fetchJsonPost(url, data, options = {}) {
     let body;
 
     // dataがFormDataでなければ、自動変換
@@ -118,8 +165,12 @@ const fetchJsonPost = async (url, data, options = {}) => {
     }
 };
 
-// 可変 textarea 初期化関数
-const autoResizeTextareas = () => {
+/**
+ * class="auto-resize" を持つtextareaの高さを内容に合わせて自動調整する。
+ * 初期化時と入力イベントで高さを更新する。
+ * @returns {void}
+ */
+function autoResizeTextareas() {
     const textareas = document.querySelectorAll('textarea.auto-resize');
     textareas.forEach(textarea => {
         const resize = () => {
@@ -140,7 +191,11 @@ const autoResizeTextareas = () => {
 // 時刻関連
 // ==============================
 
-// 時刻取得 (AM4:00更新)
+/**
+ * 「論理日付ID」を返す。日付区切りをAM4:00とし、"YYYYMMDD" 文字列で返却。
+ * @param {Date} [date=new Date()] - 基準とする日時。省略時は現在時刻。
+ * @returns {string} - 4時区切りでの "YYYYMMDD"。
+ */
 function getLogicalDayId(date = new Date()) {
     const shifted = new Date(date.getTime() - 4 * 60 * 60 * 1000); // 0:00-3:59 を前日扱い
     const y = shifted.getFullYear();
@@ -154,7 +209,21 @@ function getLogicalDayId(date = new Date()) {
 // CSV読み込み関連
 // ==============================
 
-const loadCsvAsJsonAsync = (url, options) => {loadCsvAsJson(url, options)}
+/**
+ * (非同期)CSVを取得・デコードし、ヘッダー行をキーとしたオブジェクト配列へ変換する。
+ * @param {string} url - CSVの取得先URL。
+ * @param {{encoding?: string, delimiter?: ('auto'|string)}} [options] - 文字コード/区切りの指定。
+ * @returns {Promise<Array<Object>>} - レコードの配列。各要素は{header:value}のオブジェクト。
+ * @throws {Error} - HTTPステータス異常時。
+ */
+function loadCsvAsJsonAsync(url, options) {loadCsvAsJson(url, options)}
+/**
+ * CSVを取得・デコードし、ヘッダー行をキーとしたオブジェクト配列へ変換する。
+ * @param {string} url - CSVの取得先URL。
+ * @param {{encoding?: string, delimiter?: ('auto'|string)}} [options] - 文字コード/区切りの指定。
+ * @returns {Promise<Array<Object>>} - レコードの配列。各要素は{header:value}のオブジェクト。
+ * @throws {Error} - HTTPステータス異常時。
+ */
 async function loadCsvAsJson(url, { encoding = 'utf-8', delimiter = 'auto' } = {}) {
     const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -169,6 +238,12 @@ async function loadCsvAsJson(url, { encoding = 'utf-8', delimiter = 'auto' } = {
     });
 }
 
+/**
+ * CSVテキストをパースして行配列とヘッダーを返す。クォートや改行を考慮する。
+ * @param {string} text - CSVテキスト。
+ * @param {('auto'|string)} [delimiter='auto'] - 区切り文字。auto時は1行目から推定。
+ * @returns {{rows: string[][], headers: string[], delimiter: string}} - 本文行、ヘッダー、使用区切り。
+ */
 function parseCSV(text, delimiter = 'auto') {
     // 改行を正規化
     text = text.replace(/\r\n?/g, '\n');
@@ -236,7 +311,12 @@ function parseCSV(text, delimiter = 'auto') {
     return { rows: normalized, headers, delimiter };
 }
 
-// 行内の簡易スプリット（自動判定用：クォートをそこまで厳密に扱う必要はない）
+/**
+ * 1行を簡易に分割する補助関数。
+ * @param {string} line - 分割対象の1行テキスト。
+ * @param {string} d - 区切り文字。
+ * @returns {string[]} - 分割後のフィールド配列。
+ */
 function splitLine(line, d) {
     let arr = [], cur = '', inQ = false;
     for (let i = 0; i < line.length; i++) {
@@ -259,8 +339,12 @@ function splitLine(line, d) {
 // クリップボード関連
 // ==============================
 
-// ユーティリティ：writeText が使えない場合のフォールバック
-const legacyCopy = (text) => {
+/**
+ * Clipboard API非対応時のフォールバックとして、textareaを用いて文字列をコピーする。
+ * @param {string} text - コピーする文字列。
+ * @returns {boolean} - コピー試行の成否。
+ */
+function legacyCopy(text) {
     const ta = document.createElement('textarea');
 
     ta.value = text;
@@ -281,7 +365,12 @@ const legacyCopy = (text) => {
     return ok;
 };
 
-const copyText = async (text) => {
+/**
+ * 文字列をクリップボードへコピーする。可能ならClipboard APIを使用し、失敗時はフォールバックする。
+ * @param {string} text - コピーする文字列。
+ * @returns {Promise<boolean>} - コピーの成否。例外はフォールバック内で吸収。
+ */
+async function copyText(text) {
     // セキュアコンテキスト(https)で且つAPIがあれば使う
     if (navigator.clipboard && navigator.clipboard.writeText) {
         try {
@@ -322,6 +411,40 @@ function initializeTutorial() {
 }
 */
 
+
+/**
+ * チュートリアルを管理するクラス
+ * HTMLに所定のDOMを配置した上で、インスタンス化して使用する
+ * 
+ * 使用箇所では下記のようにクラスごと初期化しておく
+ * let tutorialManager = null;
+ * 
+ * // チュートリアルを初期化
+ * function initializeTutorial() {
+ *     tutorialManager = new TutorialManager({
+ *         rootSel: "#tutorial",
+ *         windowSel: ".tutorial-window",
+ *         helpBtnSel: ".help-button",
+ *         skipBtnSel: ".skip-button",
+ *         optoutCheckboxSel: "#hidden-checkbox",
+ *         keyLast: "tutorial_last_shown",
+ *         keyOptout: "tutorial_optout",
+ *     });
+ *     tutorialManager.init();
+ * }
+ * 
+ * @param {string} text - コピーする文字列。
+ * @param {string} rootSel - ルートDOMのセレクタ
+ * @param {string} windowSel - チュートリアルウィンドウのセレクタ
+ * @param {string} helpBtnSel - ヘルプ表示ボタンのセレクタ
+ * @param {string} skipBtnSel - スキップボタンのセレクタ
+ * @param {string} optoutCheckboxSel - 再表示制御のチェックボックスのセレクタ
+ * @param {string} keyLast - 最後に表示した時刻の保存用cookieのキー
+ * @param {string} keyOptout - 自動表示の制御cookie保存用キー
+ * @param {string} defaultThemeColor - 非表示時のテーマカラー(モバイル表示用)
+ * @param {string} tutorialThemeColor - 表示時のテーマカラー(モバイル表示用)
+ * @returns {TutorialManager} - インスタンス
+ */
 class TutorialManager {
     constructor(options = {}) {
 
@@ -349,6 +472,11 @@ class TutorialManager {
     }
 
     // ============ 公開メソッド ============
+    
+    /**
+     * TutorialManagerの初期化。DOM要素の取得、イベントバインド、自動表示判定などを行う。
+     * @returns {void}
+     */
     init = () => {
         // 必要な要素取得
         this.tutorial = document.querySelector(this.rootSel);
@@ -389,7 +517,11 @@ class TutorialManager {
     };
 
     // ============ 表示系 ============
-    // チュートリアルを頭から開始
+
+    /**
+     * チュートリアルを最初のウィンドウから開始し、オーバーレイを表示する。
+     * @returns {void}
+     */
     startTutorial = () => {
         if (!this.tutorialWindows?.length) return;
         // すべて非表示
@@ -402,7 +534,10 @@ class TutorialManager {
         setThemeColor(this.tutorialThemeColor, 0);
     };
 
-    // チュートリアルを閉じる
+    /**
+     * チュートリアルを閉じ、表示状態とtheme-colorを元に戻す。
+     * @returns {void}
+     */
     closeTutorial = () => {
         if (!this.tutorial) return;
         this.tutorialWindows?.forEach((win) => win.classList.remove("show"));
@@ -410,7 +545,12 @@ class TutorialManager {
         setThemeColor(this.defaultThemeColor, 0);
     };
 
-    // チュートリアルのページ送り
+
+    /**
+     * 現在のウィンドウを閉じ、次のインデックスのウィンドウを表示する。末尾ではチュートリアルを終了する。
+     * @param {number} index - 現在のウィンドウのインデックス。
+     * @returns {void}
+ */
     handleNext = (index) => {
         if (!this.tutorialWindows?.length) return;
         // 現在ウィンドウを閉じる
@@ -425,7 +565,10 @@ class TutorialManager {
         }
     };
 
-    // 自動表示の条件にあてはまれば、チュートリアルを表示
+    /**
+     * 自動表示条件に該当する場合、遅延後にチュートリアルを開始し、本日表示済みとして記録する。
+     * @returns {void}
+     */
     runAutoTutorial = () => {
         const autoRun = this.shouldAutoShowToday();
         if (autoRun) {
@@ -436,21 +579,37 @@ class TutorialManager {
         }
     };
 
-    // ============ 自動表示判定 ============
+    /**
+     * 本日表示すべきかを判定する。オプトアウト状態と最終表示日のCookieを参照する。
+     * @returns {boolean} - 自動表示すべきならtrue。
+     */
     shouldAutoShowToday = () => {
         return !this.getOptOut() && getCookie(this.KEY_LAST) !== getLogicalDayId();
     };
 
+    /**
+     * 本日表示済みとしてCookieに論理日付IDを保存する。
+     * @returns {void}
+     */
     markShownToday = () => {
         setCookie(this.KEY_LAST, getLogicalDayId());
     };
 
     // ============ オプトアウト ============
+    /**
+     * 自動表示をオプトアウト/解除する。オン時はCookieに"1"を記録、オフ時は削除。
+     * @param {boolean} [on=true] - オプトアウト有効ならtrue。
+     * @returns {void}
+     */
     setOptOut = (on = true) => {
         if (on) setCookie(this.KEY_OPTOUT, "1");
         else deleteCookie(this.KEY_OPTOUT);
     };
 
+    /**
+     * 自動表示のオプトアウト状態を取得する。
+     * @returns {boolean} - オプトアウト中ならtrue。
+     */
     getOptOut = () => {
         return getCookie(this.KEY_OPTOUT) === "1";
     };
@@ -476,6 +635,35 @@ function initializeModal() {
 }
 */
 
+/**
+ * モーダルの表示・非表示を制御するクラス。
+ * 
+ * 指定されたDOM構造を基に、スライドイン型モーダルの開閉処理を統括する。
+ * 
+ * 主な機能:
+ * - モーダルの初期化（要素取得・イベント設定）
+ * - トリガーボタンによるモーダル表示
+ * - 閉じるボタンおよび背景クリックによる閉鎖
+ * 
+ * 使用例:
+ * let modalManager = null;
+ * function initializeModal() {
+ *     // モーダルを初期化
+ *     modalManager = new ModalManager({
+ *         rootSel: ".slide-modal",
+ *         windowSel: ".modal-window",
+ *         closeBtnSel: ".modal-close-button",
+ *     });
+ *     modalManager.init();
+ *     modalManager.bindShowButton(".modal-show-button")
+ * }
+ * 
+ * @param {Object} [options={}] - 設定オプション。
+ * @param {string} [rootSel] - モーダル全体を包むルート要素のセレクタ。
+ * @param {string} [windowSel] - モーダル本体ウィンドウのセレクタ。
+ * @param {string} [closeBtnSel] - 閉じるボタンのセレクタ。
+ * @returns {ModalManager} インスタンス
+ */
 class ModalManager {
     constructor(options = {}) {
         // DOMセレクタ
@@ -485,6 +673,12 @@ class ModalManager {
     }
 
     // ============ 公開メソッド ============
+    /**
+     * ModalManagerクラスの初期化処理。
+     * DOM要素を取得し、閉じるボタンおよび背景クリックによるモーダル閉鎖イベントを設定する。
+     * 対象要素が存在しない場合は何も行わない。
+     * @returns {void}
+     */
     init = () => {
         // 必要な要素取得
         this.modalRoot = document.querySelector(this.rootSel);
@@ -503,7 +697,12 @@ class ModalManager {
     };
 
     // ============ 表示系 ============
-    // 表示ボタンに処理を割り当て
+    /**
+     * 指定したボタンにモーダル表示イベントをバインドする。
+     * ボタンをクリックするとモーダルを開く。
+     * @param {string} showButtonSel - モーダル表示トリガーとなるボタンのセレクタ。
+     * @returns {void}
+     */
     bindShowButton = (showButtonSel) => {
         // 必要な要素取得
         const showButton = document.querySelector(showButtonSel);
@@ -512,14 +711,22 @@ class ModalManager {
         showButton.addEventListener("click", this.showModal);
     };
 
-    // モーダルを表示
+    /**
+     * モーダルを表示状態にする。
+     * ルート要素に "show" クラスを付与して画面上に表示する。
+     * @returns {void}
+     */
     showModal = () => {
         if (!this.modalRoot) return;
         // 全体表示
         this.modalRoot.classList.add("show");
     };
 
-    // モーダルを閉じる
+    /**
+     * モーダルを非表示にする。
+     * ルート要素から "show" クラスを削除して画面から隠す。
+     * @returns {void}
+     */
     closeModal = () => {
         if (!this.modalRoot) return;
         this.modalRoot.classList.remove("show");

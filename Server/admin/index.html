@@ -15,6 +15,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
+    <link rel="icon" href="./favicon.ico">
+
     <!-- Fonts: Inter + Noto Sans JP -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,7 +51,8 @@
                 HTMLをテーマに変換
             </div>
             <div class="convert-content">
-                <input id="convert-html-textarea" type="text" name="convert-html" class="hidden-input width-full height-fit" rows="2" cols="15`"/></textarea>
+                <input id="convert-theme-textarea" type="text" name="convert-html" placeholder="テーマ" class="hidden-input width-full height-fit" rows="2" cols="15`"/></textarea>
+                <input id="convert-html-textarea" type="text" name="convert-html" placeholder="HTMLを貼り付け" class="hidden-input width-full height-fit" rows="2" cols="15`"/></textarea>
                 <div class="conevert-button-row">
                     <button id="convert-submit-button" class="convert-submit-button button secondary">生成</button>
                     <button id="create-submit-button" class="create-submit-button button secondary">更新</button>
