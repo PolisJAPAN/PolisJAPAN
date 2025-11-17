@@ -340,9 +340,9 @@ function buildTopicInnerHTML(displayDataList, label) {
                     <div class="caption">回答の割合</div>
                     <div class="graph-container">
                         <div class="data-text-group">
-                            <div class="data-text positive"><span class="percent">賛成</span>${(data.totalAgreeRate) * 100}<span class="percent">%</span></div>
-                            <div class="data-text negative"><span class="percent">反対</span>${(data.totalDisagreeRate) * 100}<span class="percent">%</span></div>
-                            <div class="data-text neutral"><span class="percent">わからない/どちらでもない</span>${(data.totalPassRate) * 100}<span class="percent">%</span></div>
+                            <div class="data-text positive"><span class="percent">賛成</span>${Math.round((data.totalAgreeRate) * 100)}<span class="percent">%</span></div>
+                            <div class="data-text negative"><span class="percent">反対</span>${Math.round((data.totalDisagreeRate) * 100)}<span class="percent">%</span></div>
+                            <div class="data-text neutral"><span class="percent">わからない/どちらでもない</span>${Math.round((data.totalPassRate) * 100)}<span class="percent">%</span></div>
                         </div>
                         <div class="graph-item">
                             <div class="graph-bar positive" style="width:${(data.totalAgreeRate) * 100}%"></div>
@@ -412,9 +412,9 @@ function getGroupCommentsInnerHTML(displayDataList, label, groupName) {
                     <div class="caption"></i>回答の割合</div>
                     <div class="graph-container">
                         <div class="data-text-group">
-                            <div class="data-text positive"><span class="percent">賛成</span>${(data.totalAgreeRate) * 100}<span class="percent">%</span></div>
-                            <div class="data-text negative"><span class="percent">反対</span>${(data.totalDisagreeRate) * 100}<span class="percent">%</span></div>
-                            <div class="data-text neutral"><span class="percent">わからない/どちらでもない</span>${(data.totalPassRate) * 100}<span class="percent">%</span></div>
+                            <div class="data-text positive"><span class="percent">賛成</span>${Math.round((data.totalAgreeRate) * 100)}<span class="percent">%</span></div>
+                            <div class="data-text negative"><span class="percent">反対</span>${Math.round((data.totalDisagreeRate) * 100)}<span class="percent">%</span></div>
+                            <div class="data-text neutral"><span class="percent">わからない/どちらでもない</span>${Math.round((data.totalPassRate) * 100)}<span class="percent">%</span></div>
                         </div>
                         <div class="graph-item">
                             <div class="graph-bar positive" style="width:${(targetData.agreeRate) * 100}%"></div>
