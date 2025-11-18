@@ -1,3 +1,4 @@
+import os
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -11,7 +12,12 @@ from api.core.middleware.timeout_middleware import TimeoutMiddleware
 REQUEST_TIMEOUT = 300
 
 # FastAPIアプリの構築
-app = FastAPI()
+APP_ENV = os.getenv("APP_ENV", "production")
+if APP_ENV == "production":
+    app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+else:
+    app = FastAPI()
+
 app.add_middleware(TimeoutMiddleware, timeout=REQUEST_TIMEOUT)
 
 # 必要なルーターのみinclude、API処理本体はルーター内に記載

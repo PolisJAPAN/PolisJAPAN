@@ -40,11 +40,6 @@ services:
     container_name: ${PROJECT_NAME}_cache
     ports:
       - "11211:11211"
-  
-  cron:
-    build: ./cron
-    container_name: ${PROJECT_NAME}_cron
-    restart: unless-stopped
 
 volumes:
   PolisJAPAN_db_data:

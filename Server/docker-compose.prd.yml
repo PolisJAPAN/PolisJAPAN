@@ -22,6 +22,11 @@ services:
     volumes:
       - ./certs:/etc/letsencrypt
       - ./webroot:/var/www/certbot
+  
+  cron:
+    build: ./cron
+    container_name: ${PROJECT_NAME}_cron
+    restart: unless-stopped
 
 # ここは named volume を使う場合のみ必要（bind マウントだけなら省略可）
 volumes:

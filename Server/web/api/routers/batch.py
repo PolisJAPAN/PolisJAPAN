@@ -71,7 +71,7 @@ async def update(request: Request, request_body:batch_schemas.BatchUpdateRequest
             total_votes += int(comment["total-votes"])
             total_comments = total_comments + 1
         
-        Logger.debug(f"before {theme['votes']} -> after {total_votes}  (Refresh -> {int(theme['votes']) != int(total_votes)})")
+        Logger.debug(f"{theme['title']} before {theme['votes']} -> after {total_votes}  (Refresh -> {int(theme['votes']) != int(total_votes)})")
         
         # 現在S3に保存済みの集計CSVと比較
         if (int(theme['votes']) != int(total_votes)):
@@ -114,64 +114,6 @@ async def update(request: Request, request_body:batch_schemas.BatchUpdateRequest
     # なし
 
     return batch_schemas.BatchUpdateResponse(
-        is_success=True
-    )
-
-@router.post("/create", description="テーマ作成API", responses=error_response(batch_schemas.BatchCreateErrorResponses.errors()), response_model=batch_schemas.BatchCreateResponse)
-async def create(request: Request, request_body:batch_schemas.BatchCreateRequest = Depends(batch_schemas.BatchCreateRequest.parse)):
-    """
-    テーマ作成API
-        Polis経由でテーマを作成し、記録するAPI
-    
-    エンドポイント : (base_url)/batch/create
-    
-    Args:
-        access_key(str) : アクセスキー
-        theme_name(str) : テーマ名
-        theme_description(str) : テーマ説明
-        comments(str) : 初期コメント(区切り文字 #####)
-        category(str) : カテゴリー
-
-    Returns:
-        is_success(bool) : 処理が成功したか
-
-    """
-    
-    # 1.サービスの取得
-    service : BatchService = request.state.service
-
-    # なし
-
-    # 2.DB更新前の事前処理
-    # アクセスキーがサーバーに設置された値と一致しなければエラー
-    if request_body.access_key != configs.constants.BATCH_ACCESS_KEY:
-        raise batch_schemas.BatchCreateErrorResponses.InvalidAccessKeyError
-    
-    comments = request_body.comments.split(configs.constants.SPLITTER)
-    
-    # テーマ一覧を取得
-    themes_str, theme_list = await service.get_theme_csv()
-    
-    # テーマを作成
-    report_csv_str, theme_info = await service.create_theme(theme_list, request_body.theme_name, request_body.theme_description, comments, request_body.category)
-    
-    # テーマ一覧に追加
-    theme_list.append(theme_info)
-    
-    # テーマ一覧CSVをS3にアップ
-    fixed_theme_csv_text = utils.CSV.to_csv(theme_list, THEME_HEADERS)
-    await service.s3.upload_bytes(f"csv/themes.csv", fixed_theme_csv_text.encode("utf-8"), content_type="text/csv")
-    
-    # レポートから取得したファイルをS3にアップ
-    await service.s3.upload_bytes(f"csv/report/report_{theme_info['conversation_id']}.csv", report_csv_str.encode("utf-8"), content_type="text/csv")
-
-    # 3.DB更新処理実行
-    # なし
-
-    # 4.レスポンスの作成と返却
-    # なし
-
-    return batch_schemas.BatchCreateResponse(
         is_success=True
     )
 
@@ -250,75 +192,6 @@ async def create_all(request: Request, request_body:batch_schemas.BatchCreateAll
     return batch_schemas.BatchCreateAllResponse(
         is_success=True
     )
-    
-@router.post("/generate", description="テーマ内容生成API", responses=error_response(batch_schemas.BatchGenerateErrorResponses.errors()), response_model=batch_schemas.BatchGenerateResponse)
-async def generate(request: Request, request_body:batch_schemas.BatchGenerateRequest = Depends(batch_schemas.BatchGenerateRequest.parse)):
-    """
-    テーマ内容生成API
-        特定話題からテーマ内容を生成するAPI
-    
-    エンドポイント : (base_url)/batch/generate
-    
-    Args:
-        access_key(str) : アクセスキー
-        url(str) : 参照URL
-        html(str) : 参照HTML
-        theme(str) : テーマ(ユーザー設定)
-
-    Returns:
-        is_success(bool) : 処理が成功したか
-
-    """
-    # 1.サービスの取得
-    service : BatchService = request.state.service
-    
-    # なし
-
-    # 2.DB更新前の事前処理
-    # アクセスキーがサーバーに設置された値と一致しなければエラー
-    if request_body.access_key != configs.constants.BATCH_ACCESS_KEY:
-        raise batch_schemas.BatchGenerateErrorResponses.InvalidAccessKeyError
-    
-    page_title : str = ""
-    main_tweet : dict = {}
-    reaction_tweet_list : list[dict] = []
-    background_detail : str = ""
-    
-    # urlから話題情報と反応を取得
-    if request_body.url:
-        page_title, main_tweet, reaction_tweet_list, background_detail = await service.get_info_from_toggetter(request_body.url)
-    elif request_body.html:
-        page_title, main_tweet, reaction_tweet_list, background_detail = await service.get_info_from_twitter(request_body.html)
-    
-    # テーマを生成
-    theme_result = await service.generate_theme(request_body.theme, page_title, main_tweet, reaction_tweet_list, background_detail)
-    Logger.debug_focused(json.dumps(theme_result, indent=4, ensure_ascii=False)) 
-
-    # 3.DB更新処理実行
-    try:
-        t_draft = await cruds.TDraft.insert(
-            db = service.db_session,
-            title = page_title,
-            origin_url = str(request_body.url),
-            origin_html = str(request_body.html),
-            theme_name = theme_result["theme"],
-            theme_description = theme_result["description"],
-            theme_comments = theme_result["comments_str"],
-            theme_category = theme_result["category"],
-        )
-        await service.db_session.commit()
-    except Exception as e:
-        await service.db_session.rollback()
-        raise e
-
-    # 4.レスポンスの作成と返却
-    # なし
-
-    return batch_schemas.BatchGenerateResponse(
-        is_success=True
-    )
-    
-
 
 @router.post("/delete", description="テーマ削除API", responses=error_response(batch_schemas.BatchDeleteErrorResponses.errors()), response_model=batch_schemas.BatchDeleteResponse)
 async def delete(request: Request, request_body:batch_schemas.BatchDeleteRequest = Depends(batch_schemas.BatchDeleteRequest.parse)):

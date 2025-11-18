@@ -82,6 +82,9 @@ class BatchService(CommonService):
         # Polis上でテーマを作成して必要情報を格納
         theme_info = self.create_theme_on_polis(theme_name, theme_description, comments, category)
         
+        Logger.debug("作成されたテーマ情報を表示")
+        Logger.debug(json.dumps(theme_info, indent=4, ensure_ascii=False))
+        
         # レポートからファイルを取得
         report_csv_str, comments = await self.get_report_csv(theme_info["report_id"])
         
