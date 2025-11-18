@@ -629,6 +629,37 @@ function bindClipBoardCopy() {
     shareButton.addEventListener('touchend', handler, { passive: false });
 }
 
+async function initializeLink() {
+    const conversationId = getConversationId();
+    const csvJson = await loadCsvAsJson("/csv/themes.csv")
+    const targetConversation = csvJson.find((conversation) => conversation.conversation_id === conversationId);
+    const reportDetailButton = document.querySelector('#detail-report-button');
+    reportDetailButton.setAttribute("href", `https://pol.is/report/${targetConversation.report_id}`);
+}
+
+/**
+ * リンク要素への処理を追加
+ * 
+ * @returns {void}
+ */
+function bindDetailLink() {
+    const targetElements = [document.querySelector(".back")];
+
+    targetElements.forEach((element) => {
+        element.addEventListener("click", (e) => {
+            e.stopPropagation();
+            
+            console.log(`${window.location.origin}${element.getAttribute("href")}`);
+
+            setGrobalLoading(true);
+
+            setTimeout(() => {
+                window.location = `${window.location.origin}${element.getAttribute("href")}`;
+            }, 500);
+        });
+    });
+}
+
 // ウィンドウ初期化時にイベントを割り当て
 document.addEventListener("DOMContentLoaded", () => {
     bindTabs();
@@ -637,5 +668,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializePolisIframe();
     bindClipBoardCopy();
     initializeArticles();
+    initializeLink();
+    bindDetailLink();
 });
 

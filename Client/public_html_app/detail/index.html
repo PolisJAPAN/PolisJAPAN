@@ -81,9 +81,9 @@
 
 <body id="detail">
     <div id="tab-group">
-        <a class="back" href="/">
+        <button class="back" href="/">
             <i class="bi bi bi-arrow-left"></i>
-        </a>
+        </button>
         <div class="tab-wrapper">
             <button class="tab active" data-tab="conversations">テーマ</button>
             <button class="tab" data-tab="reports">みんなの意見</button>
@@ -97,6 +97,16 @@
             <div class="polis-report">
                 <div class="report-container">
                     <div class="report-list-container"></div>
+                    <div class="detail-report-container">
+                        <div class="detail-report-text-group">
+                            <div class="title">詳細レポートはこちら</div>
+                            <div class="detail">すべての分析情報を閲覧する場合は詳細レポートをご確認ください。</div>
+                        </div>
+                        <a id="detail-report-button" class="button secondary" href="" target=”_blank”>
+                            <div class="text">確認する</div>
+                            <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    </div>
                     <div class="make-comments-group">
                         <img class="make-comment-img" src="/images/tutorial/make-comments.png" alt="">
                         <div class="make-comments-detail">みんなの意見には納得できましたか？<br>もっと同意できる意見を投稿してみましょう</div>
@@ -106,7 +116,7 @@
             </div>
         </div>
         <div id="app-loading" class="show">
-            <div class="loader"></div>
+            <div class="loader2"></div>
         </div>
     </div>
 
@@ -221,6 +231,10 @@
             <input type="checkbox" id="hidden-checkbox">
             <label for="hidden-checkbox">次回から表示しない</label>
         </div>
+    </div>
+
+    <div id="loading-overlay">
+        <div class="loader2"></div>
     </div>
 
     <script src="/javascript/common.js" defer></script>

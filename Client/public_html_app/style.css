@@ -2494,6 +2494,20 @@ _components.scss
   }
 }
 
+.loader2 {
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(0, 0, 0, 0.1); /* Or use a CSS var for this color */
+  border-radius: 50%;
+  border-top-color: var(--color-dark);
+  animation: spin 1s ease-in-out infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 #tutorial {
   position: fixed;
   background-image: radial-gradient(circle at 50% -70%, #ffffff 70%, #dbf7ff);
@@ -2849,6 +2863,28 @@ textarea.skeleton-loading::placeholder {
 #loading-block-overlay.show {
   pointer-events: all;
   display: block;
+}
+
+#loading-overlay {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100lvw;
+  height: 100lvh;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.5019607843);
+  z-index: var(--z-index-grobal-over-iframe);
+  transition: opacity 0.3s;
+  opacity: 0;
+  pointer-events: none;
+}
+#loading-overlay.show {
+  opacity: 1;
 }
 
 #header {
@@ -5662,6 +5698,47 @@ body#detail .polis-report .report-container {
   --color-graph-neutral: #cdcdcd;
   --color-graph-nothing: #f2f2f2;
 }
+body#detail .polis-report .report-container .detail-report-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 32px;
+  width: 100%;
+  margin-bottom: 32px;
+  background-color: var(--color-light);
+  border-radius: 8px;
+  filter: drop-shadow(0px 4px 16px rgba(9, 8, 39, 0.15));
+}
+body#detail .polis-report .report-container .detail-report-container .detail-report-text-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: auto;
+  width: fit-content;
+}
+body#detail .polis-report .report-container .detail-report-container .detail-report-text-group .title {
+  font-weight: 900;
+  font-size: var(--font-size-medium);
+  letter-spacing: var(--letter-spacing-2px);
+}
+body#detail .polis-report .report-container .detail-report-container .detail-report-text-group .detail {
+  font-weight: 400;
+  font-size: var(--font-size-small);
+  letter-spacing: var(--letter-spacing-2px);
+}
+body#detail .polis-report .report-container .detail-report-container .button {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
+  min-width: fit-content;
+}
 body#detail .polis-report .report-container .comment-wrapper {
   display: flex;
   flex-direction: column;
@@ -5681,7 +5758,7 @@ body#detail .polis-report .report-container .comment-wrapper .comment-list {
   display: flex;
   flex-direction: column;
   gap: 48px;
-  padding-bottom: 120px;
+  padding-bottom: 64px;
 }
 body#detail .polis-report .report-container .comments-item {
   display: flex;

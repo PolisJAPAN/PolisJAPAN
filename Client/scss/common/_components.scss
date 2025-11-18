@@ -271,6 +271,18 @@ _components.scss
 }
 .loader { @include loader; }
 
+@mixin loader2 {
+    width: 60px;
+    height: 60px;
+    border: 6px solid rgba(0, 0, 0, 0.1); /* Or use a CSS var for this color */
+    border-radius: 50%;
+    border-top-color: var(--color-dark);
+    animation: spin 1s ease-in-out infinite;
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+}
+.loader2 { @include loader2; }
+
 @mixin tutorial {
     @include layout.fixed;
     
@@ -710,6 +722,30 @@ textarea {
     &.show {
         pointer-events: all;
         display: block;
+    }
+}
+
+#loading-overlay {
+    @include layout.fixed;
+    @include layout.row;
+    @include layout.center;
+    @include layout.align-center;
+
+    width: 100lvw;
+    height: 100lvh;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #FFFFFF80;
+    z-index: var(--z-index-grobal-over-iframe);
+
+    transition: opacity 0.3s;
+    opacity: 0;
+    pointer-events: none;
+    
+    &.show {
+        opacity: 1;
     }
 }
 

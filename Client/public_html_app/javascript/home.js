@@ -120,7 +120,7 @@ function buildTopicInnerHTML(csvData) {
 
         // ここで `${...}` による差し込みがすべて見えます
         return `
-        <a class="article-item" href="/detail/?conversation_id=${conversationId}" data-category=${esc(categoryId)} data-id=${uniqueId} data-population=${votes}>
+        <button class="article-item" href="/detail/?conversation_id=${conversationId}" data-category=${esc(categoryId)} data-id=${uniqueId} data-population=${votes}>
             <img class="corner-bg" src="/images/common/corner-spaced.png" alt="">
             <div class="category-label">#${esc(categoryLabel)}</div>
             <div class="article-window cat-${esc(categoryId)}">
@@ -138,7 +138,7 @@ function buildTopicInnerHTML(csvData) {
                     </div>
                 </div>
             </div>
-        </a>
+        </button>
     `;
     }).join('');
 
@@ -479,6 +479,26 @@ async function initializeArticles() {
     setupSearchUI();
 }
 
+/**
+ * リンク要素への処理を追加
+ * 
+ * @returns {void}
+ */
+function bindArticleLink() {
+    const targetElements = document.querySelectorAll(".article-item");
+
+    targetElements.forEach((element) => {
+        element.addEventListener("click", (e) => {
+            e.stopPropagation();
+            
+            setGrobalLoading(true);
+            
+            setTimeout(() => {
+                window.location = `${window.location.origin}${element.getAttribute("href")}`;
+            }, 500);
+        });
+    });
+}
 
 // ウィンドウ初期化時にイベントを割り当て
 document.addEventListener("DOMContentLoaded", () => {
@@ -492,6 +512,7 @@ document.addEventListener("DOMContentLoaded", () => {
             sortArticles(currentSort);
             updateArticleVisible(currentCategory, currentWords);
             BindHorizontalScroll();
+            bindArticleLink();
         }, 500
     )
 });

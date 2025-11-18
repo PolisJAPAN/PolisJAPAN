@@ -973,3 +973,14 @@ function BindHorizontalScroll() {
         }, { passive: false }); // preventDefault のために passive を false
     });
 }
+
+function setGrobalLoading(isLoading){
+    const loadingOverlay = document.querySelector("#loading-overlay");
+
+    if (! loadingOverlay)
+    {
+        return;
+    }
+
+    loadingOverlay.classList.toggle("show", isLoading);
+}
