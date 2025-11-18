@@ -60,6 +60,7 @@ body#detail {
                 border-radius: 32px 32px 0 0 !important;
                 filter: drop-shadow(0px 8px 16px rgba(9, 8, 39, 0.1));
                 background-color: var(--color-light);
+                padding-bottom: 64px !important;
     
                 iframe {
                     border: none !important;
@@ -96,100 +97,117 @@ body#detail {
         }
     
     
-        .loader {
-            color: var(--color-dark);
-            font-size: 60px;
-            text-indent: -9999em;
-            overflow: hidden;
-            width: 1em;
-            height: 1em;
-            border-radius: 50%;
-            margin: 72px auto;
-            position: relative;
-            -webkit-transform: translateZ(0);
-            -ms-transform: translateZ(0);
-            transform: translateZ(0);
-            -webkit-animation: load-animation 1.7s infinite ease, round 1.7s infinite ease;
-            animation: load-animation 1.7s infinite ease, round 1.7s infinite ease;
-        }
+    }
+
+    #copy-complete-modal {
+        .modal-window {
+            .modal-content {
+                .modal-title-group {
+                    @include common.stack;
+                    @include common.center;
+                    @include common.align-center;
+                    @include common.spacing-8px;
+                }
+                .modal-text {
+                    @include common.font-size-small;
+                }
+
+                .share-input-group {
+                    @include common.relative;
+                    @include common.width-full;
+                    @include common.height-fit;
+                    @include common.stack;
+                    @include common.center;
+                    @include common.align-center;
+                    @include common.spacing-8px;
+
+                    .share-input-wrapper{
+                        @include common.relative;
+                        @include common.width-full;
+                        @include common.height-fit;
+                        border-radius: 8px;
+                        overflow: hidden;
+
+                        .share-input {
+                            @include common.width-full;
+                            @include common.height-fit;
+                            // @include common.padding-8px;
+                            @include common.line-spacing-medium;
+                            @include common.font-size-sub-small;
+                            padding-left: 16px;
+                            padding-right: 8px;
+                            padding-top: 12px;
+                            padding-bottom: 12px;
+                            line-height: 1.6;
+                            background-color: var(--color-bg-gray);
+                        }
     
-        @-webkit-keyframes load-animation {
-            0% {
-                box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em, 0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
-            }
+                        .copy-button {
+                            @include common.absolute;
+                            @include common.padding-x-16px;
+                            @include common.padding-y-0px;
+                            @include common.row;
+                            @include common.row-right;
+                            @include common.align-center;
+                            right: 0;
+                            top: 0;
+                            bottom: 1px;
     
-            5%,
-            95% {
-                box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em, 0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
-            }
+                            color: var(--color-dark);
     
-            10%,
-            59% {
-                box-shadow: 0 -0.83em 0 -0.4em, -0.087em -0.825em 0 -0.42em, -0.173em -0.812em 0 -0.44em, -0.256em -0.789em 0 -0.46em, -0.297em -0.775em 0 -0.477em;
-            }
+                            border-radius: 0;
+                            background: linear-gradient(90deg, transparent, var(--color-bg-gray) 50%, var(--color-bg-gray) 100%);
+                            border: none;
     
-            20% {
-                box-shadow: 0 -0.83em 0 -0.4em, -0.338em -0.758em 0 -0.42em, -0.555em -0.617em 0 -0.44em, -0.671em -0.488em 0 -0.46em, -0.749em -0.34em 0 -0.477em;
-            }
+                            height: 100%;
+                            width: 96px;
     
-            38% {
-                box-shadow: 0 -0.83em 0 -0.4em, -0.377em -0.74em 0 -0.42em, -0.645em -0.522em 0 -0.44em, -0.775em -0.297em 0 -0.46em, -0.82em -0.09em 0 -0.477em;
-            }
+                            i {
+                                @include common.padding-bottom-2px;
+                                font-size: var(--font-size-22px);
+                            }
+                        }
+                        .copy-complete-tip {
+                            @include common.absolute;
+                            @include common.padding-x-24px;
+                            @include common.padding-y-0px;
+                            @include common.row;
+                            @include common.center;
+                            @include common.align-center;
+                            @include common.width-fit;
+                            right: 32px;
+                            top: 0;
+                            bottom: 0;
+                            left: 0;
+                            margin: auto;
     
-            100% {
-                box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em, 0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
-            }
-        }
+                            color: var(--color-light);
     
-        @keyframes load-animation {
-            0% {
-                box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em, 0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
-            }
+                            border-radius: 36px;
+                            background-color: var(--color-main);
+                            border: none;
     
-            5%,
-            95% {
-                box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em, 0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
-            }
+                            height: 25px;
     
-            10%,
-            59% {
-                box-shadow: 0 -0.83em 0 -0.4em, -0.087em -0.825em 0 -0.42em, -0.173em -0.812em 0 -0.44em, -0.256em -0.789em 0 -0.46em, -0.297em -0.775em 0 -0.477em;
-            }
-    
-            20% {
-                box-shadow: 0 -0.83em 0 -0.4em, -0.338em -0.758em 0 -0.42em, -0.555em -0.617em 0 -0.44em, -0.671em -0.488em 0 -0.46em, -0.749em -0.34em 0 -0.477em;
-            }
-    
-            38% {
-                box-shadow: 0 -0.83em 0 -0.4em, -0.377em -0.74em 0 -0.42em, -0.645em -0.522em 0 -0.44em, -0.775em -0.297em 0 -0.46em, -0.82em -0.09em 0 -0.477em;
-            }
-    
-            100% {
-                box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em, 0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
-            }
-        }
-    
-        @-webkit-keyframes round {
-            0% {
-                -webkit-transform: rotate(0deg);
-                transform: rotate(0deg);
-            }
-    
-            100% {
-                -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
-            }
-        }
-    
-        @keyframes round {
-            0% {
-                -webkit-transform: rotate(0deg);
-                transform: rotate(0deg);
-            }
-    
-            100% {
-                -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
+                            .text {
+                                @include common.font-size-sub-small;
+                            }
+
+                            i {
+                                font-size: var(--font-size-22px);
+                            }
+
+                            opacity: 0;
+                            transition: opacity 0.3s;
+                            will-change: opacity;
+
+                            &.show {
+                                opacity: 1;
+                            }
+                        }
+                    }
+
+                }
             }
         }
     }

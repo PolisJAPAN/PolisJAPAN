@@ -19,7 +19,7 @@ async function requestContactAPI() {
 
     try {
         const result = await fetchJsonPostAsJson(url, payload);
-        console.log('取得結果:', result);
+        // console.log('取得結果:', result);
 
         return result;
     } catch (err) {

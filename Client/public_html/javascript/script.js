@@ -158,8 +158,6 @@ function observeProblemsGroups() {
     const groups = document.querySelectorAll(".problems-posts-group");
     if (!groups.length) return;
 
-    console.log("実行開始");
-
     const observer = new IntersectionObserver(
         (entries) => {
             entries.forEach((entry) => {
@@ -227,9 +225,7 @@ function bindProblemsAnimation() {
         // 最後の要素のディレイ時間を記録
         totalDelay = (index * delay);
     });
-
-    console.log(totalDelay);
-
+    
     setTimeout(() => {
         document.querySelector(".problems-person-text").classList.add("show");
     }, totalDelay + 1000);

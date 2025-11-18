@@ -96,6 +96,17 @@
     }
     @media (max-width: 768px) {
         @include common.padding-16px;
+
+        .menu-container {
+            height: 60px;
+
+            .menu-left {
+                .logo {
+                    width: calc(223px * 0.75);
+                    height: calc(42px * 0.75);
+                }
+            }
+        }
     }
 
 }
@@ -408,7 +419,6 @@
 
     }
     @media (max-width: 768px) {
-        
     }
 }
 

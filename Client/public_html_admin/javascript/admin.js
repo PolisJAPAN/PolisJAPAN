@@ -27,7 +27,6 @@ async function requestAdminInfoAPI() {
 
     try {
         const result = await fetchJsonPost(url, payload);
-        console.log('取得結果:', result);
 
         // キーがあっていれば,Cookieに保存
         setCookie("admin_access_key", input.value, 30)
@@ -68,7 +67,6 @@ async function requestAdminApproveAPI(target_t_draft_id) {
 
     try {
         const result = await fetchJsonPost(url, payload);
-        console.log('取得結果:', result);
         
         mergeToTDraftList(result.t_draft);
         buildThemeInnerHTML();
@@ -127,7 +125,6 @@ async function requestAdminEditAPI(target_t_draft_id) {
 
     try {
         const result = await fetchJsonPost(url, payload);
-        console.log('取得結果:', result);
                 
         mergeToTDraftList(result.t_draft);
         buildThemeInnerHTML();
@@ -178,7 +175,6 @@ async function requestBatchGenerateAPI() {
 
     try {
         const result = await fetchJsonPost(url, payload);
-        console.log('取得結果:', result);
         
         // mergeToTDraftList(result.t_draft);
         // buildThemeInnerHTML();
@@ -214,7 +210,6 @@ async function requestBatchCreateAPI() {
 
     try {
         const result = await fetchJsonPost(url, payload);
-        console.log('取得結果:', result);
     } catch (err) {
         console.error('通信エラー:', err.message);
     }
@@ -244,8 +239,6 @@ async function requestBatchDeleteAPI(target_t_draft_id) {
 
     try {
         const result = await fetchJsonPost(url, payload);
-        console.log('取得結果:', result);
-        console.log(result["is_success"]);
 
         location.reload();
 
@@ -280,7 +273,6 @@ function buildThemeInnerHTML() {
     const container = document.querySelector('.theme-container');
     if (!container) throw new Error(`親要素が見つかりません: .theme-container`);
     container.innerHTML = '';
-    console.log(tDraftList)
 
     const sortedTDraftList = [...tDraftList].sort((a, b) => b.id - a.id);
 
@@ -356,20 +348,15 @@ function buildThemeInnerHTML() {
         const approve_button = theme_parent.querySelector(`.approve-button`);
 
         edit_button.addEventListener('click', (e) => {
-            console.log("fetch開始");
             
             e.preventDefault();
             requestAdminEditAPI(item.id);
         });
         delete_button.addEventListener('click', (e) => {
-            console.log("fetch開始");
-            
             e.preventDefault();
             requestBatchDeleteAPI(item.id);
         });
         approve_button.addEventListener('click', (e) => {
-            console.log("fetch開始");
-            
             e.preventDefault();
             requestAdminApproveAPI(item.id);
         });
@@ -413,7 +400,6 @@ function mergeToTDraftList(tDraft) {
 async function buildThemeElements() {
     const tDraftListTemp = await requestAdminInfoAPI();
     tDraftList = tDraftListTemp;
-    console.log(tDraftList);
     
     buildThemeInnerHTML();
 }
@@ -443,7 +429,6 @@ function bindWindowResize() {
     
             // リサイズ終了後 300ms 経過したら発火
             resizeTimer = setTimeout(() => {
-                console.log('リサイズ完了');
                 autoResizeTextareas(); //
             }, 300);
         });
@@ -468,8 +453,6 @@ function bindIdentifyButton() {
     // クリック
     const button = document.querySelector('#identify-submit-button');
     button.addEventListener('click', (e) => {
-        console.log("fetch開始");
-        
         e.preventDefault();
         buildThemeElements();
     });
@@ -486,8 +469,6 @@ function bindGenerateButton() {
     // クリック
     const button = document.querySelector('#convert-submit-button');
     button.addEventListener('click', (e) => {
-        console.log("fetch開始");
-        
         e.preventDefault();
         requestBatchGenerateAPI();
     });
@@ -496,8 +477,6 @@ function bindCreateButton() {
     // クリック
     const button = document.querySelector('#create-submit-button');
     button.addEventListener('click', (e) => {
-        console.log("fetch開始");
-        
         e.preventDefault();
         requestBatchCreateAPI();
     });

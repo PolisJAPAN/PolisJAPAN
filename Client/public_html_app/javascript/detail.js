@@ -387,8 +387,6 @@ function buildTopicInnerHTML(displayDataList, label) {
  * @returns {string} - 生成されたHTML文字列。
  */
 function getGroupCommentsInnerHTML(displayDataList, label, groupName) {
-    console.log(displayDataList);
-    
     const listHtml = displayDataList.map(data => {
         // 表示対象データを取得
         const targetData = data.groupData.find(g => g.groupName === groupName)
@@ -612,15 +610,37 @@ function bindClipBoardCopy() {
         
         const conversationId = getConversationId();
         const text = `https://share.pol-is.jp/ogp?conversation_id=${conversationId}`;
+        const share_text = `\
+テーマ : ${detailData.title}
+${text}
+#Polis #ブロードリスニング\
+        `;
 
-        const isSuccess = await copyText(text);
+        const simpleLinkInputGroup = document.querySelector('#simple-link-share-input-group');
+        const snsShareInputGroup = document.querySelector('#sns-message-share-input-group');
+        // 初期化
+        simpleLinkInputGroup.querySelector('.copy-complete-tip').classList.remove("show");
+        snsShareInputGroup.querySelector('.copy-complete-tip').classList.remove("show");
 
-        // 簡易フィードバック
-        shareButton.disabled = true;
-        setTimeout(() => {
-            shareButton.disabled = false;
-        }, 1200);
+        simpleLinkInputGroup.querySelector('.share-input').value = text;
+        snsShareInputGroup.querySelector('.share-input').value = share_text;
 
+        simpleLinkInputGroup.querySelector('.copy-button').addEventListener('click', () => {
+            copyText(text);
+            simpleLinkInputGroup.querySelector('.copy-complete-tip').classList.add("show");
+            setTimeout(() => {
+                simpleLinkInputGroup.querySelector('.copy-complete-tip').classList.remove("show");
+            }, 1500);
+        });
+        snsShareInputGroup.querySelector('.copy-button').addEventListener('click', () => {
+            copyText(share_text);
+            snsShareInputGroup.querySelector('.copy-complete-tip').classList.add("show");
+            setTimeout(() => {
+                snsShareInputGroup.querySelector('.copy-complete-tip').classList.remove("show");
+            }, 1500);
+        });
+
+        autoResizeTextareas(null, 0);
         modalManager.showModal();
     };
 
@@ -629,12 +649,15 @@ function bindClipBoardCopy() {
     shareButton.addEventListener('touchend', handler, { passive: false });
 }
 
+let detailData = null;
+
 async function initializeLink() {
     const conversationId = getConversationId();
     const csvJson = await loadCsvAsJson("/csv/themes.csv")
     const targetConversation = csvJson.find((conversation) => conversation.conversation_id === conversationId);
     const reportDetailButton = document.querySelector('#detail-report-button');
     reportDetailButton.setAttribute("href", `https://pol.is/report/${targetConversation.report_id}`);
+    detailData = targetConversation;
 }
 
 /**
@@ -649,8 +672,6 @@ function bindDetailLink() {
         element.addEventListener("click", (e) => {
             e.stopPropagation();
             
-            console.log(`${window.location.origin}${element.getAttribute("href")}`);
-
             setGrobalLoading(true);
 
             setTimeout(() => {

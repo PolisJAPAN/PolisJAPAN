@@ -133,9 +133,32 @@
     <div id="copy-complete-modal" class="slide-modal simple-annouce-modal">
         <div class="modal-window">
             <div class="modal-content">
-                <i class="modal-content-icon bi bi-check-circle"></i>
-                <div class="modal-title">コピー完了</div>
-                <div class="modal-text">クリップボードにURLをコピーしました。<br>ペーストして他のユーザーに共有しましょう！</div>
+                <div class="modal-title-group">
+                    <div class="modal-title">テーマを共有</div>
+                    <div class="modal-text">このテーマについての意見を皆に聞いてみませんか？<br>URLをコピーしてSNSでシェアしましょう!</div>
+                </div>
+
+                <div id="simple-link-share-input-group" class="share-input-group">
+                    <div class="modal-text">リンク</div>
+                    <div class="share-input-wrapper">
+                        <textarea class="share-input auto-resize" rows="1">http://app.pol-is.jp/images/og-image.png</textarea>
+                        <button class="copy-button button secondary">
+                            <i class="bi bi-copy"></i>
+                        </button>
+                        <div class="copy-complete-tip show"><i class="bi bi-check"></i><div class="text">コピー完了</div></div>
+                    </div>
+                </div>
+
+                <div id="sns-message-share-input-group" class="share-input-group">
+                    <div class="modal-text">SNSシェア用メッセージ</div>
+                    <div class="share-input-wrapper">
+                        <textarea class="share-input auto-resize" rows="1">http://app.pol-is.jp/images/og-image.png</textarea>
+                        <button class="copy-button button secondary">
+                            <i class="bi bi-copy"></i>
+                        </button>
+                        <div class="copy-complete-tip show"><i class="bi bi-check"></i><div class="text">コピー完了</div></div>
+                    </div>
+                </div>
             </div>
             <button class="modal-close-button button secondary">
                 <div class="text">閉じる</div>

@@ -129,11 +129,13 @@ function buildTopicInnerHTML(csvData) {
                 </div>
                 <div class="article-footer">
                     <div class="article-opinion-group">
-                        <i class="bi bi-megaphone-fill"></i>
+                        <i class="bi bi-chat-left-dots-fill"></i>
+                        <div class="label-text">意見</div>
                         <div class="text">${comments}</div>
                     </div>
                     <div class="article-vote-group">
                         <i class="bi bi-people-fill"></i>
+                        <div class="label-text">投票</div>
                         <div class="text">${votes}</div>
                     </div>
                 </div>

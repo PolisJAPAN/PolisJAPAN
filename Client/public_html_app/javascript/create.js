@@ -45,8 +45,6 @@ async function requestThemeGenerateAxisAPI() {
 
     try {
         const result = await fetchJsonPost(url, payload);
-        console.log('取得結果:', result);
-        console.log(result["axis"]);
 
         setMultiInputValues(axisInputList, result["axis"].map(value => value?.trim?.() ?? "").filter(value => value !== ""));
 
@@ -98,7 +96,6 @@ async function requestThemeGenerateCommentsAPI() {
 
     try {
         const result = await fetchJsonPost(url, payload);
-        console.log('取得結果:', result);
 
         setMultiInputValues(commentInputList, result["comments"].map(value => value?.trim?.() ?? "").filter(value => value !== ""));
 
@@ -151,8 +148,6 @@ async function requestThemeGenerateDescriptionsAPI() {
 
     try {
         const result = await fetchJsonPost(url, payload);
-        console.log('取得結果:', result);
-        console.log(result["description"]);
 
         if (!descriptionInput)
         {
@@ -210,8 +205,6 @@ async function requestThemePostDraftAPI(onComplete) {
 
     try {
         const result = await fetchJsonPost(url, payload);
-        console.log('取得結果:', result);
-        console.log(result["is_success"]);
 
         onComplete();
         setLoadingOverlay(false);
@@ -728,8 +721,6 @@ function syncStepperInputValidation() {
     // すべてのモーダルステッパーを取得
     const modalSteppers = parentNode.querySelectorAll(".modal-stepper");
     if (!modalSteppers.length) return;
-
-    console.log("ステッパーのinputを検収");
 
     let allStepperFilledArray = []
     modalSteppers.forEach((modalStepper) => {

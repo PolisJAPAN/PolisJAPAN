@@ -44,14 +44,15 @@
     .loading-content {
         .loading-logo {
             @include common.from-left;
-
-            height: 66px;
+            width: 356px;
+            max-width: calc(75vw);
         }
         .loading-logo-reverse {
             @include common.absolute;
             @include common.from-left;
 
-            height: 66px;
+            width: 356px;
+            max-width: calc(75vw);
             top: 0;
             bottom: 0;
             left: 0;

@@ -228,12 +228,12 @@ async function fetchJsonPost(url, data, options = {}) {
  * @param {function} onResize - リサイズ時のコールバック
  * @returns {void}
  */
-function autoResizeTextareas(onResize = null) {
+function autoResizeTextareas(onResize = null, offset = 16) {
     const textareas = document.querySelectorAll('textarea.auto-resize');
     textareas.forEach(textarea => {
         const resize = () => {
             textarea.style.height = 'auto'; // 一旦リセット
-            textarea.style.height = `${textarea.scrollHeight + 16}px`; // 実際の内容に合わせる
+            textarea.style.height = `${textarea.scrollHeight + offset}px`; // 実際の内容に合わせる
             
             if (!onResize) {return}
 
@@ -314,8 +314,7 @@ async function loadCsvAsJson(url, { encoding = 'utf-8', delimiter = 'auto' } = {
     const buf = await res.arrayBuffer();
     const text = new TextDecoder(encoding).decode(buf);
     const { rows, headers } = parseCSV(text, delimiter);
-    console.log(rows);
-    
+
     // ヘッダーをキーにしてオブジェクト化
     return rows.map(r => {
         const obj = {};
@@ -449,9 +448,6 @@ function legacyCopy(text) {
     
     const ok = document.execCommand('copy');
     document.body.removeChild(ta);
-
-    console.log(`クリップボードにコピーしました : ${text}`);
-    
     return ok;
 };
 
@@ -465,8 +461,6 @@ async function copyText(text) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
         try {
             await navigator.clipboard.writeText(text);
-            console.log(`クリップボードにコピーしました : ${text}`);
-            
             return true;
         } catch {
             // 明示フォールバック
@@ -908,8 +902,6 @@ class CustomSelectManager {
 
         // イベントデリゲーションで click を一括処理（元コードのコメントを維持）
         function handleContainerClick(eventObject) {
-            console.log("クリックされました");
-
             // 実際にクリックされた要素を取得（元コード通り e.target を使用）
             const clickedElement = eventObject.target;
 
@@ -986,10 +978,7 @@ function setGrobalLoading(isLoading){
 }
 
 function bindPageReturn() {
-    console.log("ページ表示検知をセット");
     window.addEventListener('pageshow', (event) => {
-        console.log("ページ表示を検知");
-        
         if (event.persisted) {
             setGrobalLoading(false);
         }

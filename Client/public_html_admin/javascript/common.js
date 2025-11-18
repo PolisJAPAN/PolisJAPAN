@@ -360,8 +360,6 @@ function legacyCopy(text) {
     const ok = document.execCommand('copy');
     document.body.removeChild(ta);
 
-    console.log(`クリップボードにコピーしました : ${text}`);
-    
     return ok;
 };
 
@@ -375,8 +373,6 @@ async function copyText(text) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
         try {
             await navigator.clipboard.writeText(text);
-            console.log(`クリップボードにコピーしました : ${text}`);
-            
             return true;
         } catch {
             // 明示フォールバック

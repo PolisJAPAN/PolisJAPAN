@@ -99,12 +99,44 @@
 
                     border-radius: 16px;
                     
-                    &.cat-financial {
-                        background-image: linear-gradient(135deg, #00a6f9 0%, #00db99 100%);
+                    // 社会・政治
+                    &.cat-1 {
+                        background-image: linear-gradient(135deg, #fa3517 0%, #fcb80c 100%);
                     }
         
-                    &.cat-politics {
-                        background-image: linear-gradient(135deg, #ff1833 0%, #fda336 100%);
+                    // お金・資産
+                    &.cat-2 {
+                        background-image: linear-gradient(135deg, #e99928 0%, #fdc136 100%);
+                    }
+        
+                    // 男女・性別
+                    &.cat-3 {
+                        background-image: linear-gradient(135deg, #71a8ff 0%, #ff70d7 100%);
+                    }
+        
+                    // 外国人問題
+                    &.cat-4 {
+                        background-image: linear-gradient(135deg, #289dda 0%, #1ee3eb 100%);
+                    }
+        
+                    // テクノロジー
+                    &.cat-5 {
+                        background-image: linear-gradient(135deg, #7a58f5 0%, #e156e1 100%);
+                    }
+        
+                    // 医療・福祉
+                    &.cat-6 {
+                        background-image: linear-gradient(135deg, #0c9351 0%, #59ab84 100%);
+                    }
+
+                    // 生活
+                    &.cat-7 {
+                        background-image: linear-gradient(135deg, #4bdb44 0%, #aaea43 100%);
+                    }
+        
+                    // その他
+                    &.cat-8 {
+                        background-image: linear-gradient(135deg, #8349ff 0%, #d481fe 100%);
                     }
 
                     .article-title-area {
