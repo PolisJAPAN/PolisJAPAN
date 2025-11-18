@@ -670,5 +670,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeArticles();
     initializeLink();
     bindDetailLink();
+    bindPageReturn();
 });
 

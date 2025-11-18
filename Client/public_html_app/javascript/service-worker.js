@@ -21,6 +21,7 @@ const PRECACHE_IMAGES = [
     "/images/report/women_01.png",
     "/images/report/women_02.png",
     "/images/report/women_03.png",
+    "https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700;900&display=swap",
 ];
 
 // install時にキャッシュ

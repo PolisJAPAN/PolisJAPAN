@@ -984,3 +984,14 @@ function setGrobalLoading(isLoading){
 
     loadingOverlay.classList.toggle("show", isLoading);
 }
+
+function bindPageReturn() {
+    console.log("ページ表示検知をセット");
+    window.addEventListener('pageshow', (event) => {
+        console.log("ページ表示を検知");
+        
+        if (event.persisted) {
+            setGrobalLoading(false);
+        }
+    });
+}

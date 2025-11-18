@@ -513,6 +513,7 @@ document.addEventListener("DOMContentLoaded", () => {
             updateArticleVisible(currentCategory, currentWords);
             BindHorizontalScroll();
             bindArticleLink();
+            bindPageReturn();
         }, 500
     )
 });
