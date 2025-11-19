@@ -15,11 +15,134 @@ body#detail {
 
             max-width: 720px;
 
-            // --color-graph-positive: #8d91e7;
             --color-graph-positive: #87b8fe;
             --color-graph-negative: #f37979;
             --color-graph-neutral: #cdcdcd;
             --color-graph-nothing: #f2f2f2;
+
+            .group-info-container {
+                @include common.width-full;
+                @include common.stack;
+                @include common.center;
+                @include common.align-center;
+                @include common.spacing-8px;
+                @include common.margin-bottom-32px;
+
+                .group-title {
+                    @include common.width-full;
+                    @include common.font-weight-black;
+                    @include common.font-size-large;
+                    @include common.letter-spacing-small;
+                    @include common.text-center;
+                    @include common.padding-bottom-8px;
+                }
+
+                .group-description {
+                    @include common.width-full;
+                    @include common.font-size-sub-small;
+                    @include common.letter-spacing-default;
+                    @include common.line-spacing-medium;
+                    @include common.text-center;
+                    @include common.padding-bottom-8px;
+                    color: var(--color-font-dark-gray);
+                }
+
+                .group-item-list {
+                    @include common.stack;
+                    @include common.center;
+                    @include common.align-center;
+                    @include common.spacing-8px;
+
+                    .group-item {
+                        @include common.stack;
+                        @include common.center;
+                        @include common.align-center;
+                        @include common.spacing-16px;
+                        @include common.padding-4px;
+                        @include common.width-full;
+                        @include common.margin-bottom-16px;
+    
+                        background-color: var(--color-light);
+                        border-radius: 8px;
+                        filter: drop-shadow(0px 4px 16px rgba(9, 8, 39, 0.15));
+                        will-change: filter;
+    
+                        .group-name-label-group {
+                            @include common.stack;
+                            @include common.center;
+                            @include common.align-center;
+                            @include common.height-full;
+                            @include common.width-full;
+                            @include common.padding-16px;
+                            @include common.padding-y-48px;
+                
+                            border-radius: 8px;
+                            &.group-a { background-image: linear-gradient(135deg, #fa3517 0%, #fcb80c 100%);}
+                            &.group-b { background-image: linear-gradient(135deg, #71a8ff 0%, #ff70d7 100%);}
+                            &.group-c { background-image: linear-gradient(135deg, #289dda 0%, #1ee3eb 100%);}
+                            &.group-d { background-image: linear-gradient(135deg, #7a58f5 0%, #e156e1 100%);}
+                            &.group-e { background-image: linear-gradient(135deg, #0c9351 0%, #59ab84 100%);}
+                            &.group-f { background-image: linear-gradient(135deg, #4bdb44 0%, #aaea43 100%);}
+                            &.group-g { background-image: linear-gradient(135deg, #8349ff 0%, #d481fe 100%);}
+            
+                            .group-name-label {
+                                @include common.font-weight-black;
+                                @include common.font-size-medium;
+                                @include common.letter-spacing-small;
+                                color: var(--color-light)
+                            }
+                        }
+                        .group-comment-group {
+                            @include common.stack;
+                            @include common.center;
+                            @include common.align-center;
+                            @include common.width-full;
+            
+                            .group-comment-title {
+                                @include common.font-weight-semibold;
+                                @include common.font-size-sub-small;
+                                @include common.letter-spacing-small;
+                                color: var(--color-font-dark-gray);
+                            }
+                            .group-comment-list {
+                                @include common.stack;
+                                @include common.center;
+                                @include common.align-center;
+                                @include common.spacing-8px;
+                                @include common.padding-16px;
+                                @include common.width-full;
+                
+                                .group-comment {
+                                    @include common.row;
+                                    @include common.row-left;
+                                    @include common.align-center;
+                                    @include common.height-fit;
+                                    @include common.width-full;
+                                    @include common.spacing-8px;
+                                    @include common.padding-x-16px;
+                                    @include common.padding-y-16px;
+                                    // border: 1px solid var(--color-font-dark-gray);
+                                    background-color: var(--color-bg-gray);
+                                    border-radius: 16px;
+                                    
+                                    .text {
+                                        @include common.font-size-sub-small;
+                                        @include common.letter-spacing-default;
+                                        @include common.line-spacing-medium;
+                                        color: var(--color-font-dark-gray);
+                                    }
+    
+                                    i {
+                                        @include common.font-size-sub-small;
+                                        color: var(--color-font-dark-gray);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
 
             .detail-report-container {
                 @include common.stack;
@@ -34,6 +157,7 @@ body#detail {
 
                 border-radius: 8px;
                 filter: drop-shadow(0px 4px 16px rgba(9, 8, 39, 0.15));
+                will-change: filter;
 
                 .detail-report-text-group{
                     @include common.stack;
@@ -66,6 +190,7 @@ body#detail {
                 @include common.center;
                 @include common.align-center;
                 @include common.spacing-16px;
+                @include common.padding-bottom-48px;
 
                 .title {
                     @include common.width-full;
@@ -78,9 +203,44 @@ body#detail {
     
                 .comment-list {
                     @include common.stack;
-                    @include common.spacing-48px;
-                    @include common.padding-bottom-64px;
+                    @include common.spacing-24px;
                 }
+                .comment-acordion-list {
+                    @include common.relative;
+                    @include common.stack;
+                    @include common.stack-top;
+                    @include common.align-center;
+                    @include common.width-full;
+
+                    max-height: 0px;
+                    transition: max-height 0.3s ease, opacity 0.3s;
+                    will-change: max-height, opacity;
+
+                    opacity: 0;
+                    pointer-events: none;
+
+                    &.show {
+                        opacity: 1;
+                        pointer-events: all;
+
+                        .scroll-content {
+                            display: flex;
+                        }
+                    }
+
+                    .scroll-content {
+                        @include common.stack;
+                        @include common.spacing-24px;
+                        @include common.width-full;
+                        @include common.height-fit;
+                        display: none;
+                    }
+                }
+            }
+
+            .accordion-button {
+                @include common.width-full;
+                z-index: var(--z-index-local-over-2);
             }
 
 
@@ -95,6 +255,7 @@ body#detail {
 
                 border-radius: 8px;
                 filter: drop-shadow(0px 4px 16px rgba(9, 8, 39, 0.15));
+                will-change: filter;
 
                 .caption {
                     @include common.font-size-small;
@@ -108,6 +269,7 @@ body#detail {
                 }
 
                 .comments-text-group {
+                    @include common.relative;
                     @include common.row;
                     @include common.both;
                     @include common.align-center;
@@ -143,19 +305,24 @@ body#detail {
                         @include common.align-center;
                         @include common.width-full;
                         @include common.height-fit;
-                        @include common.padding-16px;
-                        @include common.padding-left-20px;
+                        @include common.padding-8px;
+                        @include common.padding-left-12px;
                         @include common.margin-left-16px;
-                        @include common.font-weight-semibold;
-                        @include common.letter-spacing-default;
-                        @include common.line-spacing-medium;
-                        font-size: 17px;
+
+                        @include common.font-size-sub-small;
                         background-color: var(--color-dark);
-                        color: var(--color-light);
                         border-radius: 8px;
-                        text-align: start;
 
                         min-height: 120px;
+                        
+                        .comment-text-content {
+                            z-index: var(--z-index-local-over-2);
+                            @include common.font-weight-semibold;
+                            @include common.letter-spacing-default;
+                            @include common.line-spacing-medium;
+                            color: var(--color-light);
+                            text-align: start;
+                        }
 
                         .comment-arrow {
                             /* 配置する */
@@ -163,6 +330,7 @@ body#detail {
                             bottom: 25%;
                             left: 0%;
                             transform: translateX(-100%) rotate(116deg);
+                            z-index: var(--z-index-local-over-1);
                         }
                     }
                 }
@@ -172,10 +340,10 @@ body#detail {
                     @include common.stack;
                     @include common.width-full;
                     @include common.height-fit;
-                    @include common.spacing-16px;
+                    @include common.spacing-8px;
                     @include common.padding-x-16px;
                     @include common.padding-top-8px;
-                    @include common.padding-bottom-32px;
+                    @include common.padding-bottom-16px;
 
                     .graph-sample {
                         @include common.row;
@@ -184,7 +352,7 @@ body#detail {
                         @include common.width-full;
                         @include common.height-fit;
                         @include common.spacing-16px;
-                        @include common.padding-top-16px;
+                        @include common.padding-top-8px;
     
                         .graph-sample-element {
                             @include common.row;
@@ -251,12 +419,14 @@ body#detail {
                     @include common.center;
                     @include common.height-fit;
                     @include common.width-full;
-                    @include common.margin-bottom-16px;
+                    @include common.margin-bottom-8px;
+                    @include common.relative;
 
                     .graph-item {
                         @include common.row;
                         @include common.row-left;
-                        height: 40px;
+                        @include common.relative;
+                        height: 24px;
                         overflow: hidden;
                         background-color: var(--color-graph-nothing);
                         box-sizing: border-box;
@@ -293,19 +463,19 @@ body#detail {
                         @include common.width-full;
                         @include common.height-fit;
                         @include common.spacing-8px;
-                        @include common.padding-bottom-16px;
+                        @include common.padding-bottom-8px;
 
                         .data-text {
                             @include common.font-weight-black;
                             @include common.letter-spacing-default;
-                            @include common.font-size-x-large;
+                            @include common.font-size-medium;
 
                             .percent {
-                                @include common.font-weight-black;
+                                @include common.font-weight-semibold;
                                 @include common.letter-spacing-default;
                                 @include common.line-spacing-medium;
 
-                                @include common.font-size-medium;
+                                @include common.font-size-normal;
                                 @include common.padding-right-8px;
                             }
                         }
@@ -334,15 +504,15 @@ body#detail {
                             @include common.center;
                             @include common.align-center;
                             @include common.margin-right-8px;
-                            height: 100px;
-                            width: 100px;
+                            height: 80px;
+                            width: 80px;
                             max-width: 30vw;
                             max-height: 30vw;
                             border-radius: 50%;
-                            background-image: radial-gradient(#fff 55%, transparent 55%), conic-gradient(var(--color-graph-positive) 60%, var(--color-graph-negative) 60% 80%, var(--color-graph-neutral) 80% 100%);
-                            font-weight: 600;
+                            background-image: radial-gradient(#fff 50%, transparent 50%), conic-gradient(var(--color-graph-positive) 60%, var(--color-graph-negative) 60% 80%, var(--color-graph-neutral) 80% 100%);
 
-                            @include common.font-size-small;
+                            @include common.font-size-medium;
+                            @include common.font-weight-black;
                             @include common.letter-spacing-default;
                             color: var(--color-font-dark-gray);
                         }
@@ -350,11 +520,11 @@ body#detail {
 
                     .data-text-group {
                         @include common.stack;
-                        @include common.stack-bottom;
-                        @include common.spacing-4px;
+                        @include common.center;
+                        @include common.spacing-0px;
                         @include common.height-full;
 
-                        height: 100px;
+                        height: 80px;
                         max-height: 30vw;
                     }
                 }
@@ -392,6 +562,31 @@ body#detail {
                     color: var(--color-font-dark-gray);
                 }
             }
+        }
+    }
+
+    @media (max-width: 1024px) {
+
+    }
+    @media (max-width: 768px) {
+        .polis-report {
+            .report-container {
+                .comments-item {
+            
+                    .group-graph-container {
+                        .group-graph-container {
+                            .graph-circle {
+                                height: 64px;
+                                width: 64px;
+        
+                                .data-text-group {
+                                    height: 64px;
+                                }
+                            }
+                        }
+                    }
+                } 
+            } 
         }
     }
 }

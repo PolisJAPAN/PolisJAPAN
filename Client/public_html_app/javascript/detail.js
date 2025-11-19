@@ -194,9 +194,9 @@ function buildGroupObject(rec, letter) {
     // 入力の votes があっても、合計値を信頼して再計算
     const totalVotes = agrees + disagrees + passes;
 
-    const agreeRate = agrees / totalVotes;
-    const disagreeRate = disagrees / totalVotes;
-    const passRate = passes / totalVotes;
+    const agreeRate =  (totalVotes > 0) ? (agrees / totalVotes) : 0;
+    const disagreeRate = (totalVotes > 0) ? (disagrees / totalVotes) : 0;
+    const passRate = (totalVotes > 0) ? (passes / totalVotes) : 0;
 
     return {
         "groupName": letter,
@@ -220,6 +220,7 @@ function buildGroupObject(rec, letter) {
  */
 function extractGroups(record) {
     const out = [];
+    // ラベル行をチェックして存在するグループだけ配列に追加(例[a,b])
     for (let code = "a".charCodeAt(0); code <= "z".charCodeAt(0); code++) {
         const letter = String.fromCharCode(code);
         if (hasGroup(record, letter)) {
@@ -265,7 +266,9 @@ function getGroupAgreeRate(item, groupName) {
     const g = item.groupData?.find(
         (x) => (x.groupName || "").toLowerCase() === groupName.toLowerCase()
     );
+
     if (!g) return 0;
+
     return typeof g.agreeRate === "number"
         ? g.agreeRate
         : toInt(g.totalVotes) > 0
@@ -297,7 +300,7 @@ const COMMENT_ICON_LIST = [
  * @returns {string} - 生成されたHTML文字列。
  */
 function buildTopicInnerHTML(displayDataList, label) {
-    const listHtml = displayDataList.map(data => {
+    const listHtmlList = displayDataList.map(data => {
 
         // 可変になるグループ部分のHTMLを先に作成
         const groupHtml = data.groupData.map(groupData => {
@@ -311,7 +314,7 @@ function buildTopicInnerHTML(displayDataList, label) {
                     background-image: 
                         radial-gradient(#fff 55%, transparent 55%), 
                         conic-gradient(var(--color-graph-positive) ${positivePercent}%, var(--color-graph-negative) ${positivePercent}% ${positivePercent + negativePercent}%, var(--color-graph-neutral) ${positivePercent + negativePercent}% 100%);
-                ">グループ${String(groupData.groupName).toUpperCase()}</div>
+                ">${String(groupData.groupName).toUpperCase()}</div>
                 <div class="data-text-group">
                     <div class="data-text positive">${positivePercent}<span class="percent">%</span></div>
                     <div class="data-text negative">${negativePercent}<span class="percent">%</span></div>
@@ -322,27 +325,28 @@ function buildTopicInnerHTML(displayDataList, label) {
 
 
         return `
-            <div class="comments-item stack center align-center spacing-8px padding-4px">
+            <div class="comments-item">
                 <div class="comments-text-group">
                     <div class="comment-person-img-group">
                         <img class="comment-person-img" src="${COMMENT_ICON_LIST[getRandomInt(0, (COMMENT_ICON_LIST.length - 1))]}" alt="">
                     </div>
-                    <div class="comments-text row center align-center width-full height-fit text-center">
-                        ${data.comment}
+                    <div class="comments-text">
                         <div class="comment-arrow">
                             <svg xmlns="http://www.w3.org/2000/svg" width="33" height="54" viewBox="0 0 33 54" fill="none">
                                 <path d="M19.4839 50.9938C18.7096 53.9943 14.4486 53.9943 13.6743 50.9938L0.579104 0.250003L32.5791 0.250005L19.4839 50.9938Z" fill="#202426"/>
                             </svg>
                         </div>
+                        <div class="comment-text-content">
+                            ${data.comment}
+                        </div>
                     </div>
                 </div>
                 <div class="graph-group">
-                    <div class="caption">回答の割合</div>
                     <div class="graph-container">
                         <div class="data-text-group">
                             <div class="data-text positive"><span class="percent">賛成</span>${Math.round((data.totalAgreeRate) * 100)}<span class="percent">%</span></div>
                             <div class="data-text negative"><span class="percent">反対</span>${Math.round((data.totalDisagreeRate) * 100)}<span class="percent">%</span></div>
-                            <div class="data-text neutral"><span class="percent">わからない/どちらでもない</span>${Math.round((data.totalPassRate) * 100)}<span class="percent">%</span></div>
+                            <div class="data-text neutral"><span class="percent">どちらでもない</span>${Math.round((data.totalPassRate) * 100)}<span class="percent">%</span></div>
                         </div>
                         <div class="graph-item">
                             <div class="graph-bar positive" style="width:${(data.totalAgreeRate) * 100}%"></div>
@@ -362,14 +366,225 @@ function buildTopicInnerHTML(displayDataList, label) {
                 </div>
             </div>
     `;
-    }).join('');
+    });
+
+    const firstFiveList = listHtmlList.slice(0, 5);  // 先頭5件
+    const remainingList = listHtmlList.slice(5);     // 6件目以降
+
+    const firstFiveListHTML = `
+        <div class="comment-list">
+            ${firstFiveList.join("")}
+        </div>
+    `
+    const remainingListHTML = (remainingList.length > 0) ? `
+        <div id="top-comments-acordion" class="comment-acordion-list acordion">
+            <div class="scroll-content">
+                ${remainingList.join("")}
+            </div>
+        </div>
+    ` : "";
 
     const groupHtml = `
         <div class="comment-wrapper">
             <div class="title">${label}</div>
-            <div class="comment-list">
-                ${listHtml}
+            ${firstFiveListHTML}
+            ${remainingListHTML}
+            <button class="accordion-button button secondary-border" data-target="#top-comments-acordion">もっと見る</button>
+        </div>
+    `;
+
+    return groupHtml;
+}
+
+/**
+ * 指定のアコーディオン（パネル）の高さを、内部コンテンツの高さに合わせて更新する。
+ *
+ * @param {HTMLElement} panelElement - 対象のパネル要素（.modal-stepper）。
+ * @returns {void}
+ */
+function adjustTargetAcordion() {
+    const accordionElements = document.querySelectorAll('.acordion');
+    
+    if (!accordionElements) return;
+
+    accordionElements.forEach((accordion) => {
+        const scrollContent = accordion.querySelector('.scroll-content');
+        let idealHeight = (scrollContent.scrollHeight + 8);
+
+        if (!accordion.classList.contains("show")) {
+            idealHeight = 0;
+        };
+    
+        accordion.style.maxHeight = (idealHeight) + 'px';
+        
+        requestAnimationFrame(function () {
+            accordion.style.maxHeight = (idealHeight) + 'px';
+        });
+    })
+}
+
+function bindAccordionToggle() {
+    const accordionButtonList = document.querySelectorAll('.accordion-button');
+    
+    accordionButtonList.forEach((accordionButton) => {
+        accordionButton.addEventListener('click', () => {
+            console.log("アコーディオン開閉処理発火");
+            
+            const targetSelector = accordionButton.dataset.target;
+            if (!targetSelector) { return; }
+
+            const targetElement = document.querySelector(targetSelector);
+            if (!targetElement) { return; }
+
+            const shouldShow = !targetElement.classList.contains('show');
+            targetElement.classList.toggle('show', shouldShow);
+
+            adjustTargetAcordion();
+            scrollPolisReportToAccordion(targetElement, shouldShow);
+
+            accordionButton.textContent = shouldShow ? "閉じる" : "もっと見る"
+        });
+    });
+}
+
+/**
+ * .polis-report 内で、指定アコーディオン要素の上部が
+ * コンテナの上に来るようにスクロールする。
+ *
+ * @param {HTMLElement} accordionElement - スクロール位置を合わせたいアコーディオン要素
+ * @returns {void}
+ */
+function scrollPolisReportToAccordion(accordionElement, show) {
+    if (!accordionElement) {
+        return;
+    }
+
+    // accordionElement の祖先から .polis-report を探す
+    const polisReportElement = accordionElement.closest('.polis-report');
+
+    // 祖先に .polis-report が無い場合は画面全体スクロールにフォールバック
+    if (!polisReportElement) {
+        accordionElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
+        return;
+    }
+
+    // .polis-report（スクロールコンテナ）の位置とサイズを取得する
+    // → viewport（画面）から見た相対的な座標が入る
+    const reportRect = polisReportElement.getBoundingClientRect();
+
+    // 折りたたみ要素（アコーディオン本体）の位置とサイズを取得する
+    // → これも viewport 基準
+    const accordionRect = accordionElement.getBoundingClientRect();
+
+    /**
+     * スクロール先の scrollTop を計算する。
+     *
+     * polisReportElement.scrollTop
+     *   …現在のスクロール位置
+     *
+     * (accordionRect.top - reportRect.top)
+     *   …画面上での相対位置の差分（アコーディオンの上端が、
+     *     .polis-report の上端からどれだけ下にあるか）
+     *
+     * → 現在のスクロール量に、この差分を足すことで、
+     *    アコーディオン要素の上端が .polis-report の上端に
+     *    ちょうど揃う scrollTop の値を算出している。
+     */
+    const targetScrollTop =
+        polisReportElement.scrollTop + (accordionRect.top - reportRect.top) + (show ? 0 : (window.innerHeight / 2 * -1));
+
+    polisReportElement.scrollTo({
+        top: targetScrollTop,
+        behavior: 'smooth',
+    });
+}
+
+
+/**
+ * コメント群（特定グループ指標）をHTMLに整形して返す。
+ * 
+ * 指定グループ `groupName` の賛成/反対/パス比率バーのみを表示するレイアウトを生成する。
+ * 
+ * @param {Array<Object>} displayDataList - 表示用データ配列（各要素は groupData を含む）。
+ * @param {string} label - セクションタイトル文言。
+ * @param {string} groupName - 対象グループ名。
+ * @returns {string} - 生成されたHTML文字列。
+ */
+function getGroupCommentsInnerHTML(groupData) {
+    const displayDataList = groupData.groupAgreedData;
+    const label = `グループ${String(groupData.groupName).toUpperCase()}が賛成した意見`;
+    const groupName =  groupData.groupName;
+
+    const listHtmlList = displayDataList.map(data => {
+        // 表示対象データを取得
+        const targetData = data.groupData.find(g => g.groupName === groupName)
+
+        const positivePercent = Math.round((targetData.agreeRate) * 100);
+        const negativePercent = Math.round((targetData.disagreeRate) * 100);
+        const passPercent = Math.round((targetData.passRate) * 100);
+        
+        return `
+            <div class="comments-item">
+                <div class="comments-text-group">
+                    <div class="comment-person-img-group">
+                        <img class="comment-person-img" src="${COMMENT_ICON_LIST[getRandomInt(0, (COMMENT_ICON_LIST.length - 1))]}" alt="">
+                    </div>
+                    <div class="comments-text">
+                        <div class="comment-arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="33" height="54" viewBox="0 0 33 54" fill="none">
+                                <path d="M19.4839 50.9938C18.7096 53.9943 14.4486 53.9943 13.6743 50.9938L0.579104 0.250003L32.5791 0.250005L19.4839 50.9938Z" fill="#202426"/>
+                            </svg>
+                        </div>
+                        <div class="comment-text-content">
+                            ${data.comment}
+                        </div>
+                    </div>
+                </div>
+                <div class="graph-group">
+                    <div class="caption"></i>回答の割合</div>
+                    <div class="graph-container">
+                        <div class="data-text-group">
+                            <div class="data-text positive"><span class="percent">賛成</span>${positivePercent}<span class="percent">%</span></div>
+                            <div class="data-text negative"><span class="percent">反対</span>${negativePercent}<span class="percent">%</span></div>
+                            <div class="data-text neutral"><span class="percent">どちらでもない</span>${passPercent}<span class="percent">%</span></div>
+                        </div>
+                        <div class="graph-item">
+                            <div class="graph-bar positive" style="width:${positivePercent}%"></div>
+                            <div class="graph-bar negative" style="width:${negativePercent}%"></div>
+                            <div class="graph-bar neutral" style="width:${passPercent}%"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
+    `;
+    });
+
+    const firstFiveList = listHtmlList.slice(0, 5);  // 先頭5件
+    const remainingList = listHtmlList.slice(5);     // 6件目以降
+
+    const firstFiveListHTML = `
+        <div class="comment-list">
+            ${firstFiveList.join("")}
+        </div>
+    `
+    const remainingListHTML = (remainingList.length > 0) ? `
+        <div id="group-${groupData.groupName}-comments-acordion" class="comment-acordion-list acordion">
+            <div class="scroll-content">
+                ${remainingList.join("")}
+            </div>
+        </div>
+    ` : "";
+
+
+    const groupHtml = `
+        <div class="comment-wrapper">
+            <div class="title">${label}</div>
+            ${firstFiveListHTML}
+            ${remainingListHTML}
+            <button class="accordion-button button secondary-border" data-target="#group-${groupData.groupName}-comments-acordion">もっと見る</button>
         </div>
     `;
 
@@ -386,50 +601,32 @@ function buildTopicInnerHTML(displayDataList, label) {
  * @param {string} groupName - 対象グループ名。
  * @returns {string} - 生成されたHTML文字列。
  */
-function getGroupCommentsInnerHTML(displayDataList, label, groupName) {
-    const listHtml = displayDataList.map(data => {
+function getGroupInfoInnerHTML(groupData) {
+    const displayDataList = groupData.groupAgreedData;
+    const groupName =  groupData.groupName;
+
+    const listHtml = displayDataList.slice(0, 3).map(data => {
         // 表示対象データを取得
         const targetData = data.groupData.find(g => g.groupName === groupName)
-
         return `
-            <div class="comments-item stack center align-center spacing-8px padding-4px">
-                <div class="comments-text-group">
-                    <div class="comment-person-img-group">
-                        <img class="comment-person-img" src="${COMMENT_ICON_LIST[getRandomInt(0, (COMMENT_ICON_LIST.length - 1))]}" alt="">
-                    </div>
-                    <div class="comments-text row center align-center width-full height-fit text-center">
-                        ${data.comment}
-                        <div class="comment-arrow">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="33" height="54" viewBox="0 0 33 54" fill="none">
-                                <path d="M19.4839 50.9938C18.7096 53.9943 14.4486 53.9943 13.6743 50.9938L0.579104 0.250003L32.5791 0.250005L19.4839 50.9938Z" fill="#202426"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="graph-group">
-                    <div class="caption"></i>回答の割合</div>
-                    <div class="graph-container">
-                        <div class="data-text-group">
-                            <div class="data-text positive"><span class="percent">賛成</span>${Math.round((data.totalAgreeRate) * 100)}<span class="percent">%</span></div>
-                            <div class="data-text negative"><span class="percent">反対</span>${Math.round((data.totalDisagreeRate) * 100)}<span class="percent">%</span></div>
-                            <div class="data-text neutral"><span class="percent">わからない/どちらでもない</span>${Math.round((data.totalPassRate) * 100)}<span class="percent">%</span></div>
-                        </div>
-                        <div class="graph-item">
-                            <div class="graph-bar positive" style="width:${(targetData.agreeRate) * 100}%"></div>
-                            <div class="graph-bar negative" style="width:${(targetData.disagreeRate) * 100}%"></div>
-                            <div class="graph-bar neutral" style="width:${(targetData.passRate) * 100}%"></div>
-                        </div>
-                    </div>
-                </div>
+            <div class="group-comment">
+                <div class="text">${data.comment}</div>
             </div>
     `;
     }).join('');
 
     const groupHtml = `
-        <div class="comment-wrapper">
-            <div class="title">${label}</div>
-            <div class="comment-list">
-                ${listHtml}
+        <div id="group-${String(groupData.groupName).toLowerCase()}" class="group-item">
+            <div class="group-name-label-group group-${String(groupData.groupName).toLowerCase()}">
+                <div class="group-name-label">
+                    グループ${String(groupData.groupName).toUpperCase()}
+                </div>
+            </div>
+            <div class="group-comment-group">
+                <div class="group-comment-title">このグループの代表的な意見</div>
+                <div class="group-comment-list">
+                    ${listHtml}
+                </div>
             </div>
         </div>
     `;
@@ -466,6 +663,7 @@ function sortByTotalAgreeRate(list) {
  * @returns {Array<Object>} - 新しい配列を返す（元配列は変更しない）。
  */
 function sortByGroupAgreeRate(list, groupName) {
+
     return list.slice().sort((a, b) => {
         const ra = getGroupAgreeRate(a, groupName);
         const rb = getGroupAgreeRate(b, groupName);
@@ -475,6 +673,42 @@ function sortByGroupAgreeRate(list, groupName) {
         return vb - va; // 同率なら票数多い順
     });
 };
+
+function getDisplayDataFromCSVJSON(csvJson) {
+    // 各グラフ表示用のリストに加工
+    const displayData = csvJson.map((rowData) => {
+        const comment = rowData.comment;
+        const commentId = rowData["comment-id"];
+        const totalAgrees = rowData["total-agrees"];
+        const totalDisagrees = rowData["total-disagrees"];
+        const totalPasses = rowData["total-passes"];
+        const totalVotes = rowData["total-votes"];
+
+        // 入力の votes があっても、合計値を信頼して再計算
+        const totalAgreeRate = (totalVotes > 0) ? (totalAgrees / totalVotes) : 0;
+        const totalDisagreeRate = (totalVotes > 0) ? (totalDisagrees / totalVotes) : 0;
+        const totalPassRate = (totalVotes > 0) ? (totalPasses / totalVotes) : 0;
+
+        const result = {
+            "comment" : comment,
+            "commentId" : commentId,
+            "totalAgrees" : totalAgrees,
+            "totalDisagrees" : totalDisagrees,
+            "totalPasses" : totalPasses,
+            "totalVotes" : totalVotes,
+            "totalAgreeRate" : totalAgreeRate,
+            "totalDisagreeRate" : totalDisagreeRate,
+            "totalPassRate" : totalPassRate,
+        };
+
+        const groupData = extractGroups(rowData)
+        result.groupData = groupData;
+
+        return result;
+    })
+
+    return displayData;
+}
 
 /**
  * 記事セクション（全体および各グループ）を初期化して描画する。
@@ -495,36 +729,7 @@ async function initializeArticles() {
     const csvJson = await loadCsvAsJson(`/csv/report/report_${conversationId}.csv`)
 
     // 各グラフ表示用のリストに加工
-    const displayData = csvJson.map((rowData) => {
-        const comment = rowData.comment;
-        const commentId = rowData["comment-id"];
-        const totalAgrees = rowData["total-agrees"];
-        const totalDisagrees = rowData["total-disagrees"];
-        const totalPasses = rowData["total-passes"];
-        const totalVotes = rowData["total-votes"];
-
-        // 入力の votes があっても、合計値を信頼して再計算
-        const totalAgreeRate = totalAgrees / totalVotes;
-        const totalDisagreeRate = totalDisagrees / totalVotes;
-        const totalPassRate = totalPasses / totalVotes;
-
-        const result = {
-            "comment" : comment,
-            "commentId" : commentId,
-            "totalAgrees" : totalAgrees,
-            "totalDisagrees" : totalDisagrees,
-            "totalPasses" : totalPasses,
-            "totalVotes" : totalVotes,
-            "totalAgreeRate" : totalAgreeRate,
-            "totalDisagreeRate" : totalDisagreeRate,
-            "totalPassRate" : totalPassRate,
-        };
-
-        const groupData = extractGroups(rowData)
-        result.groupData = groupData;
-
-        return result;
-    })
+    const displayData = getDisplayDataFromCSVJSON(csvJson);
 
     // 含まれるグループ一覧を取得
     const groups = getGroups(csvJson[0]);
@@ -546,18 +751,29 @@ async function initializeArticles() {
     // 取得したデータから各DOMを生成する
     // 生成用の親要素取得
     const container = document.querySelector('.report-list-container');
-    if (!container) throw new Error(`親要素が見つかりません: .report-container`);
+    const groupInfoContainer = document.querySelector('.group-info-container .group-item-list');
+
+    if (!container || !groupInfoContainer) throw new Error(`親要素が見つかりません: .report-container`);
+
     container.innerHTML = '';
     // 全体のリスト
     const totalHTML = buildTopicInnerHTML(sortedByTotal, "みんなが賛成した意見");
 
     // グループ別のリスト
     const groupHTML = sortedByGroup.map((groupData) => {
-        return getGroupCommentsInnerHTML(groupData.groupAgreedData, `グループ${String(groupData.groupName).toUpperCase()}が賛成した意見`, groupData.groupName);
+        return getGroupCommentsInnerHTML(groupData);
     }).join("");
 
     container.innerHTML += totalHTML;
     container.innerHTML += groupHTML;
+
+
+    // グループ紹介
+    const groupInfoHTML = sortedByGroup.map((groupData) => {
+        return getGroupInfoInnerHTML(groupData);
+    }).join("");
+
+    groupInfoContainer.innerHTML = groupInfoHTML;
 }
 
 // ==============================
@@ -609,7 +825,7 @@ function bindClipBoardCopy() {
         ev.preventDefault();
         
         const conversationId = getConversationId();
-        const text = `https://share.pol-is.jp/ogp?conversation_id=${conversationId}`;
+        const text = `https://share.pol-is.jp/link?conversation_id=${conversationId}`;
         const share_text = `\
 テーマ : ${detailData.title}
 ${text}
@@ -692,5 +908,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeLink();
     bindDetailLink();
     bindPageReturn();
+    setTimeout(() => {
+        bindAccordionToggle();
+    }, 500);
 });
-
