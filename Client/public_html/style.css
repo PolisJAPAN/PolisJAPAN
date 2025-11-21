@@ -5763,18 +5763,59 @@ body#detail #tab-group .tab-wrapper .tab-select.on-reports {
 body#detail #bottom-menu {
   position: fixed;
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
   width: 100%;
   height: fit-content;
-  padding: 16px;
   gap: 16px;
+  padding: 16px;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: var(--z-index-grobal-menu);
   pointer-events: auto; /* ここが重要。背景へのヒットを遮断 */
+}
+body#detail #bottom-menu .bottom-menu-info-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: fit-content;
+}
+body#detail #bottom-menu .bottom-menu-info-group .bottom-menu-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  height: fit-content;
+  padding-right: 16px;
+  padding-left: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+  background-color: rgba(242, 242, 240, 0.6392156863);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  color: var(--color-font-dark-secondary);
+}
+body#detail #bottom-menu .bottom-menu-info-group .bottom-menu-info .text {
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  font-size: var(--font-size-sub-small);
+}
+body#detail #bottom-menu .bottom-menu-button-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: fit-content;
+  gap: 16px;
 }
 body#detail #bottom-menu .help-button, body#detail #bottom-menu .share-button {
   gap: 8px;

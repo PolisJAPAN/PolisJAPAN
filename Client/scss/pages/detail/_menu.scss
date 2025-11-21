@@ -87,13 +87,13 @@ body#detail {
     
     #bottom-menu {
         @include common.fixed;
-        @include common.row;
-        @include common.row-left;
+        @include common.stack;
+        @include common.center;
         @include common.align-center;
         @include common.width-full;
         @include common.height-fit;
-        @include common.padding-16px;
         @include common.spacing-16px;
+        @include common.padding-16px;
         
         bottom: 0;
         left: 0;
@@ -101,6 +101,50 @@ body#detail {
     
         z-index: var(--z-index-grobal-menu);
         pointer-events: auto;    /* ここが重要。背景へのヒットを遮断 */
+
+        .bottom-menu-info-group {
+            @include common.row;
+            @include common.center;
+            @include common.align-center;
+            @include common.width-full;
+            @include common.height-fit;
+
+            .bottom-menu-info {
+                @include common.row;
+                @include common.center;
+                @include common.align-center;
+                @include common.width-fit;
+                @include common.height-fit;
+                @include common.padding-x-16px;
+                @include common.padding-y-8px;
+                @include common.spacing-8px;
+
+                max-width: calc(100vw - 32px);
+                background-color: #f2f2f0a3;
+                border-radius: 8px;
+
+                backdrop-filter: blur(4px);
+
+                color: var(--color-font-dark-secondary);
+
+                .text {
+                    @include common.font-weight-semibold;
+                    // @include common.letter-spacing-small;
+                    @include common.line-spacing-medium;
+                    @include common.text-center;
+                    @include common.font-size-sub-small;
+                }
+            }
+        }
+
+        .bottom-menu-button-group {
+            @include common.row;
+            @include common.row-left;
+            @include common.align-center;
+            @include common.width-full;
+            @include common.height-fit;
+            @include common.spacing-16px;
+        }
     
         .help-button, .share-button {
             @include common.spacing-8px;
