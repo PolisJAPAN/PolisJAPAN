@@ -2833,7 +2833,6 @@ div.skeleton-loading::after {
   bottom: 0;
   left: 0;
   right: 0;
-  border-radius: 8px;
 }
 
 textarea.skeleton-loading {
@@ -5048,53 +5047,52 @@ body#home .slide-modal.full-screen-modal .modal-window .modal-content .modal-ste
 body#home .slide-modal.full-screen-modal .modal-window .modal-content .modal-stepper .modal-stepper-content .hidden-input {
   padding-right: 4px;
   padding-left: 4px;
-  padding-right: 20px;
   padding-top: 16px;
   padding-bottom: 16px;
   line-height: 1.6;
   width: 100%;
   height: fit-content;
+  position: relative;
   box-sizing: border-box;
   transition: border 0.3s;
-  border-bottom: 1px solid var(--color-font-dark-secondary-2);
   border-radius: 0;
   resize: none;
+  z-index: var(--z-index-local-over-1);
 }
 body#home .slide-modal.full-screen-modal .modal-window .modal-content .modal-stepper .modal-stepper-content .hidden-input::placeholder {
   color: var(--color-font-dark-secondary);
 }
-body#home .slide-modal.full-screen-modal .modal-window .modal-content .modal-stepper .modal-stepper-content .hidden-input:focus {
-  border-bottom: 1px solid var(--color-main);
-}
 body#home .slide-modal.full-screen-modal .modal-window .modal-content .modal-stepper .modal-stepper-content .input-group {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: fit-content;
   gap: 4px;
   position: relative;
+  border-bottom: 1px solid var(--color-font-dark-secondary-2);
+}
+body#home .slide-modal.full-screen-modal .modal-window .modal-content .modal-stepper .modal-stepper-content .input-group .hidden-input {
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: auto;
+  flex-shrink: 1;
 }
 body#home .slide-modal.full-screen-modal .modal-window .modal-content .modal-stepper .modal-stepper-content .input-group .clear-button {
-  position: absolute;
   padding-right: 0px;
   padding-left: 0px;
   padding-top: 0px;
   padding-bottom: 0px;
-  right: 0;
-  top: 0;
-  bottom: 1px;
-  color: var(--color-light);
+  background: transparent;
+  border: none;
+  color: var(--color-font-dark-secondary);
+  width: 32px;
+  opacity: 1;
+  pointer-events: auto;
   border-radius: 0;
-  background-color: #ff1f53;
-  border: 1px solid #ff1f53;
   height: calc(100% - 1px);
-  width: 20px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-  will-change: opacity;
+  min-width: 32px;
 }
 body#home .slide-modal.full-screen-modal .modal-window .modal-content .modal-stepper .modal-stepper-content .input-group .clear-button .text {
   font-weight: 400;
@@ -5106,9 +5104,13 @@ body#home .slide-modal.full-screen-modal .modal-window .modal-content .modal-ste
   padding-bottom: 2px;
   font-size: var(--font-size-22px);
 }
+body#home .slide-modal.full-screen-modal .modal-window .modal-content .modal-stepper .modal-stepper-content .input-group:focus-within {
+  border-bottom: 1px solid var(--color-main);
+}
 body#home .slide-modal.full-screen-modal .modal-window .modal-content .modal-stepper .modal-stepper-content .input-group:focus-within .clear-button {
   opacity: 1;
-  pointer-events: all;
+  pointer-events: auto;
+  z-index: var(--z-index-local-over-5);
 }
 body#home .slide-modal.full-screen-modal .modal-window .modal-content .modal-stepper .modal-stepper-content .ai-generate-button {
   position: relative;
@@ -5488,6 +5490,14 @@ body#home .slide-modal.full-screen-modal .modal-window .complete-overlay .comple
   body#home .slide-modal.full-screen-modal .modal-window {
     padding: 16px;
   }
+  body#home .slide-modal.full-screen-modal .modal-window .modal-content .modal-stepper .modal-stepper-content .input-group .clear-button {
+    background: transparent;
+    border: none;
+    color: var(--color-font-dark-secondary);
+    width: 32px;
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 @media (display-mode: standalone) {
   body#home .slide-modal {
@@ -5807,6 +5817,42 @@ body#detail .polis-report .report-container {
   --color-graph-negative: #f37979;
   --color-graph-neutral: #cdcdcd;
   --color-graph-nothing: #f2f2f2;
+}
+body#detail .polis-report .report-container .notice-container {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+}
+body#detail .polis-report .report-container .notice-container .notice-group {
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-right: 32px;
+  padding-left: 32px;
+  border-radius: 8px;
+  background-color: var(--color-bg-gray);
+}
+body#detail .polis-report .report-container .notice-container .notice-group i {
+  font-size: var(--font-size-sub-small);
+  color: var(--color-font-dark-gray);
+}
+body#detail .polis-report .report-container .notice-container .notice-group .text {
+  font-size: var(--font-size-sub-small);
+  font-weight: 600;
+  letter-spacing: var(--letter-spacing-1px);
+  line-height: 1.4;
+  text-align: center;
+  color: var(--color-font-dark-gray);
 }
 body#detail .polis-report .report-container .group-info-container {
   width: 100%;

@@ -872,7 +872,10 @@ function bindAIGenerateButton(id, handler) {
 function setInputLoading(inputList, isLoading) {
     if (inputList) {
         Array.from(inputList).forEach((input) => {
-            input.classList.toggle("skeleton-loading", isLoading);
+            const groupElement = input.closest('.input-group');
+
+            if (!groupElement) return;
+            groupElement.classList.toggle('skeleton-loading', isLoading);
         })
     };
 }
@@ -932,8 +935,10 @@ function bindClearButtonEvents() {
     
     clearButtons.forEach((clearButton) => {
         clearButton.addEventListener("click", () => {
+            
             // ボタンのターゲット情報を辿り、インプット内容の削除を実施
             const targetSelector = clearButton.dataset.target;
+            console.log(`クリア開始 ${targetSelector}`);
             const targetInput = parentNode.querySelector(`#${targetSelector}`);
             targetInput.value = "";
 

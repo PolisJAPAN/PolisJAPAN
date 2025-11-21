@@ -278,29 +278,27 @@ body#home {
 
                             .hidden-input {
                                 @include common.padding-x-4px;
-                                @include common.padding-right-20px;
+                                // @include common.padding-right-20px;
                                 @include common.padding-top-16px;
                                 @include common.padding-bottom-16px;
                                 @include common.line-spacing-large;
                                 @include common.width-full;
                                 @include common.height-fit;
+                                @include common.relative;
 
                                 box-sizing: border-box;
                                 transition: border 0.3s;
-                                border-bottom: 1px solid var(--color-font-dark-secondary-2);
                                 border-radius: 0;
                                 resize: none;
+
+                                z-index: var(--z-index-local-over-1);
 
                                 &::placeholder {
                                     color: var(--color-font-dark-secondary);
                                 }
-
-                                &:focus {
-                                    border-bottom: 1px solid var(--color-main);
-                                }
                             }
                             .input-group {
-                                @include common.stack;
+                                @include common.row;
                                 @include common.center;
                                 @include common.align-center;
                                 @include common.width-full;
@@ -308,27 +306,36 @@ body#home {
                                 @include common.spacing-4px;
                                 @include common.relative;
 
+                                border-bottom: 1px solid var(--color-font-dark-secondary-2);
+
+                                .hidden-input {
+                                    @include common.fill;
+                                    flex-shrink: 1;
+                                }
+
                                 .clear-button {
-                                    @include common.absolute;
                                     @include common.padding-x-0px;
                                     @include common.padding-y-0px;
-                                    right: 0;
-                                    top: 0;
-                                    bottom: 1px;
+
+                                    background: transparent;
+                                    border: none;
+                                    color: var(--color-font-dark-secondary);
+
+                                    width: 32px;
+                                    opacity: 1;
+                                    pointer-events: auto;
     
-                                    color: var(--color-light);
+                                    // color: var(--color-light);
     
                                     border-radius: 0;
-                                    background-color: #ff1f53;
-                                    border: 1px solid #ff1f53;
     
                                     height: calc(100% - 1px);
-                                    width: 20px;
+                                    min-width: 32px;
 
-                                    opacity: 0;
-                                    pointer-events: none;
-                                    transition: opacity 0.3s;
-                                    will-change: opacity;
+                                    // opacity: 0;
+                                    // pointer-events: none;
+                                    // transition: opacity 0.3s;
+                                    // will-change: opacity;
     
                                     .text {
                                         @include common.font-weight-regular;
@@ -346,8 +353,11 @@ body#home {
                                 &:focus-within {
                                     .clear-button {
                                         opacity: 1;
-                                        pointer-events: all;
+                                        pointer-events: auto;
+                                        z-index: var(--z-index-local-over-5);
                                     }
+
+                                    border-bottom: 1px solid var(--color-main);
                                 }
                             }
 
@@ -803,6 +813,22 @@ body#home {
             &.full-screen-modal {
                 .modal-window {
                     @include common.padding-16px;
+                    .modal-content {
+                        .modal-stepper {
+                            .modal-stepper-content {
+                                .input-group {
+                                    .clear-button {
+                                        background: transparent;
+                                        border: none;
+                                        color: var(--color-font-dark-secondary);
+                                        width: 32px;
+                                        opacity: 1;
+                                        pointer-events: auto;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

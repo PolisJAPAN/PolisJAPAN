@@ -20,6 +20,41 @@ body#detail {
             --color-graph-neutral: #cdcdcd;
             --color-graph-nothing: #f2f2f2;
 
+            .notice-container {
+                @include common.width-full;
+                @include common.height-fit;
+                @include common.stack;
+                @include common.center;
+                @include common.align-center;
+                @include common.margin-bottom-16px;
+
+                .notice-group {
+                    @include common.width-fit;
+                    @include common.height-fit;
+                    @include common.row;
+                    @include common.center;
+                    @include common.align-center;
+                    @include common.spacing-8px;
+                    @include common.padding-y-8px;
+                    @include common.padding-x-32px;
+                    border-radius: 8px;
+                    background-color: var(--color-bg-gray);
+
+                    i {
+                        @include common.font-size-sub-small;
+                        color: var(--color-font-dark-gray);
+                    }
+                    .text {
+                        @include common.font-size-sub-small;
+                        @include common.font-weight-semibold;
+                        @include common.letter-spacing-default;
+                        @include common.line-spacing-medium;
+                        @include common.text-center;
+                        color: var(--color-font-dark-gray);
+                    }
+                }
+            }
+
             .group-info-container {
                 @include common.width-full;
                 @include common.stack;
