@@ -289,6 +289,145 @@ const COMMENT_ICON_LIST = [
 ];
 
 /**
+ * グループ別データのキャッシュ（キーは小文字グループ名）
+ * initializeArticles 内で設定される
+ */
+let groupDataCacheByName = null;
+
+/**
+ * グループ意見ツールチップの管理
+ */
+const GroupTooltip = (() => {
+    let tooltipElement = null;
+    let currentAnchor = null;
+
+    /**
+     * ツールチップのルート要素を生成して返す（初回のみ生成、以降はキャッシュを返却）。
+     * クリック外しやスクロール/リサイズ時のクローズ処理もここで初期化する。
+     *
+     * @returns {HTMLDivElement} ツールチップ要素
+     */
+    function ensureTooltipElement() {
+        if (tooltipElement) return tooltipElement;
+        tooltipElement = document.createElement('div');
+        tooltipElement.className = 'group-tooltip';
+        tooltipElement.setAttribute('role', 'dialog');
+        tooltipElement.style.display = 'none';
+
+        // ツールチップ内の閉じるボタンはイベント委譲で処理
+        tooltipElement.addEventListener('click', (ev) => {
+            const closeBtn = ev.target && ev.target.closest('.group-tooltip-close');
+            if (closeBtn) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                hide();
+            }
+        });
+
+        document.body.appendChild(tooltipElement);
+
+        // クリック外しで閉じる
+        document.addEventListener('click', (ev) => {
+            if (!tooltipElement || tooltipElement.style.display === 'none') return;
+            if (tooltipElement.contains(ev.target)) return;
+            if (currentAnchor && currentAnchor.contains(ev.target)) return;
+            hide();
+        });
+        // スクロールやリサイズで閉じる
+        window.addEventListener('scroll', hide, { passive: true });
+        window.addEventListener('resize', hide);
+        return tooltipElement;
+    }
+
+    /**
+     * アンカー要素のビューポート座標をもとに、ツールチップの表示位置を決定する。
+     * 画面下に収まらない場合は自動的に上側へ配置する。
+     *
+     * @param {DOMRect} anchorRect - 基準にする要素の getBoundingClientRect() 結果
+     * @returns {void}
+     */
+    function positionTooltip(anchorRect) {
+        const margin = 8;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        const preferredTop = anchorRect.bottom + margin;
+        const preferredLeft = Math.min(
+            Math.max(anchorRect.left, margin),
+            viewportWidth - margin - 360
+        );
+
+        tooltipElement.style.left = `${preferredLeft}px`;
+        // 下に置けない場合は上に
+        const tentativeTop = preferredTop;
+        const height = tooltipElement.offsetHeight || 240;
+        const fitsBelow = tentativeTop + height + margin <= viewportHeight;
+        const finalTop = fitsBelow ? tentativeTop : Math.max(anchorRect.top - height - margin, margin);
+        tooltipElement.style.top = `${finalTop}px`;
+    }
+
+    /**
+     * 重複IDを避けるため、生成済みHTMLから group-* の id 属性を取り除く。
+     *
+     * @param {string} html - ツールチップへ挿入するHTML文字列
+     * @returns {string} - id除去後のHTML文字列
+     */
+    function sanitizeGroupInfoHTML(html) {
+        // id="group-*" は重複させないよう除去
+        return html.replace(/\s+id="group-[^"]*"/, '');
+    }
+
+    /**
+     * 指定グループの情報を取得し、ツールチップへHTMLを流し込んで表示する。
+     *
+     * @param {string} groupLetter - グループ名（a〜z）
+     * @param {HTMLElement} anchorEl - 配置の基準にする要素
+     * @returns {void}
+     */
+    function showForGroup(groupLetter, anchorEl) {
+        if (!groupDataCacheByName) return;
+        const key = String(groupLetter || '').toLowerCase();
+        const groupData = groupDataCacheByName[key];
+        if (!groupData) return;
+
+        // ツールチップDOMを用意し、今回の基準要素（アンカー）を保持する
+        const el = ensureTooltipElement();
+        currentAnchor = anchorEl;
+
+        // コンテンツ生成（既存の getGroupInfoInnerHTML と同内容）
+        const rawHTML = getGroupInfoInnerHTML(groupData);
+        // 重複IDを持たないようにサニタイズ
+        const innerHTML = sanitizeGroupInfoHTML(rawHTML);
+        // 閉じるボタン＋中身（グループ情報HTML）を文字列連結で挿入
+        const html = `
+            <button class="group-tooltip-close" aria-label="閉じる">×</button>
+            <div class="group-tooltip-content">
+                ${innerHTML}
+            </div>
+        `;
+        el.innerHTML = html;
+
+        // いったん表示してから、アンカー位置に基づいて最適な表示位置へ配置
+        el.style.display = 'block';
+        const rect = anchorEl.getBoundingClientRect();
+        positionTooltip(rect);
+    }
+
+    /**
+     * ツールチップを非表示にし、現在のアンカー参照もクリアする。
+     *
+     * @returns {void}
+     */
+    function hide() {
+        if (!tooltipElement) return;
+        tooltipElement.style.display = 'none';
+        currentAnchor = null;
+    }
+
+    return { showForGroup, hide };
+})();
+
+/**
  * コメント群（全体指標）をHTMLに整形して返す。
  * 
  * displayDataList の各要素について、コメントと全体比率、各グループの円グラフを描画するHTMLを生成する。
@@ -302,6 +441,8 @@ const COMMENT_ICON_LIST = [
 function buildTopicInnerHTML(displayDataList, label) {
     const listHtmlList = displayDataList.map(data => {
 
+        console.log(data);
+
         // 可変になるグループ部分のHTMLを先に作成
         const groupHtml = data.groupData.map(groupData => {
             const positivePercent = Math.round((groupData.agreeRate * 100) * 10) / 10;
@@ -309,16 +450,16 @@ function buildTopicInnerHTML(displayDataList, label) {
             const passPercent = Math.round((groupData.passRate * 100) * 10) / 10;
 
             return`
-            <div class="circle-graph-item">
+            <div class="circle-graph-item" data-group="${String(groupData.groupName).toLowerCase()}" role="button" tabindex="0" aria-label="グループ${String(groupData.groupName).toUpperCase()}の代表意見を表示">
                 <div class="graph-circle" style="
                     background-image: 
                         radial-gradient(#fff 55%, transparent 55%), 
                         conic-gradient(var(--color-graph-positive) ${positivePercent}%, var(--color-graph-negative) ${positivePercent}% ${positivePercent + negativePercent}%, var(--color-graph-neutral) ${positivePercent + negativePercent}% 100%);
                 ">${String(groupData.groupName).toUpperCase()}</div>
                 <div class="data-text-group">
-                    <div class="data-text positive">${positivePercent}<span class="percent">%</span></div>
-                    <div class="data-text negative">${negativePercent}<span class="percent">%</span></div>
-                    <div class="data-text neutral">${passPercent}<span class="percent">%</span></div>
+                    <div class="data-text positive">${positivePercent}<span class="percent">%</span><span class="percent">(${groupData.agrees})</span></div>
+                    <div class="data-text negative">${negativePercent}<span class="percent">%</span><span class="percent">(${groupData.disagrees})</span></div>
+                    <div class="data-text neutral">${passPercent}<span class="percent">%</span><span class="percent">(${groupData.passes})</span></div>
                 </div>
             </div>
         `}).join('');
@@ -344,9 +485,9 @@ function buildTopicInnerHTML(displayDataList, label) {
                 <div class="graph-group">
                     <div class="graph-container">
                         <div class="data-text-group">
-                            <div class="data-text positive"><span class="percent">賛成</span>${Math.round((data.totalAgreeRate) * 100)}<span class="percent">%</span></div>
-                            <div class="data-text negative"><span class="percent">反対</span>${Math.round((data.totalDisagreeRate) * 100)}<span class="percent">%</span></div>
-                            <div class="data-text neutral"><span class="percent">どちらでもない</span>${Math.round((data.totalPassRate) * 100)}<span class="percent">%</span></div>
+                            <div class="data-text positive"><span class="percent">賛成</span>${Math.round((data.totalAgreeRate) * 100)}<span class="percent">%</span></span><span class="percent">(${data.totalAgrees})</span></div>
+                            <div class="data-text negative"><span class="percent">反対</span>${Math.round((data.totalDisagreeRate) * 100)}<span class="percent">%</span></span><span class="percent">(${data.totalDisagrees})</span></div>
+                            <div class="data-text neutral"><span class="percent">どちらでもない</span>${Math.round((data.totalPassRate) * 100)}<span class="percent">%</span></span><span class="percent">(${data.totalPasses})</span></div>
                         </div>
                         <div class="graph-item">
                             <div class="graph-bar positive" style="width:${(data.totalAgreeRate) * 100}%"></div>
@@ -394,6 +535,34 @@ function buildTopicInnerHTML(displayDataList, label) {
     `;
 
     return groupHtml;
+}
+
+/**
+ * グループ円グラフ（circle-graph-item）にツールチップをバインドする
+ * @returns {void}
+ */
+function bindCircleGraphTooltips() {
+    const items = document.querySelectorAll('.group-graph-container .circle-graph-item');
+    if (!items || items.length === 0) return;
+
+    items.forEach((item) => {
+        const groupLetter = item.dataset.group;
+        if (!groupLetter) return;
+
+        const showHandler = (ev) => {
+            ev.stopPropagation();
+            GroupTooltip.showForGroup(groupLetter, item);
+        };
+
+        item.addEventListener('click', showHandler);
+        item.addEventListener('touchend', showHandler, { passive: true });
+        item.addEventListener('keydown', (ev) => {
+            if (ev.key === 'Enter' || ev.key === ' ') {
+                ev.preventDefault();
+                showHandler(ev);
+            }
+        });
+    });
 }
 
 /**
@@ -547,9 +716,9 @@ function getGroupCommentsInnerHTML(groupData) {
                     <div class="caption"></i>回答の割合</div>
                     <div class="graph-container">
                         <div class="data-text-group">
-                            <div class="data-text positive"><span class="percent">賛成</span>${positivePercent}<span class="percent">%</span></div>
-                            <div class="data-text negative"><span class="percent">反対</span>${negativePercent}<span class="percent">%</span></div>
-                            <div class="data-text neutral"><span class="percent">どちらでもない</span>${passPercent}<span class="percent">%</span></div>
+                            <div class="data-text positive"><span class="percent">賛成</span>${positivePercent}<span class="percent">%</span><span class="percent">(${targetData.agrees})</span></div>
+                            <div class="data-text negative"><span class="percent">反対</span>${negativePercent}<span class="percent">%</span><span class="percent">(${targetData.disagrees})</span></div>
+                            <div class="data-text neutral"><span class="percent">どちらでもない</span>${passPercent}<span class="percent">%</span><span class="percent">(${targetData.passes})</span></div>
                         </div>
                         <div class="graph-item">
                             <div class="graph-bar positive" style="width:${positivePercent}%"></div>
@@ -748,6 +917,12 @@ async function initializeArticles() {
         return result;
     })
     
+    // グループデータのキャッシュを準備（ツールチップで利用）
+    groupDataCacheByName = {};
+    sortedByGroup.forEach((g) => {
+        groupDataCacheByName[String(g.groupName).toLowerCase()] = g;
+    });
+
     // 取得したデータから各DOMを生成する
     // 生成用の親要素取得
     const container = document.querySelector('.report-list-container');
@@ -767,6 +942,8 @@ async function initializeArticles() {
     container.innerHTML += totalHTML;
     container.innerHTML += groupHTML;
 
+    // 円グラフのツールチップをバインド
+    bindCircleGraphTooltips();
 
     // グループ紹介
     const groupInfoHTML = sortedByGroup.map((groupData) => {

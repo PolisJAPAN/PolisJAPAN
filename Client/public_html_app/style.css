@@ -6338,7 +6338,6 @@ body#detail .polis-report .report-container .comments-item .group-graph-containe
   grid-template-columns: 1fr 1fr;
   height: fit-content;
   width: 100%;
-  gap: 16px;
   overflow: hidden;
   border-radius: 8px;
 }
@@ -6351,9 +6350,19 @@ body#detail .polis-report .report-container .comments-item .group-graph-containe
   flex-shrink: 0;
   flex-basis: auto;
   height: fit-content;
+  padding: 8px;
   overflow: hidden;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+body#detail .polis-report .report-container .comments-item .group-graph-container .circle-graph-item:focus-visible {
+  outline: 2px solid var(--color-graph-positive);
+  outline-offset: 2px;
 }
 body#detail .polis-report .report-container .comments-item .group-graph-container .circle-graph-item .graph-circle {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) inset, 0 2px 6px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -6378,6 +6387,7 @@ body#detail .polis-report .report-container .comments-item .group-graph-containe
   height: 100%;
   height: 80px;
   max-height: 30vw;
+  min-width: 140px;
 }
 body#detail .polis-report .report-container .make-comments-group {
   display: flex;
@@ -6408,13 +6418,159 @@ body#detail .polis-report .report-container .make-comments-group .goto-theme-but
   border-color: var(--color-font-dark-gray);
   color: var(--color-font-dark-gray);
 }
+body#detail .group-tooltip {
+  position: fixed;
+  z-index: 10000;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 2px;
+  max-width: 360px;
+  background-color: var(--color-light);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  filter: drop-shadow(0px 8px 24px rgba(9, 8, 39, 0.18));
+  will-change: filter;
+}
+body#detail .group-tooltip .group-tooltip-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  line-height: 1;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--color-light);
+  padding: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+body#detail .group-tooltip .group-tooltip-close:hover {
+  opacity: 0.7;
+}
+body#detail .group-tooltip .group-tooltip-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+body#detail .group-tooltip .group-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 4px;
+  width: 100%;
+  background-color: transparent;
+  border-radius: 8px;
+  filter: none;
+  will-change: auto;
+}
+body#detail .group-tooltip .group-item .group-name-label-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 12px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-radius: 8px;
+}
+body#detail .group-tooltip .group-item .group-name-label-group.group-a {
+  background-image: linear-gradient(135deg, #fa3517 0%, #fcb80c 100%);
+}
+body#detail .group-tooltip .group-item .group-name-label-group.group-b {
+  background-image: linear-gradient(135deg, #71a8ff 0%, #ff70d7 100%);
+}
+body#detail .group-tooltip .group-item .group-name-label-group.group-c {
+  background-image: linear-gradient(135deg, #289dda 0%, #1ee3eb 100%);
+}
+body#detail .group-tooltip .group-item .group-name-label-group.group-d {
+  background-image: linear-gradient(135deg, #7a58f5 0%, #e156e1 100%);
+}
+body#detail .group-tooltip .group-item .group-name-label-group.group-e {
+  background-image: linear-gradient(135deg, #0c9351 0%, #59ab84 100%);
+}
+body#detail .group-tooltip .group-item .group-name-label-group.group-f {
+  background-image: linear-gradient(135deg, #4bdb44 0%, #aaea43 100%);
+}
+body#detail .group-tooltip .group-item .group-name-label-group.group-g {
+  background-image: linear-gradient(135deg, #8349ff 0%, #d481fe 100%);
+}
+body#detail .group-tooltip .group-item .group-name-label-group .group-name-label {
+  font-weight: 600;
+  font-size: var(--font-size-medium);
+  letter-spacing: var(--letter-spacing-2px);
+  color: var(--color-light);
+}
+body#detail .group-tooltip .group-item .group-comment-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+body#detail .group-tooltip .group-item .group-comment-group .group-comment-title {
+  font-weight: 600;
+  font-size: var(--font-size-sub-small);
+  letter-spacing: var(--letter-spacing-2px);
+  color: var(--color-font-dark-gray);
+}
+body#detail .group-tooltip .group-item .group-comment-group .group-comment-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+  width: 100%;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+body#detail .group-tooltip .group-item .group-comment-group .group-comment-list .group-comment {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  height: fit-content;
+  width: 100%;
+  gap: 8px;
+  padding-right: 16px;
+  padding-left: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  background-color: var(--color-bg-gray);
+  border-radius: 8px;
+}
+body#detail .group-tooltip .group-item .group-comment-group .group-comment-list .group-comment .text {
+  font-size: var(--font-size-small);
+  letter-spacing: var(--letter-spacing-1px);
+  line-height: 1.4;
+  color: var(--color-font-dark-gray);
+}
+body#detail .group-tooltip .group-item .group-comment-group .group-comment-list .group-comment i {
+  font-size: var(--font-size-sub-small);
+  color: var(--color-font-dark-gray);
+}
 @media (max-width: 768px) {
-  body#detail .polis-report .report-container .comments-item .group-graph-container .group-graph-container .graph-circle {
+  body#detail .polis-report .report-container .comments-item .group-graph-container .circle-graph-item .graph-circle {
     height: 64px;
     width: 64px;
   }
-  body#detail .polis-report .report-container .comments-item .group-graph-container .group-graph-container .graph-circle .data-text-group {
+  body#detail .polis-report .report-container .comments-item .group-graph-container .circle-graph-item .data-text-group {
     height: 64px;
+    min-width: 80px;
+  }
+  body#detail .polis-report .report-container .comments-item .group-graph-container .circle-graph-item .data-text-group .data-text {
+    font-size: 16px;
   }
 }
 
