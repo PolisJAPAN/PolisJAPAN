@@ -150,6 +150,48 @@ function initializePolisIframe() {
     document.head.appendChild(s);
 }
 
+/**
+ * キーボードショートカット（s/d/f）で投票操作を補助する。
+ *
+ * s: 賛成（ArrowRight）
+ * d: 反対（ArrowLeft）
+ * f: わからない（ArrowDown）
+ *
+ * フォーム入力中は発火しない。
+ *
+ * @returns {void}
+ */
+function bindPolisVoteShortcut() {
+    const keyMap = {
+        s: "ArrowRight",
+        d: "ArrowLeft",
+        f: "ArrowDown",
+    };
+
+    document.addEventListener("keydown", (event) => {
+        const target = event.target;
+        if (
+            target instanceof HTMLElement &&
+            (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/i.test(target.tagName))
+        ) {
+            return;
+        }
+
+        const mappedKey = keyMap[String(event.key).toLowerCase()];
+        if (!mappedKey) return;
+
+        const keyEvent = new KeyboardEvent("keydown", {
+            key: mappedKey,
+            code: mappedKey,
+            bubbles: true,
+            cancelable: true,
+        });
+
+        window.dispatchEvent(keyEvent);
+        document.dispatchEvent(keyEvent);
+    });
+}
+
 // ==============================
 // レポート関連
 // ==============================
@@ -1080,6 +1122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     hideLoading();
     initializeTutorial();
     initializePolisIframe();
+    bindPolisVoteShortcut();
     bindClipBoardCopy();
     initializeArticles();
     initializeLink();
