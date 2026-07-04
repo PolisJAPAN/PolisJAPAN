@@ -2652,18 +2652,6 @@ files = [
 cli = ["click (>=5.0)"]
 
 [[package]]
-name = "python-memcached"
-version = "1.62"
-description = "Pure python memcached client"
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "python-memcached-1.62.tar.gz", hash = "sha256:0285470599b7f593fbf3bec084daa1f483221e68c1db2cf1d846a9f7c2655103"},
-    {file = "python_memcached-1.62-py2.py3-none-any.whl", hash = "sha256:1bdd8d2393ff53e80cd5e9442d750e658e0b35c3eebb3211af137303e3b729d1"},
-]
-
-[[package]]
 name = "python-multipart"
 version = "0.0.20"
 description = "A streaming multipart parser for Python"
@@ -4151,4 +4139,4 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4.0"
-content-hash = "07a163dc14f104a94149668cbc61cc279c82140a30f32db7ae1a782814812fa9"
+content-hash = "fca558c8473178348ddec91496ef2e87899b9ec8258080b6fc2cadf2643ec4ef"
