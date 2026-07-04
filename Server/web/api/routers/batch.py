@@ -1,5 +1,4 @@
 import json
-import os
 
 from fastapi import Depends, Request
 from fastapi.routing import APIRouter
@@ -23,6 +22,9 @@ router = APIRouter(
 
 THEME_HEADERS = ["id", "category", "title", "description", "conversation_id", "report_id", "votes", "comments", "create_date"]
 """テーマ記録用CSVのカラム一覧"""
+
+CSV_CACHE_CONTROL = "max-age=300"
+"""CSV配信のCloudFront TTL。無効化APIの代わりにオブジェクト側のヘッダで鮮度を制御する"""
 
 @router.post("/update", description="テーマ情報更新API", responses=error_response(batch_schemas.BatchUpdateErrorResponses.errors()), response_model=batch_schemas.BatchUpdateResponse)
 async def update(request: Request, request_body:batch_schemas.BatchUpdateRequest = Depends(batch_schemas.BatchUpdateRequest.parse)):
@@ -94,16 +96,13 @@ async def update(request: Request, request_body:batch_schemas.BatchUpdateRequest
     try:
         if update_comment_csv and len(update_comment_csv.items()) > 0:
             Logger.debug("S3に更新を実施")
-            
+
             # 変更があった集計CSVをS3に格納
             for conversation_id, report_csv_str in update_comment_csv.items():
-                await service.s3.upload_bytes(f"csv/report/report_{conversation_id}.csv", report_csv_str.encode("utf-8"), content_type="text/csv")
-            
+                await service.s3.upload_bytes(f"csv/report/report_{conversation_id}.csv", report_csv_str.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
+
             # テーマ一覧CSVを更新
-            await service.s3.upload_bytes(f"csv/themes.csv", fixed_theme_csv_text.encode("utf-8"), content_type="text/csv")
-            
-            # キャッシュクリア
-            await service.s3.clear_cache(os.environ["CLOUDFRONT_DISTRIBUTION"],["/csv/*"])
+            await service.s3.upload_bytes(f"csv/themes.csv", fixed_theme_csv_text.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
     except Exception as e:
         raise e
     
@@ -168,13 +167,13 @@ async def create_all(request: Request, request_body:batch_schemas.BatchCreateAll
         
     # テーマ一覧CSVをS3にアップ
     fixed_theme_csv_text = utils.CSV.to_csv(theme_list, THEME_HEADERS)
-    await service.s3.upload_bytes(f"csv/themes.csv", fixed_theme_csv_text.encode("utf-8"), content_type="text/csv")
-    
+    await service.s3.upload_bytes(f"csv/themes.csv", fixed_theme_csv_text.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
+
     # レポートから取得したファイルをS3に一括アップ
-    for report_csv_str in report_csv_list:
-        await service.s3.upload_bytes(f"csv/report/report_{theme_info['conversation_id']}.csv", report_csv_str.encode("utf-8"), content_type="text/csv")
-        
-    await service.s3.clear_cache(os.environ["CLOUDFRONT_DISTRIBUTION"],["/csv/*"])
+    # (t_draftと対応づけて格納。従来はループ外のtheme_infoを参照していたため、
+    #  複数件処理時にすべて最後のテーマのconversation_idで上書きされるバグがあった)
+    for t_draft, report_csv_str in zip(t_draft_list, report_csv_list):
+        await service.s3.upload_bytes(f"csv/report/report_{t_draft.conversation_id}.csv", report_csv_str.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
 
     # 3.DB更新処理実行
     try:
@@ -238,15 +237,12 @@ async def delete(request: Request, request_body:batch_schemas.BatchDeleteRequest
     
         # S3に再アップロード
         fixed_theme_csv_text = utils.CSV.to_csv(filtered_theme_list, THEME_HEADERS)
-        await service.s3.upload_bytes(f"csv/themes.csv", fixed_theme_csv_text.encode("utf-8"), content_type="text/csv")
-        
+        await service.s3.upload_bytes(f"csv/themes.csv", fixed_theme_csv_text.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
+
     # レポートファイルがある場合は削除
     is_report_exists = await service.s3.exists(f"/csv/report/report_{t_draft.conversation_id}.csv")
     if is_report_exists:
         await service.s3.delete_object(f"csv/report/report_{t_draft.conversation_id}.csv")
-    
-    # キャッシュクリア
-    await service.s3.clear_cache(os.environ["CLOUDFRONT_DISTRIBUTION"],["/csv/*"])
 
     # 3.DB更新処理実行
     try:
@@ -263,5 +259,40 @@ async def delete(request: Request, request_body:batch_schemas.BatchDeleteRequest
     # なし
 
     return batch_schemas.BatchDeleteResponse(
+        is_success=True
+    )
+
+@router.get("/healthcheck", description="ヘルスチェックAPI", responses=error_response(batch_schemas.BatchHealthcheckErrorResponses.errors()), response_model=batch_schemas.BatchHealthcheckResponse)
+async def healthcheck(request: Request, request_body:batch_schemas.BatchHealthcheckRequest = Depends(batch_schemas.BatchHealthcheckRequest.parse)):
+    """
+    ヘルスチェックAPI
+        WEBサーバーのヘルス状態をチェックするAPI
+    
+    エンドポイント : (base_url)/batch/healthcheck
+    
+    Args:
+
+
+    Returns:
+        is_success(bool) : 成功情報
+
+    """
+
+    # 1.サービスの取得
+    service : BatchService = request.state.service
+
+    # なし
+
+    # 2.DB更新前の事前処理
+
+    # なし
+
+    # 3.DB更新処理実行
+
+    # なし
+
+    # 4.レスポンスの作成と返却
+
+    return batch_schemas.BatchHealthcheckResponse(
         is_success=True
     )

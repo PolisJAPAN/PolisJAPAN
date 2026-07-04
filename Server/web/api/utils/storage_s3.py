@@ -2,13 +2,32 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-import time
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Mapping, Optional
 
 import aioboto3
 import boto3
 from botocore.config import Config
 from botocore.exceptions import BotoCoreError, ClientError
+
+
+def build_put_args(
+    *,
+    bucket: str,
+    key: str,
+    data: bytes,
+    content_type: Optional[str] = None,
+    cache_control: Optional[str] = None,
+    extra_put_args: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """put_object に渡す引数dictを構築する（純関数・テスト用に分離）。"""
+    put_args: dict[str, Any] = {"Bucket": bucket, "Key": key, "Body": data}
+    if content_type:
+        put_args["ContentType"] = content_type
+    if cache_control:
+        put_args["CacheControl"] = cache_control
+    if extra_put_args:
+        put_args.update(extra_put_args)
+    return put_args
 
 
 class StorageS3Error(RuntimeError):
@@ -180,6 +199,7 @@ class StorageS3:
         data: bytes,
         *,
         content_type: Optional[str] = None,
+        cache_control: Optional[str] = None,
         extra_put_args: Optional[Mapping[str, Any]] = None,
     ) -> None:
         """
@@ -189,18 +209,21 @@ class StorageS3:
             key (str): アップロード先のオブジェクトキー（prefixを除いた相対パス）。
             data (bytes): アップロードするデータ。
             content_type (Optional[str]): Content-Type ヘッダ（例: "text/plain"）。
+            cache_control (Optional[str]): Cache-Control ヘッダ（例: "max-age=300"）。
+                CloudFrontはこの値をTTLとして尊重するため、キャッシュ無効化APIの代わりに使う。
             extra_put_args (Optional[Mapping[str, Any]]): put_object に渡す追加パラメータ。
 
         Raises:
             StorageS3Error: S3通信エラーや認証エラーなど。
         """
-        k = self._full_key(key)
-        put_args: dict[str, Any] = {"Bucket": self.bucket, "Key": k, "Body": data}
-        if content_type:
-            put_args["ContentType"] = content_type
-        if extra_put_args:
-            put_args.update(extra_put_args)
-
+        put_args = build_put_args(
+            bucket=self.bucket,
+            key=self._full_key(key),
+            data=data,
+            content_type=content_type,
+            cache_control=cache_control,
+            extra_put_args=extra_put_args,
+        )
         try:
             await self._exist_client().put_object(**put_args)
         except (BotoCoreError, ClientError) as e:
@@ -246,28 +269,3 @@ class StorageS3:
             )
         except (BotoCoreError, ClientError) as e:
             raise StorageS3Error(f"delete_object failed: {e}") from e
-        
-    async def clear_cache(self, distribution_id: str, paths: Sequence[str]):
-        """
-        aioboto3 を使用して CloudFront のキャッシュ無効化を非同期で実行する。
-
-        :param distribution_id: CloudFront ディストリビューション ID
-        :param paths: 無効化したいパスのリスト（例：['/index.html', '/static/*']）
-        """
-
-        # CallerReference は一意である必要があるため timestamp を利用
-        caller_reference = f"invalidation-{int(time.time())}"
-
-        async with self._session.client("cloudfront") as client:
-            response = await client.create_invalidation(
-                DistributionId=distribution_id,
-                InvalidationBatch={
-                    "Paths": {
-                        "Quantity": len(paths),
-                        "Items": list(paths),
-                    },
-                    "CallerReference": caller_reference,
-                },
-            )
-
-        return response
