@@ -1719,6 +1719,21 @@ html5 = ["html5lib"]
 htmlsoup = ["BeautifulSoup4"]
 
 [[package]]
+name = "mangum"
+version = "0.19.0"
+description = "AWS Lambda support for ASGI applications"
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "mangum-0.19.0-py3-none-any.whl", hash = "sha256:e500b35f495d5e68ac98bc97334896d6101523f2ee2c57ba6a61893b65266e59"},
+    {file = "mangum-0.19.0.tar.gz", hash = "sha256:e388e7c491b7b67970f8234e46fd4a7b21ff87785848f418de08148f71cf0bd6"},
+]
+
+[package.dependencies]
+typing-extensions = "*"
+
+[[package]]
 name = "marshmallow"
 version = "3.26.1"
 description = "A lightweight library for converting complex datatypes to and from native Python datatypes."
@@ -4136,4 +4151,4 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4.0"
-content-hash = "25c8d724dc0bd920d37ba5cfa80ef49c3849228cd0216e16f801e769df1237cc"
+content-hash = "07a163dc14f104a94149668cbc61cc279c82140a30f32db7ae1a782814812fa9"
