@@ -10,3 +10,6 @@ terraform.tfvars
 
 # プランファイル
 *.tfplan
+
+# Lambdaプレースホルダzip（既存Lambdaのimport用ダミー。実コードはignore_changes管理）
+lambda-placeholder.zip
