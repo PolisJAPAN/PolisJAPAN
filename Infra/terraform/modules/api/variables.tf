@@ -39,3 +39,8 @@ variable "environment_variables" {
   type      = map(string)
   sensitive = true
 }
+
+variable "cloudfront_distribution_id" {
+  description = "テーマ削除時にピンポイント無効化するCloudFrontディストリビューションID"
+  type        = string
+}

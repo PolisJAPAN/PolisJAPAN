@@ -24,10 +24,8 @@ module "api" {
   drafts_table_arn   = module.data.drafts_table_arn
   ssm_parameter_arns = module.data.ssm_parameter_arns
 
-  environment_variables = merge(local.common_lambda_env, {
-    USER_ACCESS_KEY = data.aws_ssm_parameter.user_access_key.value
-    ENCRYPT_SALT    = data.aws_ssm_parameter.encrypt_salt.value
-  })
+  environment_variables      = local.common_lambda_env
+  cloudfront_distribution_id = var.csv_cloudfront_distribution_id
 }
 
 # バッチ: Lambda(batch-update / batch-create) + EventBridge Scheduler
@@ -44,8 +42,8 @@ module "batch" {
   scheduler_state    = var.scheduler_state
 
   environment_variables = merge(local.common_lambda_env, {
-    POLIS_LOGIN_USER     = data.aws_ssm_parameter.polis_login_user.value
-    POLIS_LOGIN_PASSWORD = data.aws_ssm_parameter.polis_login_password.value
+    POLIS_LOGIN_USER     = data.aws_ssm_parameter.secrets["polis-login-user"].value
+    POLIS_LOGIN_PASSWORD = data.aws_ssm_parameter.secrets["polis-login-password"].value
   })
 }
 
@@ -86,39 +84,20 @@ module "monitoring" {
 # README のセキュリティ注記を参照）
 # ------------------------------------------------------------
 
-data "aws_ssm_parameter" "openai_api_key" {
-  name       = module.data.ssm_parameter_names["openai-api-key"]
-  depends_on = [module.data]
-}
+data "aws_ssm_parameter" "secrets" {
+  for_each = module.data.ssm_parameter_names
 
-data "aws_ssm_parameter" "langsmith_api_key" {
-  name       = module.data.ssm_parameter_names["langsmith-api-key"]
+  name       = each.value
   depends_on = [module.data]
-}
 
-data "aws_ssm_parameter" "batch_access_key" {
-  name       = module.data.ssm_parameter_names["batch-access-key"]
-  depends_on = [module.data]
-}
-
-data "aws_ssm_parameter" "user_access_key" {
-  name       = module.data.ssm_parameter_names["user-access-key"]
-  depends_on = [module.data]
-}
-
-data "aws_ssm_parameter" "encrypt_salt" {
-  name       = module.data.ssm_parameter_names["encrypt-salt"]
-  depends_on = [module.data]
-}
-
-data "aws_ssm_parameter" "polis_login_user" {
-  name       = module.data.ssm_parameter_names["polis-login-user"]
-  depends_on = [module.data]
-}
-
-data "aws_ssm_parameter" "polis_login_password" {
-  name       = module.data.ssm_parameter_names["polis-login-password"]
-  depends_on = [module.data]
+  lifecycle {
+    # SSM投入忘れのままLambda環境変数にプレースホルダを配ってしまう事故を防ぐ
+    # （Lambda系リソース作成時 = 第2段階apply でのみ評価される）
+    postcondition {
+      condition     = !(var.api_image_uri != "" && self.value == "CHANGEME")
+      error_message = "SSMパラメータ ${self.name} が初期値(CHANGEME)のままです。aws ssm put-parameter --overwrite で実値を投入してから再実行してください。"
+    }
+  }
 }
 
 locals {
@@ -128,17 +107,23 @@ locals {
     "arn:aws:s3:::${var.e2e_sandbox_bucket}/*",
   ] : []
 
+  # 注意: serverless設定(configs/serverless/constants.py)の必須キー
+  # (API_BASE_URL/CLIENT_BASE_URL/ENCRYPT_SALT/BATCH_ACCESS_KEY/USER_ACCESS_KEY)は
+  # api・batch全Lambdaが設定読込時に参照するため、必ずこの共通envに含めること
   common_lambda_env = {
-    APP_ENV            = "serverless"
-    CSV_BUCKET         = var.app_bucket
-    API_BASE_URL       = "https://${var.api_domain}/"
-    CLIENT_BASE_URL    = var.client_base_url
-    CORS_ALLOW_ORIGINS = join(",", var.cors_allow_origins)
-    ADMIN_ALLOW_IPS    = join(",", var.admin_allow_ips)
-    DRAFTS_TABLE       = module.data.drafts_table_name
-    BATCH_ACCESS_KEY   = data.aws_ssm_parameter.batch_access_key.value
-    OPENAI_API_KEY     = data.aws_ssm_parameter.openai_api_key.value
-    LANGCHAIN_API_KEY  = data.aws_ssm_parameter.langsmith_api_key.value
-    LANGCHAIN_ENDPOINT = "https://api.smith.langchain.com"
+    APP_ENV                 = "serverless"
+    CSV_BUCKET              = var.app_bucket
+    API_BASE_URL            = "https://${var.api_domain}/"
+    CLIENT_BASE_URL         = var.client_base_url
+    CORS_ALLOW_ORIGINS      = join(",", var.cors_allow_origins)
+    ADMIN_ALLOW_IPS         = join(",", var.admin_allow_ips)
+    DRAFTS_TABLE            = module.data.drafts_table_name
+    CLOUDFRONT_DISTRIBUTION = var.csv_cloudfront_distribution_id
+    ENCRYPT_SALT            = data.aws_ssm_parameter.secrets["encrypt-salt"].value
+    BATCH_ACCESS_KEY        = data.aws_ssm_parameter.secrets["batch-access-key"].value
+    USER_ACCESS_KEY         = data.aws_ssm_parameter.secrets["user-access-key"].value
+    OPENAI_API_KEY          = data.aws_ssm_parameter.secrets["openai-api-key"].value
+    LANGCHAIN_API_KEY       = data.aws_ssm_parameter.secrets["langsmith-api-key"].value
+    LANGCHAIN_ENDPOINT      = "https://api.smith.langchain.com"
   }
 }

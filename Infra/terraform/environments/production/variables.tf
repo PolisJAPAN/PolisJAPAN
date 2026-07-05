@@ -73,6 +73,12 @@ variable "scheduler_state" {
   }
 }
 
+variable "csv_cloudfront_distribution_id" {
+  description = "CSVを配信している既存CloudFrontディストリビューションID（テーマ削除時のピンポイント無効化に使用）"
+  type        = string
+  default     = "E1VDGUET2Z2OBX"
+}
+
 variable "e2e_sandbox_bucket" {
   description = "E2Eテスト用サンドボックスバケット名。設定するとLambdaのIAMにアクセス権が追加される（本番CSVを汚さないための一時的な検証先。テスト時はLambdaのCSV_BUCKET環境変数をこの値に上書きする）"
   type        = string

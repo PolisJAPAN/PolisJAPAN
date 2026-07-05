@@ -38,6 +38,8 @@ resource "aws_acm_certificate_validation" "api" {
 
 # ---- Lambda ----
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_cloudwatch_log_group" "api" {
   name              = "/aws/lambda/polisjapan-api"
   retention_in_days = 30
@@ -92,6 +94,13 @@ resource "aws_iam_role_policy" "api" {
         Effect   = "Allow"
         Action   = ["ssm:GetParameter", "ssm:GetParameters"]
         Resource = var.ssm_parameter_arns
+      },
+      {
+        # テーマ削除時のピンポイント無効化用（削除はCache-ControlのTTLでは反映できないため）
+        Sid      = "DeleteInvalidation"
+        Effect   = "Allow"
+        Action   = ["cloudfront:CreateInvalidation"]
+        Resource = "arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:distribution/${var.cloudfront_distribution_id}"
       },
     ]
   })
