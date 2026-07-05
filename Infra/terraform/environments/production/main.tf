@@ -1,8 +1,4 @@
-# 既存のRoute53ホストゾーン（Terraform管理外・参照のみ。
-# ACM検証レコードとadminサブドメインの「追加」のみ行い、既存レコードには触れない）
-data "aws_route53_zone" "main" {
-  name = var.root_domain
-}
+# Route53ホストゾーンは route53.tf でTerraform管理（import済み）
 
 # データ層: DynamoDB / アーカイブS3 / ECR / SSMパラメータ
 module "data" {
@@ -16,7 +12,7 @@ module "api" {
   count  = var.api_image_uri != "" ? 1 : 0
 
   api_domain         = var.api_domain
-  zone_id            = data.aws_route53_zone.main.zone_id
+  zone_id            = aws_route53_zone.main.zone_id
   image_uri          = var.api_image_uri
   app_bucket         = var.app_bucket
   extra_bucket_arns  = local.extra_bucket_arns
@@ -56,7 +52,7 @@ module "admin_site" {
   }
 
   admin_domain    = var.admin_domain
-  zone_id         = data.aws_route53_zone.main.zone_id
+  zone_id         = aws_route53_zone.main.zone_id
   admin_allow_ips = var.admin_allow_ips
 }
 

@@ -62,6 +62,22 @@ terraform apply
 2. Route53 の `api.pol-is.jp` を、出力 `api_custom_domain_target` のエイリアスへ手動で切り替える
 3. `scheduler_state = "ENABLED"` にして `terraform apply`（旧cron停止後に実施）
 
+## 管理対象（2026-07-06 既存リソース取り込み完了・計115リソース）
+
+新環境一式（Lambda/API GW/DynamoDB/EventBridge/SSM/ECR/監視/admin-site）に加え、既存リソースもすべてimport済み:
+S3（pol-is.jp / app.pol-is.jp とサブ設定）、CloudFront×4、ACM×6、Route53ゾーン+全レコード、
+contact/share Lambda + API Gateway本体/ステージ、SES（ドメインID/DKIM/MAIL FROM）。
+
+**意図的に管理外のもの**:
+- tfstateバケット `polisjapan-tfstate`（自己参照になるため手動管理）
+- contact/share の **Lambdaコード**（ignore_changes。コンソールデプロイのまま）と **API GWメソッド/統合定義・IAMサービスロール**（凍結済みレガシー。`body`を指定していないためTerraformが子リソースに触れることはない）
+- SESのメールアドレスID（個人アドレスをコードに残さない）
+- IAMユーザー（terraform-deploy等。自己権限の管理事故防止）
+- 旧EC2・EIP・SG・VPC・旧SNS・cw-syn-resultsバケット・e2e-sandbox（Phase 5で削除予定のため取り込まない）
+
+**データ保護**: S3バケット（lp/app/archive）・Route53ゾーン・DynamoDBに `prevent_destroy` を設定済み。
+取り込み前の全データバックアップは `s3://polisjapan-archive/pre-import-backup/` とローカルに保全。
+
 ## セキュリティ注記
 
 - SSMパラメータの値はTerraformでは管理しない（`ignore_changes`）。ただしLambda環境変数への注入のため **tfstateには復号値が含まれる**。tfstateバケットは非公開・暗号化・バージョニングを必須とし、terraform-deployユーザー以外にアクセス権を与えないこと

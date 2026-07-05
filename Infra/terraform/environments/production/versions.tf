@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.80"
+      version = "~> 6.0" # python3.14ランタイム対応のためv6系（v5はLambda runtime検証リストが古い）
     }
   }
 
