@@ -28,12 +28,22 @@ resource "aws_dynamodb_table" "drafts" {
   point_in_time_recovery {
     enabled = true
   }
+
+  lifecycle {
+    # 下書きデータの本体。誤destroy・構成削除をTerraform自身が拒否する
+    prevent_destroy = true
+  }
 }
 
 # ---- S3: アーカイブバケット（MySQL全量ダンプ・Server/一式の保全先） ----
 
 resource "aws_s3_bucket" "archive" {
   bucket = "polisjapan-archive"
+
+  lifecycle {
+    # バックアップ・アーカイブの保全先。誤destroyを拒否する
+    prevent_destroy = true
+  }
 }
 
 resource "aws_s3_bucket_versioning" "archive" {
