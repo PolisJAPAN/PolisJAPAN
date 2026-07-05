@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import shutil
+import tempfile
 from dataclasses import dataclass
 from time import monotonic, sleep
 from typing import List, Optional
@@ -70,12 +72,18 @@ class WebLoaderChrome:
         """
         ドライバを終了してリソースを解放する。
         """
-        
+
         if getattr(self, "_driver", None):
             try:
                 self._driver.quit()
             finally:
                 self._driver = None
+
+        # /tmpの肥大を防ぐため、実行ごとのプロファイルディレクトリを掃除する
+        profile_dir = getattr(self, "_profile_dir", None)
+        if profile_dir:
+            shutil.rmtree(profile_dir, ignore_errors=True)
+            self._profile_dir = None
     
     def restart(self) -> None:
         """
@@ -116,10 +124,12 @@ class WebLoaderChrome:
         opts.add_argument("--disable-gpu")
         opts.add_argument("--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 13_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.3 Safari/605.1.15")
         opts.add_argument("--window-size=1920,1080")
-        # Lambda環境ではファイル書き込みが/tmp配下に限られるため、
-        # Chromeの作業ディレクトリを明示する（EC2/ローカルでも無害）
-        opts.add_argument("--user-data-dir=/tmp/chrome-profile")
-        opts.add_argument("--disk-cache-dir=/tmp/chrome-cache")
+        # Lambda環境ではファイル書き込みが/tmp配下に限られるため作業ディレクトリを明示する。
+        # 固定パスにするとタイムアウト強制終了時に残るSingletonLockが
+        # ウォームコンテナ再利用時の起動を全滅させるため、実行ごとに一意のパスを使う
+        self._profile_dir = tempfile.mkdtemp(prefix="chrome-profile-")
+        opts.add_argument(f"--user-data-dir={self._profile_dir}")
+        opts.add_argument(f"--disk-cache-dir={self._profile_dir}/cache")
 
         service = Service("/usr/bin/chromedriver")
         driver = webdriver.Chrome(service=service, options=opts)

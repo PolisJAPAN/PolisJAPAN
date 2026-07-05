@@ -1,3 +1,4 @@
+import os
 
 from fastapi import Depends, Request
 from fastapi.routing import APIRouter
@@ -145,6 +146,12 @@ async def delete(request: Request, request_body:batch_schemas.BatchDeleteRequest
     is_report_exists = await service.s3.exists(f"/csv/report/report_{t_draft.conversation_id}.csv")
     if is_report_exists:
         await service.s3.delete_object(f"csv/report/report_{t_draft.conversation_id}.csv")
+
+    # 削除はCache-Control(TTL)では反映できない（削除済みオブジェクトはヘッダを持たない）ため、
+    # 対象パスのみピンポイントでキャッシュ無効化する。低頻度の管理操作のためコストはほぼゼロ
+    distribution_id = os.environ.get("CLOUDFRONT_DISTRIBUTION", "")
+    if distribution_id:
+        await service.s3.create_invalidation(distribution_id, [f"/csv/report/report_{t_draft.conversation_id}.csv", "/csv/themes.csv"])
 
     # 3.DB更新処理実行
     try:

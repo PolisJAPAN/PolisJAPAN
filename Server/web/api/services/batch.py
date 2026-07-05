@@ -16,6 +16,7 @@ import api.cruds as cruds
 from api import utils
 from api.core.common_service import CommonService
 from api.logger import Logger
+from api.utils.storage_s3 import StorageS3Error, StorageS3PreconditionError
 from api.utils.web_loader_chrome import WebLoaderChrome
 import api.models.types as types
 
@@ -69,6 +70,41 @@ class BatchService(CommonService):
 
         return report_csv_str, comments
 
+    THEMES_CSV_KEY = "csv/themes.csv"
+    """テーマ一覧CSVのS3キー"""
+
+    async def write_themes_csv(self, mutate, max_attempts: int = 3) -> list:
+        """
+        themes.csv を楽観ロック(ETag If-Match)つきで安全に更新する。
+
+        batch-update(5分毎)とbatch-create(15分毎・実行数分)が同じファイルを
+        read-modify-writeするため、素朴な上書きでは公開直後のテーマ行を
+        取りこぼす競合がある。取得時のETagを条件に書き込み、競合を検出したら
+        最新を再取得してmutateを適用し直す。
+
+        Args:
+            mutate (Callable[[list], list]): 最新のテーマ一覧を受け取り更新後の一覧を返す関数。
+                競合リトライ時に再実行されるため、冪等であること。
+            max_attempts (int): 最大試行回数。
+
+        Returns:
+            list: 書き込みに成功した更新後のテーマ一覧。
+        """
+        for attempt in range(max_attempts):
+            data, etag = await self.s3.get_bytes_and_etag(self.THEMES_CSV_KEY)
+            themes_list = utils.Common.sort_list(utils.CSV.parse_csv(data.decode("utf-8")), "id")
+
+            new_list = mutate(themes_list)
+            fixed_theme_csv_text = utils.CSV.to_csv(new_list, THEME_HEADERS)
+
+            try:
+                await self.s3.upload_bytes(self.THEMES_CSV_KEY, fixed_theme_csv_text.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL, if_match=etag)
+                return new_list
+            except StorageS3PreconditionError:
+                Logger.info(f"themes.csvの書き込み競合を検出。最新を再取得してリトライ ({attempt + 1}/{max_attempts})")
+
+        raise StorageS3Error("themes.csv update failed: write conflict retries exhausted")
+
     # ###########################################################################
     # バッチ本体（ルーター/Lambdaハンドラ共通の入口）
     # ###########################################################################
@@ -113,18 +149,15 @@ class BatchService(CommonService):
         if not update_comment_csv:
             return 0
 
-        # 取得内容をテーマ一覧CSVに反映
-        result_themes = utils.Common.merge_lists(themes_list, update_themes)
-        fixed_theme_csv_text = utils.CSV.to_csv(result_themes, THEME_HEADERS)
-
         Logger.debug("S3に更新を実施")
 
         # 変更があった集計CSVをS3に格納
         for conversation_id, report_csv_str in update_comment_csv.items():
             await self.s3.upload_bytes(f"csv/report/report_{conversation_id}.csv", report_csv_str.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
 
-        # テーマ一覧CSVを更新
-        await self.s3.upload_bytes(f"csv/themes.csv", fixed_theme_csv_text.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
+        # テーマ一覧CSVを楽観ロックで更新
+        # （並行するbatch-createが追記したテーマ行を上書きで消さないよう、最新版にマージし直す）
+        await self.write_themes_csv(lambda current: utils.Common.merge_lists(current, update_themes))
 
         return len(update_themes)
 
@@ -155,6 +188,7 @@ class BatchService(CommonService):
 
         # 承認済テーマを作成
         report_csv_list = []
+        new_theme_infos = []
         for t_draft in t_draft_list:
             # コメントリストを文字列にパース
             comments = t_draft.theme_comments.split(configs.constants.SPLITTER)
@@ -164,14 +198,15 @@ class BatchService(CommonService):
 
             # テーマ一覧に追加
             theme_list.append(theme_info)
+            new_theme_infos.append(theme_info)
             report_csv_list.append(report_csv_str)
 
             t_draft.conversation_id = theme_info["conversation_id"]
             t_draft.report_id = theme_info["report_id"]
 
-        # テーマ一覧CSVをS3にアップ
-        fixed_theme_csv_text = utils.CSV.to_csv(theme_list, THEME_HEADERS)
-        await self.s3.upload_bytes(f"csv/themes.csv", fixed_theme_csv_text.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
+        # テーマ一覧CSVを楽観ロックで更新
+        # （並行するbatch-updateの上書きに新テーマ行を消されないよう、最新版に追記し直す）
+        await self.write_themes_csv(lambda current: current + new_theme_infos)
 
         # レポートから取得したファイルをS3にアップ（t_draftと対応づけ）
         for t_draft, report_csv_str in zip(t_draft_list, report_csv_list):

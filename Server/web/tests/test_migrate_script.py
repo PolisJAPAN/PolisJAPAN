@@ -70,3 +70,24 @@ def test_migrate_and_verify(table, tmp_path):
     assert report["source_count"] == 2
     assert report["table_count"] == 2
     assert report["mismatched_ids"] == []
+
+
+def test_verify_delta_mode_ignores_count_mismatch(table, tmp_path):
+    """差分再同期では部分ファイルを投入するため、全件数照合をスキップして行突合のみ行う"""
+    # 全量を投入した後、1行だけの差分ファイルで検証する状況を再現
+    full = tmp_path / "full.json"
+    full.write_text(json.dumps(SAMPLE_ROWS, ensure_ascii=False))
+    migrate(str(full), TABLE)
+
+    delta = tmp_path / "delta.json"
+    delta.write_text(json.dumps([SAMPLE_ROWS[0]], ensure_ascii=False))
+
+    # 通常モードでは件数不一致(1 vs 2)でFAILする（これがRunbookで誤判断を生む挙動だった）
+    ok_full, _ = verify(str(delta), TABLE)
+    assert ok_full is False
+
+    # 差分モードでは対象行の突合のみでOKになる
+    ok_delta, report = verify(str(delta), TABLE, delta=True)
+    assert ok_delta is True
+    assert report["mode"] == "delta"
+    assert report["mismatched_ids"] == []

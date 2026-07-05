@@ -56,8 +56,13 @@ def migrate(source_json_path: str, table_name: str) -> dict:
     return {"total": len(rows), "written": written}
 
 
-def verify(source_json_path: str, table_name: str) -> tuple[bool, dict]:
-    """件数照合 + 全行の属性突合（origin_html以外）を行う。"""
+def verify(source_json_path: str, table_name: str, delta: bool = False) -> tuple[bool, dict]:
+    """件数照合 + 全行の属性突合（origin_html以外）を行う。
+
+    Args:
+        delta: Trueなら差分再同期モード。ソースは部分ファイルのため
+            全件数照合をスキップし、ソースに含まれる行の突合のみ行う。
+    """
     rows = json.loads(open(source_json_path, encoding="utf-8").read())
     table = boto3.resource("dynamodb").Table(table_name)
 
@@ -87,24 +92,28 @@ def verify(source_json_path: str, table_name: str) -> tuple[bool, dict]:
                 break
 
     report = {
+        "mode": "delta" if delta else "full",
         "source_count": len(rows),
         "table_count": len(items),
         "mismatched_ids": mismatched,
     }
-    ok = len(rows) == len(items) and not mismatched
+    # 差分モードではソースは部分ファイルのため件数照合は行わない（行単位の突合のみ）
+    ok = not mismatched if delta else (len(rows) == len(items) and not mismatched)
     return ok, report
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("usage: python -m scripts.migrate_drafts_to_dynamodb <t_draft.json> <table_name>")
+    args = [a for a in sys.argv[1:] if a != "--delta"]
+    is_delta = "--delta" in sys.argv[1:]
+    if len(args) != 2:
+        print("usage: python -m scripts.migrate_drafts_to_dynamodb <t_draft.json> <table_name> [--delta]")
         sys.exit(2)
-    source, table_name = sys.argv[1], sys.argv[2]
+    source, table_name = args[0], args[1]
 
-    print(f"migrate: {source} -> {table_name}")
+    print(f"migrate: {source} -> {table_name} (mode={'delta' if is_delta else 'full'})")
     print(json.dumps(migrate(source, table_name), ensure_ascii=False))
 
-    ok, report = verify(source, table_name)
+    ok, report = verify(source, table_name, delta=is_delta)
     print(json.dumps(report, ensure_ascii=False))
     print("VERIFY OK" if ok else "VERIFY FAILED")
     sys.exit(0 if ok else 1)

@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import Form
 from pydantic import Field
 
+import api.configs as configs
 from api.core.common_schema import ApiError, APIErrorResponses, CommonRequest
 from api.models import tables
 
@@ -172,7 +173,8 @@ class BatchGenerateErrorResponses(APIErrorResponses):
 class BatchDeleteRequest(CommonRequest):
     """batch/delete API用リクエスト定義"""
     access_key: str = Field(min_length=1, max_length=256, description="アクセスキー")
-    t_draft_id: int = Field(ge=1, le=256, description="下書きID")
+    # DynamoDBバックエンドの下書きIDはepoch秒(約1.75e9)のため、上限はBIGINTまで許容する
+    t_draft_id: int = Field(ge=1, le=configs.constants.BIGINT_MAX, description="下書きID")
 
     @classmethod
     def parse(
