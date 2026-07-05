@@ -20,3 +20,8 @@ INT_U_MAX   	    = 4294967295
 """TINT(符号なし)の最大値"""
 BIGINT_U_MAX   	    = 18446744073709551615
 """BIGINT_MAX(符号なし)の最大値"""
+
+SPLITTER = "###br###"
+
+DATA_BACKEND = "mysql"
+"""下書きデータの保存先: mysql | dynamodb。serverless環境のみdynamodbに上書きされる"""

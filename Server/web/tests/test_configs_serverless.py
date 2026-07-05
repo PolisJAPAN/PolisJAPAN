@@ -27,6 +27,7 @@ def test_load_constants_from_env(serverless_env):
     assert c["CORS_PARAMETERS"]["allow_credentials"] is True
     assert c["CORS_PARAMETERS"]["allow_methods"] == ["*"]
     assert c["CORS_PARAMETERS"]["allow_headers"] == ["*"]
+    assert c["DATA_BACKEND"] == "dynamodb"
 
 
 def test_load_constants_missing_required_raises(monkeypatch):

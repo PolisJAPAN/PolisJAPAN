@@ -23,6 +23,7 @@ def load_from_env() -> dict:
         "BATCH_ACCESS_KEY": os.environ["BATCH_ACCESS_KEY"],
         "USER_ACCESS_KEY": os.environ["USER_ACCESS_KEY"],
         "ADMIN_ALLOW_IPS": _csv_env("ADMIN_ALLOW_IPS"),
+        "DATA_BACKEND": "dynamodb",
         "LOG_ENABLE_FLAGS": json.loads(os.environ.get("LOG_ENABLE_FLAGS", "{}")),
         "CORS_PARAMETERS": {
             "allow_origins": _csv_env("CORS_ALLOW_ORIGINS"),
