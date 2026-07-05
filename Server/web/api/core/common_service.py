@@ -1,4 +1,5 @@
 import importlib
+import os
 from typing import TYPE_CHECKING, List, Type
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -56,7 +57,9 @@ class CommonService:
         """
         
         # 各ユーティリティをサービスに展開
-        self.s3 = StorageS3(bucket="app.pol-is.jp", base_prefix="")
+        # バケット名は環境変数で差し替え可能（E2Eテストのサンドボックス用。未設定なら本番バケット）
+        csv_bucket = os.environ.get("CSV_BUCKET", "app.pol-is.jp")
+        self.s3 = StorageS3(bucket=csv_bucket, base_prefix="")
         await self.s3.open()   # 明示的にクライアントを初期化
     
 @staticmethod

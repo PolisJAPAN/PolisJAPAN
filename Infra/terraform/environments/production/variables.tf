@@ -73,6 +73,12 @@ variable "scheduler_state" {
   }
 }
 
+variable "e2e_sandbox_bucket" {
+  description = "E2Eテスト用サンドボックスバケット名。設定するとLambdaのIAMにアクセス権が追加される（本番CSVを汚さないための一時的な検証先。テスト時はLambdaのCSV_BUCKET環境変数をこの値に上書きする）"
+  type        = string
+  default     = ""
+}
+
 variable "enable_health_check" {
   description = "Route53ヘルスチェックとアラームを作成するか（現行EC2に対しても有効に機能する）"
   type        = bool

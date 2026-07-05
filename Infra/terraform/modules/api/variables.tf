@@ -17,6 +17,12 @@ variable "app_bucket" {
   type        = string
 }
 
+variable "extra_bucket_arns" {
+  description = "追加でアクセスを許可するバケットARN（E2Eサンドボックス用）"
+  type        = list(string)
+  default     = []
+}
+
 variable "drafts_table_name" {
   type = string
 }

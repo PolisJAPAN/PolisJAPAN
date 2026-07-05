@@ -19,6 +19,7 @@ module "api" {
   zone_id            = data.aws_route53_zone.main.zone_id
   image_uri          = var.api_image_uri
   app_bucket         = var.app_bucket
+  extra_bucket_arns  = local.extra_bucket_arns
   drafts_table_name  = module.data.drafts_table_name
   drafts_table_arn   = module.data.drafts_table_arn
   ssm_parameter_arns = module.data.ssm_parameter_arns
@@ -37,6 +38,7 @@ module "batch" {
   update_image_uri   = var.api_image_uri # apiと同一イメージ・ハンドラ指定のみ変更
   create_image_uri   = var.batch_create_image_uri
   app_bucket         = var.app_bucket
+  extra_bucket_arns  = local.extra_bucket_arns
   drafts_table_arn   = module.data.drafts_table_arn
   ssm_parameter_arns = module.data.ssm_parameter_arns
   scheduler_state    = var.scheduler_state
@@ -120,8 +122,15 @@ data "aws_ssm_parameter" "polis_login_password" {
 }
 
 locals {
+  # E2Eサンドボックスバケットが指定されていればIAM許可対象に加える
+  extra_bucket_arns = var.e2e_sandbox_bucket != "" ? [
+    "arn:aws:s3:::${var.e2e_sandbox_bucket}",
+    "arn:aws:s3:::${var.e2e_sandbox_bucket}/*",
+  ] : []
+
   common_lambda_env = {
     APP_ENV            = "serverless"
+    CSV_BUCKET         = var.app_bucket
     API_BASE_URL       = "https://${var.api_domain}/"
     CLIENT_BASE_URL    = var.client_base_url
     CORS_ALLOW_ORIGINS = join(",", var.cors_allow_origins)

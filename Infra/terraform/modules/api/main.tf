@@ -70,10 +70,13 @@ resource "aws_iam_role_policy" "api" {
         Resource = "${aws_cloudwatch_log_group.api.arn}:*"
       },
       {
-        Sid      = "CsvBucket"
-        Effect   = "Allow"
-        Action   = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject", "s3:ListBucket"]
-        Resource = ["arn:aws:s3:::${var.app_bucket}", "arn:aws:s3:::${var.app_bucket}/*"]
+        Sid    = "CsvBucket"
+        Effect = "Allow"
+        Action = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject", "s3:ListBucket"]
+        Resource = concat(
+          ["arn:aws:s3:::${var.app_bucket}", "arn:aws:s3:::${var.app_bucket}/*"],
+          var.extra_bucket_arns,
+        )
       },
       {
         Sid    = "Drafts"
