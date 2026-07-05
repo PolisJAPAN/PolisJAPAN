@@ -309,7 +309,13 @@ function loadCsvAsJsonAsync(url, options) {loadCsvAsJson(url, options)}
  * @throws {Error} - HTTPステータス異常時。
  */
 async function loadCsvAsJson(url, { encoding = 'utf-8', delimiter = 'auto' } = {}) {
-    const res = await fetch(url, { cache: 'no-store' });
+    // CloudFront/ブラウザのキャッシュ鮮度を5分粒度に固定するキャッシュバスター。
+    // 時刻を5分(300000ms)単位に丸めるため、5分間は全アクセスが同一URL=キャッシュヒット
+    // （オリジン取得は5分ごと1回だけ＝コスト増なし）。5分ごとにURLが変わり最新を取得する。
+    // これによりエッジTTLのばらつきに依存せず、テーマ公開・投票数の更新が最大5分で確実に反映される。
+    const cacheBucket = Math.floor(Date.now() / 300000);
+    const bustedUrl = url + (url.includes('?') ? '&' : '?') + '_v=' + cacheBucket;
+    const res = await fetch(bustedUrl, { cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const buf = await res.arrayBuffer();
     const text = new TextDecoder(encoding).decode(buf);
