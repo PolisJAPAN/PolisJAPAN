@@ -1,11 +1,14 @@
 import importlib
-from typing import List, Type
+from typing import TYPE_CHECKING, List, Type
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.core.common_schema import ApiError
 from api.models import tables
 from api.utils import StorageS3
+
+if TYPE_CHECKING:
+    from api.repositories.draft import DraftStore
 
 
 class CommonService:
@@ -30,6 +33,9 @@ class CommonService:
 
     s3: StorageS3
     """S3ストレージ操作を行うためのユーティリティインスタンス。"""
+
+    draft_store: "DraftStore"
+    """テーマ下書きのデータストア。common_routeがリクエスト毎に設定する。"""
 
     
     def __init__(self):

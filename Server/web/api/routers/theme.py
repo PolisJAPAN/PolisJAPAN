@@ -4,7 +4,6 @@ from fastapi import Depends, Request
 from fastapi.routing import APIRouter
 
 import api.configs as configs
-import api.cruds as cruds
 import api.models.types as types
 import api.schemas.theme as theme_schemas
 from api import utils
@@ -134,12 +133,7 @@ async def generate_descriptions(request: Request, request_body:theme_schemas.The
     description : str = await service.generate_description(request_body.theme, request_body.axis.split(configs.constants.SPLITTER), request_body.comments.split(configs.constants.SPLITTER))
 
     # 3.DB更新処理実行
-    try:
-        # なし
-        await service.db_session.commit()
-    except Exception as e:
-        await service.db_session.rollback()
-        raise e
+    # なし（DB更新を行わないAPIのためcommit不要。serverless環境ではdb_sessionが存在しない）
 
     # 4.レスポンスの作成と返却
     return theme_schemas.ThemeGenerateDescriptionsResponse(
@@ -177,9 +171,8 @@ async def post_draft(request: Request, request_body:theme_schemas.ThemePostDraft
 
     # 3.DB更新処理実行
     try:
-        # 送信された内容を、t_draftの新規レコードとして挿入
-        t_draft = await cruds.TDraft.insert(
-            db = service.db_session,
+        # 送信された内容を、下書きの新規レコードとして挿入
+        t_draft = await service.draft_store.insert_draft(
             title = "",
             origin_url = "",
             origin_html = "",
@@ -189,9 +182,9 @@ async def post_draft(request: Request, request_body:theme_schemas.ThemePostDraft
             theme_category = request_body.category,
             post_status = types.PostStatus.APPROVED.value,
         )
-        await service.db_session.commit()
+        await service.draft_store.commit()
     except Exception as e:
-        await service.db_session.rollback()
+        await service.draft_store.rollback()
         raise e
 
     # 4.レスポンスの作成と返却

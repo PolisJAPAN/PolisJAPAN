@@ -4,7 +4,6 @@ from fastapi import Depends, Request
 from fastapi.routing import APIRouter
 
 import api.configs as configs
-import api.cruds as cruds
 import api.models.types as types
 import api.schemas.batch as batch_schemas
 from api import utils
@@ -143,7 +142,7 @@ async def create_all(request: Request, request_body:batch_schemas.BatchCreateAll
         raise batch_schemas.BatchCreateAllErrorResponses.InvalidAccessKeyError
     
     # 承認済テーマ一覧を取得
-    t_draft_list = await cruds.TDraft.select_by_post_status(service.db_session, types.PostStatus.APPROVED.value)
+    t_draft_list = await service.draft_store.select_by_post_status(types.PostStatus.APPROVED.value)
     Logger.debug(json.dumps([t_draft.theme_name for t_draft in t_draft_list], indent=4, ensure_ascii=False))
     
     # テーマ一覧を取得
@@ -178,11 +177,11 @@ async def create_all(request: Request, request_body:batch_schemas.BatchCreateAll
     # 3.DB更新処理実行
     try:
         for t_draft in t_draft_list:
-            await cruds.TDraft.update_post_info(service.db_session, t_draft, t_draft.conversation_id, t_draft.report_id,types.PostStatus.POSTED.value)
-            
-        await service.db_session.commit()
+            await service.draft_store.update_post_info(t_draft, t_draft.conversation_id, t_draft.report_id, types.PostStatus.POSTED.value)
+
+        await service.draft_store.commit()
     except Exception as e:
-        await service.db_session.rollback()
+        await service.draft_store.rollback()
         raise e
 
     # 4.レスポンスの作成と返却
@@ -220,7 +219,7 @@ async def delete(request: Request, request_body:batch_schemas.BatchDeleteRequest
         raise batch_schemas.BatchDeleteErrorResponses.InvalidAccessKeyError
     
     # 会話IDから下書きを取得
-    t_draft = await cruds.TDraft.select_by_id(service.db_session, request_body.t_draft_id)
+    t_draft = await service.draft_store.select_by_id(request_body.t_draft_id)
     
     if not t_draft:
         raise batch_schemas.BatchDeleteErrorResponses.ThemeNotFoundError
@@ -248,11 +247,11 @@ async def delete(request: Request, request_body:batch_schemas.BatchDeleteRequest
     try:
         # 対象下書き情報を論理削除
         if t_draft:
-            await cruds.TDraft.delete_by_id(service.db_session, t_draft.id)
-        
-        await service.db_session.commit()
+            await service.draft_store.delete_by_id(t_draft.id)
+
+        await service.draft_store.commit()
     except Exception as e:
-        await service.db_session.rollback()
+        await service.draft_store.rollback()
         raise e
 
     # 4.レスポンスの作成と返却
