@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import shutil
 import tempfile
 from dataclasses import dataclass
@@ -130,6 +131,18 @@ class WebLoaderChrome:
         self._profile_dir = tempfile.mkdtemp(prefix="chrome-profile-")
         opts.add_argument(f"--user-data-dir={self._profile_dir}")
         opts.add_argument(f"--disk-cache-dir={self._profile_dir}/cache")
+        opts.add_argument(f"--data-path={self._profile_dir}/data")
+
+        # Lambda実行環境ではHOMEが書き込み不可・プロセスモデルに制約があるため、
+        # Chrome起動に追加フラグが必要（欠くと DevToolsActivePort エラーで即死する）
+        if os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+            os.environ["HOME"] = "/tmp"
+            os.environ.setdefault("XDG_CONFIG_HOME", "/tmp/.config")
+            os.environ.setdefault("XDG_CACHE_HOME", "/tmp/.cache")
+            opts.add_argument("--single-process")
+            opts.add_argument("--no-zygote")
+            opts.add_argument("--remote-debugging-pipe")
+            opts.add_argument("--disable-crash-reporter")
 
         service = Service("/usr/bin/chromedriver")
         driver = webdriver.Chrome(service=service, options=opts)
