@@ -147,19 +147,59 @@ class DynamoDraftStore:
             return drafts
         return await asyncio.to_thread(_query)
 
-    # ---- Task 2 で実装 ----
+    async def _update_fields(self, draft: Draft, fields: dict[str, Any]) -> Draft:
+        """指定フィールドを更新し、update_dateを自動付与、ローカルのDraftにも反映する。"""
+        fields = dict(fields)
+        fields["update_date"] = Time.now()
+
+        expr_names = {f"#f{i}": k for i, k in enumerate(fields)}
+        expr_values = {}
+        sets = []
+        for i, (k, v) in enumerate(fields.items()):
+            value = v.isoformat() if isinstance(v, datetime) else v
+            expr_values[f":v{i}"] = value
+            sets.append(f"#f{i} = :v{i}")
+
+        def _update():
+            self._table.update_item(
+                Key={"id": draft.id},
+                UpdateExpression="SET " + ", ".join(sets),
+                ExpressionAttributeNames=expr_names,
+                ExpressionAttributeValues=expr_values,
+            )
+        await asyncio.to_thread(_update)
+
+        for k, v in fields.items():
+            setattr(draft, k, v)
+        return draft
 
     async def update_post_status(self, draft: Draft, post_status: int) -> Draft:
-        raise NotImplementedError
+        return await self._update_fields(draft, {"post_status": post_status})
 
-    async def update_content(self, draft, theme_name, theme_description, theme_comments, theme_category) -> Draft:
-        raise NotImplementedError
+    async def update_content(self, draft: Draft, theme_name, theme_description, theme_comments, theme_category) -> Draft:
+        fields = {}
+        if theme_name is not None:
+            fields["theme_name"] = theme_name
+        if theme_description is not None:
+            fields["theme_description"] = theme_description
+        if theme_comments is not None:
+            fields["theme_comments"] = theme_comments
+        if theme_category is not None:
+            fields["theme_category"] = theme_category
+        return await self._update_fields(draft, fields)
 
     async def update_post_info(self, draft: Draft, conversation_id: str, report_id: str, post_status: int) -> Draft:
-        raise NotImplementedError
+        return await self._update_fields(draft, {
+            "conversation_id": conversation_id,
+            "report_id": report_id,
+            "post_status": post_status,
+        })
 
     async def delete_by_id(self, draft_id: int) -> None:
-        raise NotImplementedError
+        draft = await self.select_by_id(draft_id)
+        if draft is None:
+            return
+        await self._update_fields(draft, {"status": 0})
 
     async def commit(self) -> None:
         """DynamoDBは即時反映のためcommitは何もしない(インターフェース互換用)。"""
