@@ -211,3 +211,33 @@ class BatchDeleteErrorResponses(APIErrorResponses):
 
     api_errors = [InvalidAccessKeyError, ThemeNotFoundError, DraftNotFoundError]
 
+
+# ###########################################################################
+# batch/healthcheck API用スキーマ
+# ###########################################################################
+
+# リクエスト
+class BatchHealthcheckRequest(CommonRequest):
+    """batch/healthcheck API用リクエスト定義"""
+
+
+    @classmethod
+    def parse(
+        cls,
+
+    ):
+        return BatchHealthcheckRequest()
+
+# レスポンス
+class BatchHealthcheckResponse(CommonRequest):
+    """batch/healthcheck API用レスポンス定義"""
+    is_success: bool = Field(description="成功情報")
+
+# APIエラー管理
+class BatchHealthcheckErrorResponses(APIErrorResponses):
+    """batch/healthcheck API用エラー管理クラス"""
+
+    # 固有エラー定義
+        # 固有エラーなし
+
+    api_errors = []
