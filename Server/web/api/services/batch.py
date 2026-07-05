@@ -16,6 +16,13 @@ from api import utils
 from api.core.common_service import CommonService
 from api.logger import Logger
 from api.utils.web_loader_chrome import WebLoaderChrome
+import api.models.types as types
+
+THEME_HEADERS = ["id", "category", "title", "description", "conversation_id", "report_id", "votes", "comments", "create_date"]
+"""テーマ記録用CSVのカラム一覧"""
+
+CSV_CACHE_CONTROL = "max-age=300"
+"""CSV配信のCloudFront TTL。無効化APIの代わりにオブジェクト側のヘッダで鮮度を制御する"""
 
 
 class BatchService(CommonService):
@@ -58,9 +65,129 @@ class BatchService(CommonService):
         """
         report_csv_str = await utils.WebLoaderHttpx.fetch_url(f"https://pol.is/api/v3/reportExport/{report_id}/comment-groups.csv")
         comments = utils.CSV.parse_csv(report_csv_str)
-        
+
         return report_csv_str, comments
-    
+
+    # ###########################################################################
+    # バッチ本体（ルーター/Lambdaハンドラ共通の入口）
+    # ###########################################################################
+
+    async def update_themes(self) -> int:
+        """
+        全テーマの投票数・コメント数をPolisから取得し、変化があればS3のCSVを更新する。
+
+        Returns:
+            int: 更新したテーマ数（0なら S3 への書き込みなし）
+        """
+        # 管理しているテーマ一覧のCSVをS3から取得する
+        themes_str, themes_list = await self.get_theme_csv()
+
+        # 更新するデータのみのリスト
+        update_themes = []
+        update_comment_csv = {}
+
+        # 各テーマ用のデータを取得
+        for theme in themes_list:
+
+            # Polisから集計CSVを取得
+            report_csv_str, comments = await self.get_report_csv(theme["report_id"])
+
+            # コメント数、投票数を集計
+            total_comments = len(comments)
+            total_votes = sum(int(comment["total-votes"]) for comment in comments)
+
+            Logger.debug(f"{theme['title']} before {theme['votes']} -> after {total_votes}  (Refresh -> {int(theme['votes']) != int(total_votes)})")
+
+            # 現在S3に保存済みの集計CSVと比較
+            if int(theme["votes"]) != int(total_votes):
+                # 変更があった場合は、取得したファイルを設置用に配列に格納
+                update_row = theme.copy()
+                update_row["votes"] = str(total_votes)
+                update_row["comments"] = str(total_comments)
+                update_themes.append(update_row)
+
+                # S3にアップするリストにCSVを追加
+                update_comment_csv[theme["conversation_id"]] = report_csv_str
+
+        if not update_comment_csv:
+            return 0
+
+        # 取得内容をテーマ一覧CSVに反映
+        result_themes = utils.Common.merge_lists(themes_list, update_themes)
+        fixed_theme_csv_text = utils.CSV.to_csv(result_themes, THEME_HEADERS)
+
+        Logger.debug("S3に更新を実施")
+
+        # 変更があった集計CSVをS3に格納
+        for conversation_id, report_csv_str in update_comment_csv.items():
+            await self.s3.upload_bytes(f"csv/report/report_{conversation_id}.csv", report_csv_str.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
+
+        # テーマ一覧CSVを更新
+        await self.s3.upload_bytes(f"csv/themes.csv", fixed_theme_csv_text.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
+
+        return len(update_themes)
+
+    async def publish_approved_drafts(self, limit: Optional[int] = None) -> int:
+        """
+        承認済(APPROVED)の下書きをPolis上に作成し、CSVとデータストアへ反映する。
+
+        Args:
+            limit (Optional[int]): 処理する最大件数。Lambda(15分制限)からは1を指定し、
+                残りは次回スケジュールに委ねる。Noneなら全件（現行cronと同じ挙動）。
+
+        Returns:
+            int: 処理した下書き件数
+        """
+        # 承認済テーマ一覧を取得
+        t_draft_list = await self.draft_store.select_by_post_status(types.PostStatus.APPROVED.value)
+
+        if limit is not None:
+            t_draft_list = t_draft_list[:limit]
+
+        if not t_draft_list:
+            return 0
+
+        Logger.debug(json.dumps([t_draft.theme_name for t_draft in t_draft_list], indent=4, ensure_ascii=False))
+
+        # テーマ一覧を取得
+        themes_str, theme_list = await self.get_theme_csv()
+
+        # 承認済テーマを作成
+        report_csv_list = []
+        for t_draft in t_draft_list:
+            # コメントリストを文字列にパース
+            comments = t_draft.theme_comments.split(configs.constants.SPLITTER)
+
+            # テーマを作成
+            report_csv_str, theme_info = await self.create_theme(theme_list, str(t_draft.theme_name), str(t_draft.theme_description), comments, str(t_draft.theme_category))
+
+            # テーマ一覧に追加
+            theme_list.append(theme_info)
+            report_csv_list.append(report_csv_str)
+
+            t_draft.conversation_id = theme_info["conversation_id"]
+            t_draft.report_id = theme_info["report_id"]
+
+        # テーマ一覧CSVをS3にアップ
+        fixed_theme_csv_text = utils.CSV.to_csv(theme_list, THEME_HEADERS)
+        await self.s3.upload_bytes(f"csv/themes.csv", fixed_theme_csv_text.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
+
+        # レポートから取得したファイルをS3にアップ（t_draftと対応づけ）
+        for t_draft, report_csv_str in zip(t_draft_list, report_csv_list):
+            await self.s3.upload_bytes(f"csv/report/report_{t_draft.conversation_id}.csv", report_csv_str.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
+
+        # データストアへ反映
+        try:
+            for t_draft in t_draft_list:
+                await self.draft_store.update_post_info(t_draft, t_draft.conversation_id, t_draft.report_id, types.PostStatus.POSTED.value)
+
+            await self.draft_store.commit()
+        except Exception as e:
+            await self.draft_store.rollback()
+            raise e
+
+        return len(t_draft_list)
+
     # ###########################################################################
     # Polis登録関連
     # ###########################################################################
