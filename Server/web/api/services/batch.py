@@ -1,4 +1,5 @@
 import json
+import os
 from functools import partial
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse
@@ -254,12 +255,16 @@ class BatchService(CommonService):
             web_loader_chrome.get_driver("https://pol.is/signin")
             
             # 未ログイン状態の場合、ログインを実施
+            # 認証情報は環境変数から取得（serverless環境ではTerraformがSSM経由で注入。
+            # 旧環境互換のため未設定時は従来値にフォールバックする — カットオーバー後に撤去予定）
+            polis_user = os.environ.get("POLIS_LOGIN_USER", "polis-japan")
+            polis_password = os.environ.get("POLIS_LOGIN_PASSWORD", "V7uVDSfjJdQ3E@om")
             if not web_loader_chrome.exists_wait(By.ID, "signoutLink", 10):
                 web_loader_chrome.wait_for(By.ID, "signinButton", 30, True)
                 web_loader_chrome.click(By.CSS_SELECTOR, "#signinButton")
                 web_loader_chrome.wait_for(By.ID, "username", 15, True)
-                web_loader_chrome.fill_input(By.ID, "username", "polis-japan")
-                web_loader_chrome.fill_input(By.ID, "password", "V7uVDSfjJdQ3E@om")
+                web_loader_chrome.fill_input(By.ID, "username", polis_user)
+                web_loader_chrome.fill_input(By.ID, "password", polis_password)
                 web_loader_chrome.submit_form(By.XPATH, "/html/body/div/main/section/div/div/div/form")
                 web_loader_chrome.wait_for(By.ID, "signoutLink", 15, True)
                 Logger.debug("ログインに成功")
