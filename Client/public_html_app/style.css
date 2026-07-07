@@ -5643,29 +5643,27 @@ body#home #bottom-menu.hamburger-open .help-button, body#home #bottom-menu.hambu
   pointer-events: none;
 }
 @media (max-width: 479px) {
-  body#home #bottom-menu .help-button, body#home #bottom-menu .create-button {
+  body#home #bottom-menu .help-button {
+    align-self: stretch;
+    width: 57px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 999px;
+  }
+  body#home #bottom-menu .help-button .text {
+    display: none;
+  }
+  body#home #bottom-menu .help-button i {
+    padding-bottom: 0;
+    font-size: var(--font-size-20px);
+  }
+  body#home #bottom-menu .create-button {
     padding: 14px 16px;
   }
 }
-@media (max-width: 407px) {
-  body#home #bottom-menu {
-    gap: 8px;
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-  body#home #bottom-menu .help-button, body#home #bottom-menu .create-button {
+@media (max-width: 339px) {
+  body#home #bottom-menu .create-button {
     padding: 14px 10px;
-  }
-}
-@media (max-width: 369px) {
-  body#home #bottom-menu .help-button, body#home #bottom-menu .create-button {
-    padding: 12px 8px;
-  }
-  body#home #bottom-menu .help-button .text, body#home #bottom-menu .create-button .text {
-    font-size: var(--font-size-12px);
-  }
-  body#home #bottom-menu .help-button i, body#home #bottom-menu .create-button i {
-    font-size: var(--font-size-14px);
   }
 }
 

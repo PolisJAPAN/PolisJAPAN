@@ -191,32 +191,31 @@ body#home #bottom-menu {
         }
     }
 
-    // 狭い画面では余白を段階的に詰めて「ピル2つ+ハンバーガー」を1行に収める
-    // （実測: フォント適用後のピル幅で 390px/375px/360px/320px を確認して調整）
+    // 狭い画面では「使い方」をアイコンのみの正円ボタンにして領域を確保する
+    // （「テーマを作成」は主要CTAのためラベル維持。実測: 390/375/360/320pxで確認）
     @media (max-width: 479px) {
-        .help-button, .create-button {
+        .help-button {
+            align-self: stretch;
+            width: 57px; // 現在のピル実高に一致（実測値）。多少ズレても角丸999pxで円形に見える
+            padding: 0;
+            justify-content: center;
+            border-radius: 999px;
+
+            .text {
+                display: none;
+            }
+            i {
+                padding-bottom: 0;
+                font-size: var(--font-size-20px);
+            }
+        }
+        .create-button {
             padding: 14px 16px;
         }
     }
-    @media (max-width: 407px) {
-        gap: 8px;
-        padding-left: 12px;
-        padding-right: 12px;
-
-        .help-button, .create-button {
+    @media (max-width: 339px) {
+        .create-button {
             padding: 14px 10px;
-        }
-    }
-    @media (max-width: 369px) {
-        .help-button, .create-button {
-            padding: 12px 8px;
-
-            .text {
-                font-size: var(--font-size-12px);
-            }
-            i {
-                font-size: var(--font-size-14px);
-            }
         }
     }
 }
