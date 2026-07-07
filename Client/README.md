@@ -23,6 +23,7 @@
 docker-compose up
 ```
 ### S3アップロード
+> **通常は手動アップロード不要です（2026-07-07〜）。** mainブランチへのpushでGitHub Actions（`.github/workflows/deploy-client.yml`）が自動的にS3同期とCloudFront無効化を行います。以下はActions障害時などのフォールバック手順です。
 ```
 aws s3 sync ./public_html_app/ s3://app.pol-is.jp/ --exclude ".DS_Store"  --exclude "*/.DS_Store" --exclude "csv/*"  --delete --dryrun
 aws s3 sync ./public_html_app/ s3://app.pol-is.jp/ --exclude ".DS_Store"  --exclude "*/.DS_Store" --exclude "csv/*"  --delete

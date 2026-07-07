@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PolisJAPAN デプロイフロー（サーバーレス構成）</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --text: #1f2733;
+    --muted: #5b6673;
+    --border: #dde2e8;
+    --accent: #2563b0;
+    --accent-bg: #eaf1f9;
+    --green: #1f7a4d;
+    --green-bg: #e8f4ec;
+    --orange: #a05a1e;
+    --orange-bg: #fbf0e3;
+    --purple: #6d4bab;
+    --purple-bg: #f0ebf9;
+    --warn-bg: #fdf6e3;
+    --warn-border: #e0c060;
+    --code-bg: #202733;
+    --code-text: #e6edf5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14181e;
+      --card: #1d232c;
+      --text: #e4e9ef;
+      --muted: #98a4b3;
+      --border: #333c48;
+      --accent: #6aa3e0;
+      --accent-bg: #21303f;
+      --green: #63b98a;
+      --green-bg: #1e3229;
+      --orange: #dda05f;
+      --orange-bg: #392c1c;
+      --purple: #ab8fdd;
+      --purple-bg: #2c2438;
+      --warn-bg: #362f1a;
+      --warn-border: #8a7328;
+      --code-bg: #10141a;
+      --code-text: #dce4ee;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px 64px; }
+  header h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  header p.sub { color: var(--muted); margin: 0 0 8px; font-size: .92rem; }
+  .badge {
+    display: inline-block; font-size: .78rem; padding: 2px 10px; border-radius: 999px;
+    background: var(--accent-bg); color: var(--accent); margin-right: 6px;
+  }
+  section { margin-top: 36px; }
+  h2 {
+    font-size: 1.15rem; border-left: 5px solid var(--accent);
+    padding-left: 10px; margin: 0 0 16px;
+  }
+  h3 { font-size: 1rem; margin: 20px 0 8px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px; margin-bottom: 14px;
+  }
+  .lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .lane { border-top: 4px solid var(--accent); }
+  .lane.green { border-top-color: var(--green); }
+  .lane.orange { border-top-color: var(--orange); }
+  .lane.purple { border-top-color: var(--purple); }
+  .lane h3 { margin-top: 0; }
+  .lane .tag { font-size: .75rem; font-weight: bold; padding: 1px 8px; border-radius: 999px; }
+  .lane.green .tag { background: var(--green-bg); color: var(--green); }
+  .lane.orange .tag { background: var(--orange-bg); color: var(--orange); }
+  .lane.purple .tag { background: var(--purple-bg); color: var(--purple); }
+  ol.steps { padding-left: 1.3em; margin: 8px 0; }
+  ol.steps li { margin-bottom: 8px; }
+  .flow {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    margin: 10px 0 4px; font-size: .9rem;
+  }
+  .flow .node {
+    background: var(--accent-bg); color: var(--accent);
+    border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px;
+    font-weight: bold; white-space: nowrap;
+  }
+  .flow .arrow { color: var(--muted); font-weight: bold; }
+  pre {
+    background: var(--code-bg); color: var(--code-text);
+    border-radius: 8px; padding: 14px 16px; overflow-x: auto;
+    font-size: .82rem; line-height: 1.6;
+  }
+  code { font-family: "SF Mono", Menlo, Consolas, monospace; }
+  p code, li code, td code {
+    background: var(--accent-bg); color: var(--accent);
+    padding: 1px 6px; border-radius: 4px; font-size: .85em;
+  }
+  .warn {
+    background: var(--warn-bg); border: 1px solid var(--warn-border);
+    border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: .92rem;
+  }
+  .warn strong { display: block; margin-bottom: 2px; }
+  .tablebox { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--accent-bg); }
+  footer { margin-top: 48px; color: var(--muted); font-size: .82rem; border-top: 1px solid var(--border); padding-top: 12px; }
+  footer ul { margin: 6px 0 0; padding-left: 1.2em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>PolisJAPAN デプロイフロー</h1>
+  <p class="sub">サーバーレス移行後（2026-07）の本番反映手順まとめ — 詳細は <code>docs/仕様書.md</code> §8 / <code>Infra/terraform/README.md</code></p>
+  <span class="badge">クライアント/サーバー: GitHub Actions 自動デプロイ</span>
+  <span class="badge">インフラ: Terraform 手動</span>
+  <span class="badge">認証: OIDC（長期キー不使用）</span>
+  <span class="badge">リージョン: ap-northeast-3（大阪）</span>
+</header>
+
+<section>
+  <h2>全体像 — デプロイは3系統</h2>
+  <div class="lanes">
+    <div class="card lane green">
+      <h3><span class="tag">A</span> クライアント（静的サイト）</h3>
+      <p><strong>mainブランチへのpushで自動デプロイ</strong>（<code>deploy-client.yml</code>）。</p>
+      <div class="flow">
+        <span class="node">main へ push</span><span class="arrow">→</span>
+        <span class="node">GitHub Actions</span><span class="arrow">→</span>
+        <span class="node">s3 sync</span><span class="arrow">→</span>
+        <span class="node">CloudFront 無効化</span>
+      </div>
+    </div>
+    <div class="card lane orange">
+      <h3><span class="tag">B</span> サーバー（API・バッチ Lambda）</h3>
+      <p><strong>mainブランチへのpushで自動デプロイ</strong>（<code>deploy-server.yml</code>）。</p>
+      <div class="flow">
+        <span class="node">main へ push</span><span class="arrow">→</span>
+        <span class="node">GitHub Actions</span><span class="arrow">→</span>
+        <span class="node">buildx → ECR</span><span class="arrow">→</span>
+        <span class="node">Lambda 切替</span><span class="arrow">→</span>
+        <span class="node">healthcheck</span>
+      </div>
+    </div>
+    <div class="card lane purple">
+      <h3><span class="tag">C</span> インフラ（AWS リソース）</h3>
+      <p>AWS リソースの追加・変更はすべて Terraform 経由。</p>
+      <div class="flow">
+        <span class="node">.tf 編集</span><span class="arrow">→</span>
+        <span class="node">terraform plan</span><span class="arrow">→</span>
+        <span class="node">terraform apply</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>A. クライアント（静的サイト）のデプロイ</h2>
+  <div class="card">
+    <p>対象: <code>Client/public_html/</code>（LP）・<code>Client/public_html_app/</code>（WEBアプリ）・<code>Client/public_html_admin/</code>（管理画面 → admin.pol-is.jp）</p>
+    <p><strong>mainブランチにpushするだけ</strong>。対象パスの変更を検知して <code>.github/workflows/deploy-client.yml</code> が実行される:</p>
+    <ol class="steps">
+      <li>OIDCでIAMロール <code>polisjapan-gha-deploy-client</code> をAssume（S3同期とCloudFront無効化の権限のみ）</li>
+      <li>3サイトを <code>aws s3 sync --delete</code>（<code>csv/*</code> は除外）</li>
+      <li>CloudFrontを3ディストリビューションとも無効化（HTML/CSS/JSの即時反映）</li>
+    </ol>
+    <div class="warn">
+      <strong>⚠ csv/* は絶対に同期しない</strong>
+      S3 上の CSV はバッチ Lambda（batch-update）が5分間隔で管理する「本番データ」。ワークフローの <code>--exclude "csv/*"</code> に加え、IAMポリシーでも <code>app.pol-is.jp/csv/*</code> への書き込みを明示Denyしている（二重の防波堤）。
+    </div>
+    <p>手動デプロイが必要な場合（Actions障害時など）は <code>Client/README.md</code> のコマンドを使用（<code>--dryrun</code> で差分確認してから実行）。</p>
+  </div>
+</section>
+
+<section>
+  <h2>B. サーバー（API・バッチ Lambda）のデプロイ</h2>
+  <div class="card">
+    <p><strong>mainブランチにpushするだけ</strong>。<code>Server/web/**</code> の変更を検知して <code>.github/workflows/deploy-server.yml</code> が実行される:</p>
+    <ol class="steps">
+      <li>OIDCでIAMロール <code>polisjapan-gha-deploy-server</code> をAssume（ECR pushとLambdaコード更新の権限のみ）</li>
+      <li>コンテナイメージ2種をビルドしECRへpush（タグ = コミットSHA）</li>
+      <li><code>aws lambda update-function-code</code> で3関数を新イメージに切り替え</li>
+      <li><code>/batch/healthcheck</code> で疎通確認（コールドスタート込みでリトライ。失敗するとワークフローが赤くなる）</li>
+    </ol>
+    <div class="tablebox">
+      <table>
+        <tr><th>Dockerfile</th><th>ECR リポジトリ</th><th>使われる Lambda</th></tr>
+        <tr><td><code>Server/web/Dockerfile.lambda</code></td><td><code>polisjapan-api</code></td><td>api / batch-update（同一イメージ・ハンドラ指定のみ変更）</td></tr>
+        <tr><td><code>Server/web/Dockerfile.lambda-chromium</code></td><td><code>polisjapan-batch-create</code></td><td>batch-create（Selenium + headless Chromium）</td></tr>
+      </table>
+    </div>
+    <div class="warn">
+      <strong>⚠ Terraformとの役割分担</strong>
+      Lambdaの <code>image_uri</code> はTerraform側で <code>ignore_changes</code> 済み。イメージ更新はCIの仕事、インフラ定義はTerraformの仕事で、<code>terraform apply</code> がCIのデプロイを巻き戻すことはない。
+    </div>
+    <h3>デプロイ後の確認</h3>
+    <ol class="steps">
+      <li>GitHub Actions のワークフローが緑であること（healthcheckまで含む）</li>
+      <li>変更内容に応じて: AI テーマ生成 E2E／管理画面の一覧・承認操作／CSV が5分以内に更新されること</li>
+      <li>CloudWatch アラーム（batch-update / batch-create の Errors）が発火していないこと</li>
+    </ol>
+    <h3>手動デプロイ（Actions障害時のフォールバック）</h3>
+    <pre><code># ECR ログイン
+aws ecr get-login-password --region ap-northeast-3 --profile terraform \
+  | docker login --username AWS --password-stdin 133078632695.dkr.ecr.ap-northeast-3.amazonaws.com
+
+# ビルド & push（Server/web で実行。--provenance=false --sbom=false は必須:
+# Lambdaはマルチプラットフォームマニフェスト非対応）
+docker buildx build --platform linux/amd64 --provenance=false --sbom=false --push \
+  -f Dockerfile.lambda -t 133078632695.dkr.ecr.ap-northeast-3.amazonaws.com/polisjapan-api:manual-YYYYMMDD .
+
+# Lambda切り替え（batch-createも同様）
+aws lambda update-function-code --profile terraform --function-name polisjapan-api \
+  --image-uri 133078632695.dkr.ecr.ap-northeast-3.amazonaws.com/polisjapan-api:manual-YYYYMMDD</code></pre>
+  </div>
+</section>
+
+<section>
+  <h2>シークレットの取り扱い</h2>
+  <div class="card">
+    <div class="tablebox">
+      <table>
+        <tr><th>環境</th><th>シークレットの置き場所</th></tr>
+        <tr><td>本番（Lambda）</td><td>SSM Parameter Store (SecureString) → Terraform が Lambda 環境変数へ注入</td></tr>
+        <tr><td>ローカル開発</td><td><code>Server/web/.env</code>（gitignore対象・雛形は <code>.env.example</code>）→ docker-compose が読み込み</td></tr>
+        <tr><td>GitHub Actions</td><td><strong>シークレット保持なし</strong>。OIDCで一時クレデンシャルを取得（mainブランチのみAssume可）</td></tr>
+      </table>
+    </div>
+    <p><code>Server/web/api/configs/</code> の設定ファイルはすべて環境変数から読む形式（2026-07-07〜）のため、コードにシークレットの実値は存在しない。</p>
+  </div>
+</section>
+
+<section>
+  <h2>C. インフラ（Terraform）の変更</h2>
+  <div class="card">
+    <p>実行場所は <code>Infra/terraform/environments/production/</code>。tfstate は <code>s3://polisjapan-tfstate</code>（バージョニング有効）、実行には <code>terraform</code> プロファイル（terraform-deploy IAM ユーザー）を使う。</p>
+    <div class="tablebox">
+      <table>
+        <tr><th>モジュール</th><th>管理対象</th></tr>
+        <tr><td><code>modules/data</code></td><td>DynamoDB（drafts）/ アーカイブ S3 / ECR / SSM パラメータ</td></tr>
+        <tr><td><code>modules/api</code></td><td>Lambda「api」+ API Gateway + ACM + カスタムドメイン</td></tr>
+        <tr><td><code>modules/batch</code></td><td>Lambda「batch-update / create」+ EventBridge Scheduler</td></tr>
+        <tr><td><code>modules/admin-site</code></td><td>admin.pol-is.jp（S3 + CloudFront + IP 制限 Function）</td></tr>
+        <tr><td><code>modules/monitoring</code></td><td>Route53 ヘルスチェック + アラーム + SNS 通知</td></tr>
+      </table>
+    </div>
+    <p>既存リソース（S3 / CloudFront / Route53 / ACM / contact・share Lambda / SES）も import 済みで、<strong>計 115 リソースがコード管理下</strong>。データを持つリソース（S3 / Route53 / DynamoDB）には <code>prevent_destroy</code> 設定済み。</p>
+    <div class="warn">
+      <strong>⚠ シークレット値は Terraform に書かない</strong>
+      SSM パラメータはガワだけ Terraform で作り、値は <code>aws ssm put-parameter --type SecureString --overwrite</code> で手動投入する（tfstate には Lambda 環境変数として復号値が残るため、tfstate バケットは非公開厳守）。
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>本番の自動実行（デプロイ後に動くもの）</h2>
+  <div class="card tablebox">
+    <table>
+      <tr><th>ジョブ</th><th>間隔</th><th>内容</th></tr>
+      <tr><td>batch-update</td><td>5 分</td><td>pol.is からレポート CSV を取得し、S3 の <code>themes.csv</code>・レポート CSV を Cache-Control 付きで更新</td></tr>
+      <tr><td>batch-create</td><td>15 分</td><td>APPROVED の下書きを Selenium で pol.is に作成（1 回の起動で 1 件だけ処理）</td></tr>
+    </table>
+    <p>起動は EventBridge Scheduler。失敗時は Lambda の Errors アラーム → SNS「Polis-Server-Alert」→ メール通知。</p>
+  </div>
+</section>
+
+<footer>
+  <div>関連資料</div>
+  <ul>
+    <li>システム仕様書: <code>docs/仕様書.md</code>（§8 インフラ・デプロイ）</li>
+    <li>移行の経緯・カットオーバー Runbook: <code>docs/サーバーレス移行設計書.md</code></li>
+    <li>Terraform 手順: <code>Infra/terraform/README.md</code></li>
+    <li>クライアント同期コマンド: <code>Client/README.md</code></li>
+  </ul>
+  <div style="margin-top:8px">最終更新: 2026-07-07（GitHub Actions 自動デプロイ導入）</div>
+</footer>
+
+</div>
+</body>
+</html>
