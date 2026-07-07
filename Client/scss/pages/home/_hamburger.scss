@@ -8,6 +8,9 @@ $panel-width: 224px;
 .hamburger-menu {
     position: relative;
 
+    // 既存ボタン（左寄せ）と反対の右端に寄せる
+    margin-left: auto;
+
     // 隣のピルボタン（.button）と高さを揃える: 行の中で伸ばして正方形にする
     align-self: stretch;
     display: flex;
@@ -48,7 +51,7 @@ $panel-width: 224px;
     // ---- パネル（閉時はトリガーの背後に隠れる小さな円） ----
     .hamburger-panel {
         position: absolute;
-        left: 0;
+        right: 0;
         bottom: 0;
         z-index: 1;
 

@@ -5509,6 +5509,7 @@ body#home .slide-modal.full-screen-modal .modal-window .complete-overlay .comple
 
 .hamburger-menu {
   position: relative;
+  margin-left: auto;
   align-self: stretch;
   display: flex;
   align-items: center;
@@ -5540,7 +5541,7 @@ body#home .slide-modal.full-screen-modal .modal-window .complete-overlay .comple
 }
 .hamburger-menu .hamburger-panel {
   position: absolute;
-  left: 0;
+  right: 0;
   bottom: 0;
   z-index: 1;
   width: 40px;
