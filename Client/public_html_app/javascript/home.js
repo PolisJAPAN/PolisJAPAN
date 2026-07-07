@@ -511,6 +511,8 @@ function bindArticleLink() {
  * トリガークリックでトグル、パネル外クリック・Escキーで閉じる。
  * 開閉状態は .hamburger-menu の .open と #bottom-menu の .hamburger-open で表現し、
  * 見た目の変化はすべてCSS側（_hamburger.scss）が担う。
+ *
+ * @returns {void}
  */
 function bindHamburgerMenu() {
     const menu = document.querySelector("#hamburger-menu");
