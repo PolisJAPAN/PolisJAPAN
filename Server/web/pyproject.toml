@@ -11,7 +11,6 @@ dependencies = [
     "fastapi (>=0.116.1,<0.117.0)",
     "uvicorn[standard] (>=0.35.0,<0.36.0)",
     "dotenv (>=0.9.9,<0.10.0)",
-    "python-memcached (>=1.62,<2.0)",
     "sqlalchemy (>=2.0.41,<3.0.0)",
     "aiomysql (>=0.2.0,<0.3.0)",
     "pytz (>=2025.2,<2026.0)",
@@ -29,7 +28,8 @@ dependencies = [
     "langchain (>=0.3.27,<0.4.0)",
     "langchain-community (>=0.3.31,<0.4.0)",
     "langgraph (>=0.6.8,<0.7.0)",
-    "ddgs (>=9.6.1,<10.0.0)"
+    "ddgs (>=9.6.1,<10.0.0)",
+    "mangum (>=0.19.0,<0.20.0)"
 ]
 
 
@@ -39,5 +39,12 @@ build-backend = "poetry.core.masonry.api"
 
 [dependency-groups]
 dev = [
-    "pip-licenses (>=5.5.0,<6.0.0)"
+    "pip-licenses (>=5.5.0,<6.0.0)",
+    "pytest (>=8.3,<9.0)",
+    "pytest-asyncio (>=0.24,<0.25)",
+    "moto (>=5.0,<6.0)"
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

@@ -1,0 +1,28 @@
+# Lambda用コンテナイメージ（api / batch-update 共用）
+# ハンドラはTerraform側の image_config.command で指定する:
+#   api          -> api.main.handler
+#   batch-update -> api.lambda_handlers.batch_update.handler
+#
+# ベースはpython3.12(AL2023)を使用する。3.11ベースはAmazon Linux 2(glibc 2.26)のため
+# numpy 2.x等のmanylinux_2_28 wheelが使えずソースビルドに落ちる。
+#
+# build: docker build -f Dockerfile.lambda -t polisjapan-api .
+
+# ---- 依存関係の解決（poetry.lock から requirements.txt を生成） ----
+FROM python:3.12-slim AS deps
+
+RUN pip install --no-cache-dir poetry poetry-plugin-export
+
+WORKDIR /src
+COPY pyproject.toml poetry.lock ./
+RUN poetry export -f requirements.txt --without-hashes -o /requirements.txt
+
+# ---- 実行イメージ ----
+FROM public.ecr.aws/lambda/python:3.12
+
+COPY --from=deps /requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+COPY api ${LAMBDA_TASK_ROOT}/api
+
+CMD ["api.main.handler"]

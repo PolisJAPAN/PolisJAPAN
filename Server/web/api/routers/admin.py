@@ -2,7 +2,6 @@ from fastapi import Depends, Request
 from fastapi.routing import APIRouter
 
 import api.configs as configs
-import api.cruds as cruds
 import api.models.types as types
 import api.schemas.admin as admin_schemas
 from api import utils
@@ -48,7 +47,7 @@ async def info(request: Request, request_body:admin_schemas.AdminInfoRequest = D
         raise admin_schemas.AdminInfoErrorResponses.InvalidIPAddressError
     
     # DBから有効な下書き情報一覧を取得
-    t_draft_list = await cruds.TDraft.select_all(service.db_session)
+    t_draft_list = await service.draft_store.select_all()
 
     # 3.DB更新処理実行
     # なし
@@ -90,8 +89,8 @@ async def approve(request: Request, request_body:admin_schemas.AdminApproveReque
         raise admin_schemas.AdminApproveErrorResponses.InvalidIPAddressError
     
     # DBから対象の下書き情報を取得
-    t_draft = await cruds.TDraft.select_by_id(service.db_session, request_body.t_draft_id)
-    
+    t_draft = await service.draft_store.select_by_id(request_body.t_draft_id)
+
     # 対象の下書きが存在しなければエラー
     if not t_draft:
         raise admin_schemas.AdminApproveErrorResponses.TDraftNotFoundError
@@ -99,10 +98,10 @@ async def approve(request: Request, request_body:admin_schemas.AdminApproveReque
     # 3.DB更新処理実行
     try:
         # 下書きのステータスを承認状態に更新
-        t_draft = await cruds.TDraft.update_post_status(service.db_session, t_draft, types.PostStatus.APPROVED.value)
-        await service.db_session.commit()
+        t_draft = await service.draft_store.update_post_status(t_draft, types.PostStatus.APPROVED.value)
+        await service.draft_store.commit()
     except Exception as e:
-        await service.db_session.rollback()
+        await service.draft_store.rollback()
         raise e
 
     # 4.レスポンスの作成と返却
@@ -148,8 +147,8 @@ async def edit(request: Request, request_body:admin_schemas.AdminEditRequest = D
         raise admin_schemas.AdminEditErrorResponses.InvalidIPAddressError
     
     # DBから対象の下書き情報を取得
-    t_draft = await cruds.TDraft.select_by_id(service.db_session, request_body.t_draft_id)
-    
+    t_draft = await service.draft_store.select_by_id(request_body.t_draft_id)
+
     # 対象の下書きが存在しなければエラー
     if not t_draft:
         raise admin_schemas.AdminApproveErrorResponses.TDraftNotFoundError
@@ -157,10 +156,10 @@ async def edit(request: Request, request_body:admin_schemas.AdminEditRequest = D
     # 3.DB更新処理実行
     try:
         # 下書きのデータを更新
-        t_draft = await cruds.TDraft.update_content(service.db_session, t_draft, request_body.theme_name, request_body.theme_description, request_body.theme_comments, request_body.theme_category)
-        await service.db_session.commit()
+        t_draft = await service.draft_store.update_content(t_draft, request_body.theme_name, request_body.theme_description, request_body.theme_comments, request_body.theme_category)
+        await service.draft_store.commit()
     except Exception as e:
-        await service.db_session.rollback()
+        await service.draft_store.rollback()
         raise e
 
     # 4.レスポンスの作成と返却

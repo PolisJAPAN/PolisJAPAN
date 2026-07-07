@@ -1,0 +1,33 @@
+// 管理画面へのアクセスを許可IP(CIDR)リストで制限するCloudFront Function (viewer-request)
+// 許可リストはTerraformの admin_allow_ips 変数から埋め込まれる
+var ALLOW_CIDRS = ${allow_ips_json};
+
+function ipToLong(ip) {
+    var parts = ip.split('.');
+    return ((+parts[0]) << 24 >>> 0) + ((+parts[1]) << 16) + ((+parts[2]) << 8) + (+parts[3]);
+}
+
+function inCidr(ip, cidr) {
+    var split = cidr.split('/');
+    var base = split[0];
+    var bits = split.length > 1 ? parseInt(split[1], 10) : 32;
+    if (bits === 0) { return true; }
+    var mask = bits === 32 ? 0xFFFFFFFF : (~(0xFFFFFFFF >>> bits)) >>> 0;
+    return ((ipToLong(ip) & mask) >>> 0) === ((ipToLong(base) & mask) >>> 0);
+}
+
+function handler(event) {
+    var clientIp = event.viewer.ip;
+
+    // IPv6は許可リスト運用の対象外のため拒否（必要になったら対応を追加）
+    if (clientIp.indexOf(':') !== -1) {
+        return { statusCode: 403, statusDescription: 'Forbidden' };
+    }
+
+    for (var i = 0; i < ALLOW_CIDRS.length; i++) {
+        if (inCidr(clientIp, ALLOW_CIDRS[i])) {
+            return event.request;
+        }
+    }
+    return { statusCode: 403, statusDescription: 'Forbidden' };
+}

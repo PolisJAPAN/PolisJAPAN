@@ -1,0 +1,15 @@
+# Terraformのローカル状態・プロバイダキャッシュ
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# 環境固有の変数（IP許可リスト等を含む）
+terraform.tfvars
+*.auto.tfvars
+
+# プランファイル
+*.tfplan
+
+# Lambdaプレースホルダzip（既存Lambdaのimport用ダミー。実コードはignore_changes管理）
+lambda-placeholder.zip

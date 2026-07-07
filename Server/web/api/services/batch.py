@@ -1,4 +1,5 @@
 import json
+import os
 from functools import partial
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse
@@ -15,7 +16,15 @@ import api.cruds as cruds
 from api import utils
 from api.core.common_service import CommonService
 from api.logger import Logger
+from api.utils.storage_s3 import StorageS3Error, StorageS3PreconditionError
 from api.utils.web_loader_chrome import WebLoaderChrome
+import api.models.types as types
+
+THEME_HEADERS = ["id", "category", "title", "description", "conversation_id", "report_id", "votes", "comments", "create_date"]
+"""テーマ記録用CSVのカラム一覧"""
+
+CSV_CACHE_CONTROL = "max-age=300"
+"""CSV配信のCloudFront TTL。無効化APIの代わりにオブジェクト側のヘッダで鮮度を制御する"""
 
 
 class BatchService(CommonService):
@@ -58,9 +67,163 @@ class BatchService(CommonService):
         """
         report_csv_str = await utils.WebLoaderHttpx.fetch_url(f"https://pol.is/api/v3/reportExport/{report_id}/comment-groups.csv")
         comments = utils.CSV.parse_csv(report_csv_str)
-        
+
         return report_csv_str, comments
-    
+
+    THEMES_CSV_KEY = "csv/themes.csv"
+    """テーマ一覧CSVのS3キー"""
+
+    async def write_themes_csv(self, mutate, max_attempts: int = 3) -> list:
+        """
+        themes.csv を楽観ロック(ETag If-Match)つきで安全に更新する。
+
+        batch-update(5分毎)とbatch-create(15分毎・実行数分)が同じファイルを
+        read-modify-writeするため、素朴な上書きでは公開直後のテーマ行を
+        取りこぼす競合がある。取得時のETagを条件に書き込み、競合を検出したら
+        最新を再取得してmutateを適用し直す。
+
+        Args:
+            mutate (Callable[[list], list]): 最新のテーマ一覧を受け取り更新後の一覧を返す関数。
+                競合リトライ時に再実行されるため、冪等であること。
+            max_attempts (int): 最大試行回数。
+
+        Returns:
+            list: 書き込みに成功した更新後のテーマ一覧。
+        """
+        for attempt in range(max_attempts):
+            data, etag = await self.s3.get_bytes_and_etag(self.THEMES_CSV_KEY)
+            themes_list = utils.Common.sort_list(utils.CSV.parse_csv(data.decode("utf-8")), "id")
+
+            new_list = mutate(themes_list)
+            fixed_theme_csv_text = utils.CSV.to_csv(new_list, THEME_HEADERS)
+
+            try:
+                await self.s3.upload_bytes(self.THEMES_CSV_KEY, fixed_theme_csv_text.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL, if_match=etag)
+                return new_list
+            except StorageS3PreconditionError:
+                Logger.info(f"themes.csvの書き込み競合を検出。最新を再取得してリトライ ({attempt + 1}/{max_attempts})")
+
+        raise StorageS3Error("themes.csv update failed: write conflict retries exhausted")
+
+    # ###########################################################################
+    # バッチ本体（ルーター/Lambdaハンドラ共通の入口）
+    # ###########################################################################
+
+    async def update_themes(self) -> int:
+        """
+        全テーマの投票数・コメント数をPolisから取得し、変化があればS3のCSVを更新する。
+
+        Returns:
+            int: 更新したテーマ数（0なら S3 への書き込みなし）
+        """
+        # 管理しているテーマ一覧のCSVをS3から取得する
+        themes_str, themes_list = await self.get_theme_csv()
+
+        # 更新するデータのみのリスト
+        update_themes = []
+        update_comment_csv = {}
+
+        # 各テーマ用のデータを取得
+        for theme in themes_list:
+
+            # Polisから集計CSVを取得
+            report_csv_str, comments = await self.get_report_csv(theme["report_id"])
+
+            # コメント数、投票数を集計
+            total_comments = len(comments)
+            total_votes = sum(int(comment["total-votes"]) for comment in comments)
+
+            Logger.debug(f"{theme['title']} before {theme['votes']} -> after {total_votes}  (Refresh -> {int(theme['votes']) != int(total_votes)})")
+
+            # 現在S3に保存済みの集計CSVと比較
+            if int(theme["votes"]) != int(total_votes):
+                # 変更があった場合は、取得したファイルを設置用に配列に格納
+                update_row = theme.copy()
+                update_row["votes"] = str(total_votes)
+                update_row["comments"] = str(total_comments)
+                update_themes.append(update_row)
+
+                # S3にアップするリストにCSVを追加
+                update_comment_csv[theme["conversation_id"]] = report_csv_str
+
+        if not update_comment_csv:
+            return 0
+
+        Logger.debug("S3に更新を実施")
+
+        # 変更があった集計CSVをS3に格納
+        for conversation_id, report_csv_str in update_comment_csv.items():
+            await self.s3.upload_bytes(f"csv/report/report_{conversation_id}.csv", report_csv_str.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
+
+        # テーマ一覧CSVを楽観ロックで更新
+        # （並行するbatch-createが追記したテーマ行を上書きで消さないよう、最新版にマージし直す）
+        await self.write_themes_csv(lambda current: utils.Common.merge_lists(current, update_themes))
+
+        return len(update_themes)
+
+    async def publish_approved_drafts(self, limit: Optional[int] = None) -> int:
+        """
+        承認済(APPROVED)の下書きをPolis上に作成し、CSVとデータストアへ反映する。
+
+        Args:
+            limit (Optional[int]): 処理する最大件数。Lambda(15分制限)からは1を指定し、
+                残りは次回スケジュールに委ねる。Noneなら全件（現行cronと同じ挙動）。
+
+        Returns:
+            int: 処理した下書き件数
+        """
+        # 承認済テーマ一覧を取得
+        t_draft_list = await self.draft_store.select_by_post_status(types.PostStatus.APPROVED.value)
+
+        if limit is not None:
+            t_draft_list = t_draft_list[:limit]
+
+        if not t_draft_list:
+            return 0
+
+        Logger.debug(json.dumps([t_draft.theme_name for t_draft in t_draft_list], indent=4, ensure_ascii=False))
+
+        # テーマ一覧を取得
+        themes_str, theme_list = await self.get_theme_csv()
+
+        # 承認済テーマを作成
+        report_csv_list = []
+        new_theme_infos = []
+        for t_draft in t_draft_list:
+            # コメントリストを文字列にパース
+            comments = t_draft.theme_comments.split(configs.constants.SPLITTER)
+
+            # テーマを作成
+            report_csv_str, theme_info = await self.create_theme(theme_list, str(t_draft.theme_name), str(t_draft.theme_description), comments, str(t_draft.theme_category))
+
+            # テーマ一覧に追加
+            theme_list.append(theme_info)
+            new_theme_infos.append(theme_info)
+            report_csv_list.append(report_csv_str)
+
+            t_draft.conversation_id = theme_info["conversation_id"]
+            t_draft.report_id = theme_info["report_id"]
+
+        # テーマ一覧CSVを楽観ロックで更新
+        # （並行するbatch-updateの上書きに新テーマ行を消されないよう、最新版に追記し直す）
+        await self.write_themes_csv(lambda current: current + new_theme_infos)
+
+        # レポートから取得したファイルをS3にアップ（t_draftと対応づけ）
+        for t_draft, report_csv_str in zip(t_draft_list, report_csv_list):
+            await self.s3.upload_bytes(f"csv/report/report_{t_draft.conversation_id}.csv", report_csv_str.encode("utf-8"), content_type="text/csv", cache_control=CSV_CACHE_CONTROL)
+
+        # データストアへ反映
+        try:
+            for t_draft in t_draft_list:
+                await self.draft_store.update_post_info(t_draft, t_draft.conversation_id, t_draft.report_id, types.PostStatus.POSTED.value)
+
+            await self.draft_store.commit()
+        except Exception as e:
+            await self.draft_store.rollback()
+            raise e
+
+        return len(t_draft_list)
+
     # ###########################################################################
     # Polis登録関連
     # ###########################################################################
@@ -127,12 +290,16 @@ class BatchService(CommonService):
             web_loader_chrome.get_driver("https://pol.is/signin")
             
             # 未ログイン状態の場合、ログインを実施
+            # 認証情報は環境変数から取得（serverless環境ではTerraformがSSM経由で注入。
+            # 旧環境互換のため未設定時は従来値にフォールバックする — カットオーバー後に撤去予定）
+            polis_user = os.environ.get("POLIS_LOGIN_USER", "polis-japan")
+            polis_password = os.environ.get("POLIS_LOGIN_PASSWORD", "V7uVDSfjJdQ3E@om")
             if not web_loader_chrome.exists_wait(By.ID, "signoutLink", 10):
                 web_loader_chrome.wait_for(By.ID, "signinButton", 30, True)
                 web_loader_chrome.click(By.CSS_SELECTOR, "#signinButton")
                 web_loader_chrome.wait_for(By.ID, "username", 15, True)
-                web_loader_chrome.fill_input(By.ID, "username", "polis-japan")
-                web_loader_chrome.fill_input(By.ID, "password", "V7uVDSfjJdQ3E@om")
+                web_loader_chrome.fill_input(By.ID, "username", polis_user)
+                web_loader_chrome.fill_input(By.ID, "password", polis_password)
                 web_loader_chrome.submit_form(By.XPATH, "/html/body/div/main/section/div/div/div/form")
                 web_loader_chrome.wait_for(By.ID, "signoutLink", 15, True)
                 Logger.debug("ログインに成功")

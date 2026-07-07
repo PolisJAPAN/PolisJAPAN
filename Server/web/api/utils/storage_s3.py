@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
 import time
+from dataclasses import dataclass
 from typing import Any, Mapping, Optional, Sequence
 
 import aioboto3
@@ -11,8 +11,35 @@ from botocore.config import Config
 from botocore.exceptions import BotoCoreError, ClientError
 
 
+def build_put_args(
+    *,
+    bucket: str,
+    key: str,
+    data: bytes,
+    content_type: Optional[str] = None,
+    cache_control: Optional[str] = None,
+    if_match: Optional[str] = None,
+    extra_put_args: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """put_object に渡す引数dictを構築する（純関数・テスト用に分離）。"""
+    put_args: dict[str, Any] = {"Bucket": bucket, "Key": key, "Body": data}
+    if content_type:
+        put_args["ContentType"] = content_type
+    if cache_control:
+        put_args["CacheControl"] = cache_control
+    if if_match:
+        put_args["IfMatch"] = if_match
+    if extra_put_args:
+        put_args.update(extra_put_args)
+    return put_args
+
+
 class StorageS3Error(RuntimeError):
     """S3操作中の例外を包括するアプリ固有の例外。"""
+
+
+class StorageS3PreconditionError(StorageS3Error):
+    """条件付き書き込み(If-Match)が競合した場合の例外。呼び出し側で再取得・リトライする。"""
 
 
 @dataclass(frozen=True)
@@ -174,12 +201,40 @@ class StorageS3:
         except (BotoCoreError, ClientError) as e:
             raise StorageS3Error(f"get_bytes failed: {e}") from e
 
+    async def get_bytes_and_etag(self, key: str) -> tuple[bytes, str]:
+        """
+        指定キーのオブジェクトをバイト列とETagのタプルで取得する。
+
+        ETagは upload_bytes(if_match=...) と組み合わせた楽観ロック
+        （並行書き込みの検出）に使用する。
+
+        Args:
+            key (str): 取得対象のオブジェクトキー（prefixを除いた相対パス）。
+
+        Returns:
+            tuple[bytes, str]: (オブジェクトデータ, ETag)
+
+        Raises:
+            StorageS3Error: 通信エラー、アクセス権エラー、ネットワーク障害など。
+        """
+        k = self._full_key(key)
+        try:
+            resp = await self._exist_client().get_object(Bucket=self.bucket, Key=k)
+            body = resp["Body"]
+            data = await body.read()
+            body.close()
+            return data, resp["ETag"]
+        except (BotoCoreError, ClientError) as e:
+            raise StorageS3Error(f"get_bytes_and_etag failed: {e}") from e
+
     async def upload_bytes(
         self,
         key: str,
         data: bytes,
         *,
         content_type: Optional[str] = None,
+        cache_control: Optional[str] = None,
+        if_match: Optional[str] = None,
         extra_put_args: Optional[Mapping[str, Any]] = None,
     ) -> None:
         """
@@ -189,21 +244,33 @@ class StorageS3:
             key (str): アップロード先のオブジェクトキー（prefixを除いた相対パス）。
             data (bytes): アップロードするデータ。
             content_type (Optional[str]): Content-Type ヘッダ（例: "text/plain"）。
+            cache_control (Optional[str]): Cache-Control ヘッダ（例: "max-age=300"）。
+                CloudFrontはこの値をTTLとして尊重するため、キャッシュ無効化APIの代わりに使う。
+            if_match (Optional[str]): 楽観ロック用ETag。取得時のETagと現在のオブジェクトが
+                一致する場合のみ書き込む（競合時は StorageS3PreconditionError）。
             extra_put_args (Optional[Mapping[str, Any]]): put_object に渡す追加パラメータ。
 
         Raises:
+            StorageS3PreconditionError: If-Match指定時に書き込み競合が発生した場合。
             StorageS3Error: S3通信エラーや認証エラーなど。
         """
-        k = self._full_key(key)
-        put_args: dict[str, Any] = {"Bucket": self.bucket, "Key": k, "Body": data}
-        if content_type:
-            put_args["ContentType"] = content_type
-        if extra_put_args:
-            put_args.update(extra_put_args)
-
+        put_args = build_put_args(
+            bucket=self.bucket,
+            key=self._full_key(key),
+            data=data,
+            content_type=content_type,
+            cache_control=cache_control,
+            if_match=if_match,
+            extra_put_args=extra_put_args,
+        )
         try:
             await self._exist_client().put_object(**put_args)
-        except (BotoCoreError, ClientError) as e:
+        except ClientError as e:
+            error_code = e.response.get("Error", {}).get("Code")
+            if error_code in ("PreconditionFailed", "412"):
+                raise StorageS3PreconditionError(f"upload_bytes conflict (If-Match): {e}") from e
+            raise StorageS3Error(f"upload_bytes failed: {e}") from e
+        except BotoCoreError as e:
             raise StorageS3Error(f"upload_bytes failed: {e}") from e
 
     # ---- helper ----
@@ -246,13 +313,18 @@ class StorageS3:
             )
         except (BotoCoreError, ClientError) as e:
             raise StorageS3Error(f"delete_object failed: {e}") from e
-        
-    async def clear_cache(self, distribution_id: str, paths: Sequence[str]):
-        """
-        aioboto3 を使用して CloudFront のキャッシュ無効化を非同期で実行する。
 
-        :param distribution_id: CloudFront ディストリビューション ID
-        :param paths: 無効化したいパスのリスト（例：['/index.html', '/static/*']）
+    async def create_invalidation(self, distribution_id: str, paths: Sequence[str]):
+        """
+        CloudFrontの対象パス限定のキャッシュ無効化を実行する。
+
+        通常の更新はCache-Control(TTL)で反映するため使用しない。
+        「削除」はTTLでは反映できない（削除済みオブジェクトはヘッダを持たない）ため、
+        テーマ削除フロー専用のピンポイント無効化として残している。
+
+        Args:
+            distribution_id (str): CloudFrontディストリビューションID。
+            paths (Sequence[str]): 無効化するパス（例: ["/csv/themes.csv"]）。
         """
 
         # CallerReference は一意である必要があるため timestamp を利用

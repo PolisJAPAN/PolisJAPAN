@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import Form
 from pydantic import Field
 
+import api.configs as configs
 from api.core.common_schema import ApiError, APIErrorResponses, CommonRequest
 from api.models import tables
 
@@ -172,7 +173,8 @@ class BatchGenerateErrorResponses(APIErrorResponses):
 class BatchDeleteRequest(CommonRequest):
     """batch/delete API用リクエスト定義"""
     access_key: str = Field(min_length=1, max_length=256, description="アクセスキー")
-    t_draft_id: int = Field(ge=1, le=256, description="下書きID")
+    # DynamoDBバックエンドの下書きIDはepoch秒(約1.75e9)のため、上限はBIGINTまで許容する
+    t_draft_id: int = Field(ge=1, le=configs.constants.BIGINT_MAX, description="下書きID")
 
     @classmethod
     def parse(
@@ -211,3 +213,33 @@ class BatchDeleteErrorResponses(APIErrorResponses):
 
     api_errors = [InvalidAccessKeyError, ThemeNotFoundError, DraftNotFoundError]
 
+
+# ###########################################################################
+# batch/healthcheck API用スキーマ
+# ###########################################################################
+
+# リクエスト
+class BatchHealthcheckRequest(CommonRequest):
+    """batch/healthcheck API用リクエスト定義"""
+
+
+    @classmethod
+    def parse(
+        cls,
+
+    ):
+        return BatchHealthcheckRequest()
+
+# レスポンス
+class BatchHealthcheckResponse(CommonRequest):
+    """batch/healthcheck API用レスポンス定義"""
+    is_success: bool = Field(description="成功情報")
+
+# APIエラー管理
+class BatchHealthcheckErrorResponses(APIErrorResponses):
+    """batch/healthcheck API用エラー管理クラス"""
+
+    # 固有エラー定義
+        # 固有エラーなし
+
+    api_errors = []

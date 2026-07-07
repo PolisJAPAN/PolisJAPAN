@@ -50,50 +50,66 @@ class CommonRoute(APIRoute):
                 if not session_id:
                     return await self.generate_api_error_response(request, UserAuthError()) 
             
-            # DBコネクション開始
-            async with async_session() as db:
-                # サービス初期化
-                request.state.service = await get_service(request.state.router_name)
-                request.state.service.db_session = db
-                
-                # ユーザー認証通信の場合はチェック
-                if is_user_auth_api:
-                    t_account = await cruds.TAccount.select_by_session_id(request.state.service.db_session, session_id)
-                    
-                    # アカウントがない場合は、セッション情報が間違っているのでエラー
-                    if not t_account:
-                        return await self.generate_api_error_response(request, UserAuthError()) 
-                    
-                    # ログインしたことがないユーザーの場合、先にログインしてセッションを発行しなければユーザー認証通信は使えない
-                    if str(t_account.session_id) == "":
-                        return await self.generate_api_error_response(request, UserAuthError()) 
-                    
-                    t_user = await cruds.TUser.select_by_id(request.state.service.db_session, t_account.t_user_id)
-                    t_user_add = await cruds.TUserAdd.select_by_t_user_id(request.state.service.db_session, t_account.t_user_id)
-                    
-                    # アカウント情報があって、他のユーザー関連情報がない場合は不正なデータなので処理終了
-                    if not t_user or not t_user_add:
-                        return await self.generate_api_error_response(request, UnknownError()) 
-                    
-                    request.state.service.t_user = t_user
-                    request.state.service.t_account = t_account
-                    request.state.service.t_user_add = t_user_add
+            # DBコネクション開始（mysqlバックエンドの場合のみ）
+            use_mysql = getattr(configs.constants, "DATA_BACKEND", "mysql") == "mysql"
 
-                # 4. API本体へ
-                try:
-                    response = await original_route_handler(request)
-                # 既知のエラーの場合
-                except ApiError as err:
-                    return await self.generate_api_error_response(request, err)
-                # 予期しないエラーの場合
-                except Exception as exc:
-                    return await self.generate_generic_error_response(request, exc)
-            
-                Logger.info(f"-> API処理終了")
-                await self.finalize_request(request)
-                return response
+            if use_mysql:
+                async with async_session() as db:
+                    return await self.handle_with_service(request, original_route_handler, db, is_user_auth_api)
+            else:
+                # serverless(dynamodb)ではRDBを使わない。ユーザー認証APIはRDB前提のため未対応
+                if is_user_auth_api:
+                    return await self.generate_api_error_response(request, UserAuthError())
+                return await self.handle_with_service(request, original_route_handler, None, is_user_auth_api)
 
         return custom_route_handler
+
+    async def handle_with_service(self, request: Request, original_route_handler: Callable, db, is_user_auth_api: bool):
+        """サービス初期化〜API本体実行〜後処理までの共通フロー。dbはmysqlバックエンド時のみ非None。"""
+        from api.repositories import create_draft_store
+
+        # サービス初期化
+        request.state.service = await get_service(request.state.router_name)
+        request.state.service.db_session = db
+        request.state.service.draft_store = create_draft_store(db)
+
+        # ユーザー認証通信の場合はチェック
+        if is_user_auth_api:
+            session_id = request.cookies.get("session_id")
+            t_account = await cruds.TAccount.select_by_session_id(request.state.service.db_session, session_id)
+
+            # アカウントがない場合は、セッション情報が間違っているのでエラー
+            if not t_account:
+                return await self.generate_api_error_response(request, UserAuthError())
+
+            # ログインしたことがないユーザーの場合、先にログインしてセッションを発行しなければユーザー認証通信は使えない
+            if str(t_account.session_id) == "":
+                return await self.generate_api_error_response(request, UserAuthError())
+
+            t_user = await cruds.TUser.select_by_id(request.state.service.db_session, t_account.t_user_id)
+            t_user_add = await cruds.TUserAdd.select_by_t_user_id(request.state.service.db_session, t_account.t_user_id)
+
+            # アカウント情報があって、他のユーザー関連情報がない場合は不正なデータなので処理終了
+            if not t_user or not t_user_add:
+                return await self.generate_api_error_response(request, UnknownError())
+
+            request.state.service.t_user = t_user
+            request.state.service.t_account = t_account
+            request.state.service.t_user_add = t_user_add
+
+        # API本体へ
+        try:
+            response = await original_route_handler(request)
+        # 既知のエラーの場合
+        except ApiError as err:
+            return await self.generate_api_error_response(request, err)
+        # 予期しないエラーの場合
+        except Exception as exc:
+            return await self.generate_generic_error_response(request, exc)
+
+        Logger.info(f"-> API処理終了")
+        await self.finalize_request(request)
+        return response
     
     async def generate_api_error_response(self, request: Request, err: ApiError) -> JSONResponse:
         """
@@ -176,8 +192,9 @@ class CommonRoute(APIRoute):
         
         # S3クライアントのセッションを終了
         await request.state.service.s3.close()
-        # DBセッションを終了
-        await request.state.service.db_session.close()
+        # DBセッションを終了（mysqlバックエンドの場合のみ存在）
+        if request.state.service.db_session is not None:
+            await request.state.service.db_session.close()
         
 
 

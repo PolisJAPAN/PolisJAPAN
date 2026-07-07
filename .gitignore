@@ -9,11 +9,39 @@
 .DS_Store
 **/.DS_Store/
 
-# configs 以下の特定環境フォルダをすべて無視
+# configs 以下の特定環境フォルダをすべて無視（シークレット含む）
+# 注: 実パスは Server/web/api/configs/ 配下。既存trackedファイルの履歴除去は別途対応予定
 /configs/development/
 /configs/localhost/
 /configs/production/
+/Server/web/api/configs/development/
+/Server/web/api/configs/localhost/
+/Server/web/api/configs/production/
 
 
 node_modules/
 **/node_modules/
+
+# AWS認証情報（棚卸し用アクセスキー等）を無視
+*accessKeys*.csv
+
+# GitHubトークン等の認証情報を無視
+.pr-token
+*.token
+
+# Claude Code のローカル設定・個人スキル
+.claude/
+
+# データ移行・デバッグ用の一時ファイル
+Server/web/t_draft_export.json
+Server/web/t_draft_delta.json
+Server/web/screenshot/
+
+# Dockerビルドで自動生成されるOSSライセンス一覧
+Server/web/THIRD_PARTY_LICENSES.html
+
+# 概要書PDF（大容量バイナリ。仕様書は docs/仕様書.md を参照）
+/PolosJAPAN概要書_スライド.pdf
+
+# Polisからダウンロードした集計CSV（一時）
+/*-comments.csv

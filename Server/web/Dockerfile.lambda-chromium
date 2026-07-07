@@ -1,0 +1,50 @@
+# Lambda用コンテナイメージ（batch-create: Selenium + Chromium同梱）
+# ハンドラ: api.lambda_handlers.batch_create.handler
+#
+# Chrome for Testing の安定版（chrome + 対応するchromedriver）を同梱する。
+# 既存コード(utils/web_loader_chrome.py)は /usr/bin/chromedriver 固定参照のため
+# シンボリックリンクで互換を取る。
+# ベースはpython3.12(AL2023)。3.11ベースはAL2(glibc 2.26)でnumpy 2.x等のwheelが使えない。
+#
+# build: docker build -f Dockerfile.lambda-chromium -t polisjapan-batch-create .
+
+# ---- 依存関係の解決 ----
+FROM python:3.12-slim AS deps
+
+RUN pip install --no-cache-dir poetry poetry-plugin-export
+
+WORKDIR /src
+COPY pyproject.toml poetry.lock ./
+RUN poetry export -f requirements.txt --without-hashes -o /requirements.txt
+
+# ---- 実行イメージ ----
+FROM public.ecr.aws/lambda/python:3.12
+
+# Chromeの実行に必要な共有ライブラリと日本語フォント（AL2023 / microdnf）
+RUN dnf install -y \
+    nss atk at-spi2-atk cups-libs gtk3 libXcomposite alsa-lib \
+    libXcursor libXdamage libXext libXi libXrandr libXScrnSaver \
+    libXtst pango libxkbcommon libdrm mesa-libgbm \
+    fontconfig unzip \
+    && (dnf install -y google-noto-sans-cjk-fonts || dnf install -y google-noto-sans-cjk-ttc-fonts || true) \
+    && dnf clean all
+
+# Chrome for Testing 安定版 + 対応chromedriver を取得
+RUN set -eux; \
+    STABLE_JSON="https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json"; \
+    CHROME_URL=$(python -c "import json,urllib.request;d=json.load(urllib.request.urlopen('${STABLE_JSON}'));print([x['url'] for x in d['channels']['Stable']['downloads']['chrome'] if x['platform']=='linux64'][0])"); \
+    DRIVER_URL=$(python -c "import json,urllib.request;d=json.load(urllib.request.urlopen('${STABLE_JSON}'));print([x['url'] for x in d['channels']['Stable']['downloads']['chromedriver'] if x['platform']=='linux64'][0])"); \
+    curl -sSL "$CHROME_URL" -o /tmp/chrome.zip; \
+    curl -sSL "$DRIVER_URL" -o /tmp/driver.zip; \
+    unzip -q /tmp/chrome.zip -d /opt/; \
+    unzip -q /tmp/driver.zip -d /opt/; \
+    ln -s /opt/chrome-linux64/chrome /usr/bin/google-chrome; \
+    ln -s /opt/chromedriver-linux64/chromedriver /usr/bin/chromedriver; \
+    rm -f /tmp/chrome.zip /tmp/driver.zip
+
+COPY --from=deps /requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+COPY api ${LAMBDA_TASK_ROOT}/api
+
+CMD ["api.lambda_handlers.batch_create.handler"]

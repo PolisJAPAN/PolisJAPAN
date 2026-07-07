@@ -1,0 +1,16 @@
+# terraform.tfvars にコピーして使用する（terraform.tfvars は .gitignore 対象）
+
+# 管理画面・admin APIを許可するIP(CIDR)。現行SGのSSH許可IPを参考に設定する
+admin_allow_ips = [
+  "203.0.113.1/32",
+]
+
+# アラート通知先（apply後に届く確認メールの承認が必要）
+alert_email = "your-address@example.com"
+
+# ECRへイメージをpushした後に設定する（未設定の間はLambda系リソースを作らない）
+# api_image_uri          = "133078632695.dkr.ecr.ap-northeast-3.amazonaws.com/polisjapan-api:v1"
+# batch_create_image_uri = "133078632695.dkr.ecr.ap-northeast-3.amazonaws.com/polisjapan-batch-create:v1"
+
+# カットオーバー時にENABLEDへ変更する（それまではDISABLED維持で二重投稿を防止）
+# scheduler_state = "ENABLED"

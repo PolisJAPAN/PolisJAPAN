@@ -12,19 +12,21 @@ if APP_ENV == "production":
     from .production import constants as env_constants
     from .production import credentials as credentials
     from .production import database as database
-    from .production import cache as cache
 
 elif APP_ENV == "development":
     from .development import constants as env_constants
     from .development import credentials as credentials
     from .development import database as database
-    from .development import cache as cache
 
 elif APP_ENV == "localhost":
     from .localhost import constants as env_constants
     from .localhost import credentials as credentials
     from .localhost import database as database
-    from .localhost import cache as cache
+
+elif APP_ENV == "serverless":
+    from .serverless import constants as env_constants
+    from .serverless import credentials as credentials
+    from .serverless import database as database
 
 else:
     raise ValueError("存在しない環境が指定されています")
