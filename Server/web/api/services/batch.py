@@ -291,9 +291,11 @@ class BatchService(CommonService):
             
             # 未ログイン状態の場合、ログインを実施
             # 認証情報は環境変数から取得（serverless環境ではTerraformがSSM経由で注入。
-            # 旧環境互換のため未設定時は従来値にフォールバックする — カットオーバー後に撤去予定）
-            polis_user = os.environ.get("POLIS_LOGIN_USER", "polis-japan")
-            polis_password = os.environ.get("POLIS_LOGIN_PASSWORD", "V7uVDSfjJdQ3E@om")
+            # ローカルは Server/web/.env で設定）
+            polis_user = os.environ.get("POLIS_LOGIN_USER", "")
+            polis_password = os.environ.get("POLIS_LOGIN_PASSWORD", "")
+            if not polis_user or not polis_password:
+                raise RuntimeError("POLIS_LOGIN_USER / POLIS_LOGIN_PASSWORD が未設定です")
             if not web_loader_chrome.exists_wait(By.ID, "signoutLink", 10):
                 web_loader_chrome.wait_for(By.ID, "signinButton", 30, True)
                 web_loader_chrome.click(By.CSS_SELECTOR, "#signinButton")

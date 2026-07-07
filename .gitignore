@@ -9,14 +9,11 @@
 .DS_Store
 **/.DS_Store/
 
-# configs 以下の特定環境フォルダをすべて無視（シークレット含む）
-# 注: 実パスは Server/web/api/configs/ 配下。既存trackedファイルの履歴除去は別途対応予定
-/configs/development/
-/configs/localhost/
-/configs/production/
-/Server/web/api/configs/development/
-/Server/web/api/configs/localhost/
-/Server/web/api/configs/production/
+# configs はシークレットを環境変数から読む形式のためコミット可（2026-07-07〜）
+# シークレットの実値は Server/web/.env に置く（コミット禁止）
+/Server/web/.env
+# 環境変数化前の旧configs実値のローカル退避
+/Server/web/api/configs/.backup-local-*/
 
 
 node_modules/

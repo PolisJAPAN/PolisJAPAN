@@ -82,4 +82,12 @@ contact/share Lambda + API Gateway本体/ステージ、SES（ドメインID/DKI
 
 - SSMパラメータの値はTerraformでは管理しない（`ignore_changes`）。ただしLambda環境変数への注入のため **tfstateには復号値が含まれる**。tfstateバケットは非公開・暗号化・バージョニングを必須とし、terraform-deployユーザー以外にアクセス権を与えないこと
 - `terraform.tfvars` はIP許可リスト等を含むため `.gitignore` 対象
-- 既知の残タスク: `services/batch.py` の pol.is ログイン情報ハードコードを環境変数（POLIS_LOGIN_USER / POLIS_LOGIN_PASSWORD、Terraformが注入済み）から読むようにするコード修正が必要（カットオーバー前に実施）
+- ~~既知の残タスク: `services/batch.py` の pol.is ログイン情報ハードコード~~ → 解消済み（2026-07-07 環境変数化・フォールバック実値も削除）。**過去コミットに実値が残っているため pol.is パスワードのローテーションは必要**（Phase 5）
+
+## GitHub Actions による自動デプロイ（2026-07-07〜）
+
+クライアント・サーバーのデプロイはGitHub Actionsが行う（`.github/workflows/deploy-client.yml` / `deploy-server.yml`）。
+
+- 認証は **OIDCフェデレーション**（`github_actions.tf`）。長期アクセスキーをGitHubに置かない。Assumeできるのは本リポジトリ `main` ブランチのワークフローのみ
+- IAMロール: `polisjapan-gha-deploy-client`（S3同期 + CloudFront無効化のみ。`app.pol-is.jp/csv/*` への書き込みは明示Deny）/ `polisjapan-gha-deploy-server`（ECR push + 3関数の `UpdateFunctionCode` のみ）
+- **Lambdaの `image_uri` は `ignore_changes`**: イメージ更新はCI（コミットSHAタグ）、インフラ定義はTerraformの役割分担。tfvarsの `api_image_uri` / `batch_create_image_uri` は初回作成時のみ使用される

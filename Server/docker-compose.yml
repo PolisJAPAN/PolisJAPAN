@@ -5,6 +5,10 @@ services:
     environment:
       PROJECT_NAME: ${PROJECT_NAME}
       APP_ENV: localhost
+    env_file:
+      # シークレット類（雛形: web/.env.example）。未作成でも起動は可能
+      - path: ./web/.env
+        required: false
     volumes:
       - ./web:/app
     depends_on:
