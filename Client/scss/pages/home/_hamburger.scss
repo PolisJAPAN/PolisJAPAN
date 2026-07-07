@@ -1,5 +1,7 @@
 @use "../../common" as common;
 
+$panel-width: 224px;
+
 // ハンバーガーメニュー（モーフ展開）
 // 仕様: docs/superpowers/specs/2026-07-07-hamburger-menu-design.md
 // クラスは汎用設計（将来他画面でも #bottom-menu 内に置けば動く）
@@ -64,7 +66,7 @@
                     border-radius 0.35s;
 
         .panel-inner {
-            width: 224px;
+            width: $panel-width;
             padding: 16px 16px 60px;
 
             display: flex;
@@ -82,7 +84,7 @@
             border-radius: 32px;
 
             color: var(--color-font-light);
-            font-size: 14px;
+            font-size: var(--font-size-14px);
             font-weight: 600;
             text-decoration: none;
             white-space: nowrap;
@@ -108,7 +110,7 @@
 
             .menu-sub-item {
                 color: rgba(255, 255, 255, 0.6);
-                font-size: 11px;
+                font-size: var(--font-size-11px);
                 text-decoration: none;
                 white-space: nowrap;
 
@@ -128,7 +130,7 @@
         }
 
         .hamburger-panel {
-            width: 224px;
+            width: $panel-width;
             height: 150px;
             border-radius: 24px;
             pointer-events: all;
@@ -145,7 +147,8 @@
 }
 
 // 展開中は既存ボタンをフェードアウト（閉じると復帰）
-#bottom-menu {
+// 既存 _menu.scss の body#home スコープ（pointer-events: all）に詳細度で勝つため body#home 配下に置く
+body#home #bottom-menu {
     .help-button, .create-button {
         transition: opacity 0.3s 0.15s;
     }
@@ -167,7 +170,8 @@
             transition: none;
         }
     }
-    #bottom-menu .help-button, #bottom-menu .create-button {
+    body#home #bottom-menu .help-button,
+    body#home #bottom-menu .create-button {
         transition: none;
     }
 }
