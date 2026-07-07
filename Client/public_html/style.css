@@ -5544,8 +5544,8 @@ body#home .slide-modal.full-screen-modal .modal-window .complete-overlay .comple
 }
 .hamburger-menu .hamburger-panel {
   position: absolute;
-  right: 0;
-  bottom: 0;
+  right: 6px;
+  bottom: 6px;
   z-index: 1;
   width: 40px;
   height: 40px;
@@ -5555,7 +5555,7 @@ body#home .slide-modal.full-screen-modal .modal-window .complete-overlay .comple
   filter: drop-shadow(0px 4px 8px rgba(9, 8, 39, 0.25));
   pointer-events: none;
   visibility: hidden;
-  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.35s, visibility 0s linear 0.35s;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1), right 0.35s cubic-bezier(0.4, 0, 0.2, 1), bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.35s, visibility 0s linear 0.35s;
 }
 .hamburger-menu .hamburger-panel .panel-inner {
   width: 224px;
@@ -5614,9 +5614,11 @@ body#home .slide-modal.full-screen-modal .modal-window .complete-overlay .comple
   width: 224px;
   height: 150px;
   border-radius: 24px;
+  right: 0;
+  bottom: 0;
   pointer-events: all;
   visibility: visible;
-  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.35s, visibility 0s;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1), right 0.35s cubic-bezier(0.4, 0, 0.2, 1), bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.35s, visibility 0s;
 }
 .hamburger-menu.open .hamburger-panel .menu-item,
 .hamburger-menu.open .hamburger-panel .menu-sub-row {

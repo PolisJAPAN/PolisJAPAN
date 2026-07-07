@@ -3,6 +3,8 @@
 $panel-width: 224px;
 $panel-morph: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
               height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              right 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1),
               border-radius 0.35s;
 
 // ハンバーガーメニュー（モーフ展開）
@@ -61,8 +63,11 @@ $panel-morph: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     // ---- パネル（閉時はトリガーの背後に隠れる小さな円） ----
     .hamburger-panel {
         position: absolute;
-        right: 0;
-        bottom: 0;
+        // 閉状態はトリガー(正円)の真裏に同心円で収まるよう6px内側へ寄せる。
+        // 同じ角に接したままだと、小径の円は必ず対角方向にはみ出す（閉じアニメの
+        // 最終盤に膨らみが一瞬見える）ため、角ぴったり(0,0)には置かない
+        right: 6px;
+        bottom: 6px;
         z-index: 1;
 
         width: 40px;
@@ -148,6 +153,8 @@ $panel-morph: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
             width: $panel-width;
             height: 150px;
             border-radius: 24px;
+            right: 0;
+            bottom: 0;
             pointer-events: all;
 
             // 開くときは遅延なしで即座に可視化（モーフの開始から見せる）
