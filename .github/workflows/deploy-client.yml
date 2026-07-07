@@ -1,0 +1,57 @@
+name: Deploy Client (S3 + CloudFront)
+
+# mainブランチへのpushでクライアント（静的サイト）を自動デプロイする。
+# 認証はOIDC（長期アクセスキー不使用）。Assumeできるのはmainブランチのワークフローのみ
+# （IAMロールの信頼ポリシーで制限。Infra/terraform/environments/production/github_actions.tf）
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Client/public_html/**"
+      - "Client/public_html_app/**"
+      - "Client/public_html_admin/**"
+
+permissions:
+  id-token: write # OIDCトークン取得に必要
+  contents: read
+
+concurrency:
+  group: deploy-client
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ap-northeast-3
+  ROLE_ARN: arn:aws:iam::133078632695:role/polisjapan-gha-deploy-client
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # csv/* は本番データ（バッチLambdaが管理）のため絶対に同期しない
+      - name: Sync LP (pol-is.jp)
+        run: >
+          aws s3 sync ./Client/public_html/ s3://pol-is.jp/
+          --exclude ".DS_Store" --exclude "*/.DS_Store" --exclude "csv/*" --delete
+
+      - name: Sync App (app.pol-is.jp)
+        run: >
+          aws s3 sync ./Client/public_html_app/ s3://app.pol-is.jp/
+          --exclude ".DS_Store" --exclude "*/.DS_Store" --exclude "csv/*" --delete
+
+      - name: Sync Admin (admin.pol-is.jp)
+        run: >
+          aws s3 sync ./Client/public_html_admin/ s3://admin.pol-is.jp/
+          --exclude ".DS_Store" --exclude "*/.DS_Store" --delete
+
+      - name: Invalidate CloudFront caches
+        run: |
+          aws cloudfront create-invalidation --distribution-id E1L9GH70CTWAY6 --paths "/*"
+          aws cloudfront create-invalidation --distribution-id E1VDGUET2Z2OBX --paths "/*"
+          aws cloudfront create-invalidation --distribution-id E2D8XIPYTKLR5Z --paths "/*"

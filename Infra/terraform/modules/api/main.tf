@@ -123,6 +123,12 @@ resource "aws_lambda_function" "api" {
     variables = var.environment_variables
   }
 
+  # イメージの更新はGitHub Actions（deploy-server.yml）が update-function-code で行うため、
+  # Terraformはimage_uriの差分を無視する（applyでCIのデプロイを巻き戻さない）。初回作成時のみtfvarsの値を使用
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
+
   depends_on = [aws_cloudwatch_log_group.api]
 }
 

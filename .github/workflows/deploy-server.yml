@@ -1,0 +1,90 @@
+name: Deploy Server (Lambda)
+
+# mainブランチへのpushでAPI・バッチLambdaを自動デプロイする。
+# コンテナイメージをビルド→ECRへpush→Lambdaのイメージを切り替え→ヘルスチェック。
+# 認証はOIDC（長期アクセスキー不使用）。Assumeできるのはmainブランチのワークフローのみ。
+# Terraform側は image_uri を ignore_changes 済みのため、apply でCIのデプロイが巻き戻ることはない。
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Server/web/**"
+
+permissions:
+  id-token: write # OIDCトークン取得に必要
+  contents: read
+
+concurrency:
+  group: deploy-server
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ap-northeast-3
+  ROLE_ARN: arn:aws:iam::133078632695:role/polisjapan-gha-deploy-server
+  ECR_REGISTRY: 133078632695.dkr.ecr.ap-northeast-3.amazonaws.com
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - uses: docker/setup-buildx-action@v3
+
+      # provenance/sbom無効は必須: Lambdaはマルチプラットフォームマニフェスト非対応
+      - name: Build & push api image (api / batch-update 共用)
+        uses: docker/build-push-action@v6
+        with:
+          context: Server/web
+          file: Server/web/Dockerfile.lambda
+          platforms: linux/amd64
+          provenance: false
+          sbom: false
+          push: true
+          tags: ${{ env.ECR_REGISTRY }}/polisjapan-api:${{ github.sha }}
+
+      - name: Build & push batch-create image (Selenium + Chromium)
+        uses: docker/build-push-action@v6
+        with:
+          context: Server/web
+          file: Server/web/Dockerfile.lambda-chromium
+          platforms: linux/amd64
+          provenance: false
+          sbom: false
+          push: true
+          tags: ${{ env.ECR_REGISTRY }}/polisjapan-batch-create:${{ github.sha }}
+
+      - name: Update Lambda functions
+        run: |
+          API_IMAGE="$ECR_REGISTRY/polisjapan-api:$GITHUB_SHA"
+          CREATE_IMAGE="$ECR_REGISTRY/polisjapan-batch-create:$GITHUB_SHA"
+          for fn_image in "polisjapan-api:$API_IMAGE" "polisjapan-batch-update:$API_IMAGE" "polisjapan-batch-create:$CREATE_IMAGE"; do
+            fn="${fn_image%%:*}"
+            image="${fn_image#*:}"
+            echo "== updating $fn"
+            aws lambda update-function-code --function-name "$fn" --image-uri "$image" --no-cli-pager
+          done
+          for fn in polisjapan-api polisjapan-batch-update polisjapan-batch-create; do
+            aws lambda wait function-updated --function-name "$fn"
+            echo "== $fn updated"
+          done
+
+      - name: Healthcheck (cold start込みでリトライ)
+        run: |
+          for i in $(seq 1 10); do
+            if curl -fsS --max-time 30 https://api.pol-is.jp/batch/healthcheck > /dev/null; then
+              echo "healthcheck OK"
+              exit 0
+            fi
+            echo "retry $i/10 ..."
+            sleep 15
+          done
+          echo "healthcheck FAILED — Lambdaのログを確認してください" >&2
+          exit 1
