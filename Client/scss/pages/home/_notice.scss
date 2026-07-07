@@ -87,7 +87,7 @@
                     color: var(--color-font-dark);
                 }
                 img {
-                    width: 100%;
+                    max-width: 100%;
                     height: auto;
                     border-radius: 16px;
                     margin: 4px 0 8px;
@@ -95,6 +95,8 @@
                 // 補足・注意用の囲みボックス
                 .notice-box {
                     background-color: var(--color-light);
+                    // 親(.notice-item)のグレー背景との差が小さいため、柔らかい境界線で分離する
+                    border: 1px solid rgba(32, 36, 38, 0.1);
                     border-radius: 12px;
                     padding: 10px 12px;
                     margin: 8px 0;
@@ -115,6 +117,12 @@
 
                     font-weight: 600;
                     text-decoration: none;
+
+                    transition: opacity 0.2s;
+
+                    &:hover {
+                        opacity: 0.8;
+                    }
                 }
                 .notice-error {
                     color: var(--color-font-dark-secondary);
