@@ -41,7 +41,7 @@ aws s3 sync s3://app.pol-is.jp/csv/ ./public_html_app/csv/ --exclude ".DS_Store"
 
 ### （旧）EC2でのサーバー起動 ※サーバーレス移行済みのため現在は使用しません
 > バックエンドは Lambda / API Gateway に移行済みです（`Infra/terraform/` で管理）。
-> 以下は移行前の EC2 + Docker 運用時の手順で、参考として残しています。
+> 以下は移行前の EC2 + Docker 運用時の手順です（関連ファイル docker-compose.prd.yml 等は 2026-07-07 に削除済み。必要なら git 履歴を参照）。
 ```
 cd server/
 docker logs PolisJAPAN_web -f -t
