@@ -486,7 +486,7 @@ async function initializeArticles() {
 
 /**
  * リンク要素への処理を追加
- * 
+ *
  * @returns {void}
  */
 function bindArticleLink() {
@@ -495,13 +495,54 @@ function bindArticleLink() {
     targetElements.forEach((element) => {
         element.addEventListener("click", (e) => {
             e.stopPropagation();
-            
+
             setGrobalLoading(true);
-            
+
             setTimeout(() => {
                 window.location = `${window.location.origin}${element.getAttribute("href")}`;
             }, 500);
         });
+    });
+}
+
+/**
+ * ハンバーガーメニューの開閉を制御する。
+ *
+ * トリガークリックでトグル、パネル外クリック・Escキーで閉じる。
+ * 開閉状態は .hamburger-menu の .open と #bottom-menu の .hamburger-open で表現し、
+ * 見た目の変化はすべてCSS側（_hamburger.scss）が担う。
+ */
+function bindHamburgerMenu() {
+    const menu = document.querySelector("#hamburger-menu");
+    if (!menu) {
+        return;
+    }
+    const trigger = menu.querySelector(".hamburger-trigger");
+    const bottomMenu = document.querySelector("#bottom-menu");
+
+    const setOpen = (open) => {
+        menu.classList.toggle("open", open);
+        bottomMenu.classList.toggle("hamburger-open", open);
+        trigger.setAttribute("aria-expanded", String(open));
+    };
+
+    trigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        setOpen(!menu.classList.contains("open"));
+    });
+
+    // パネル外をタップしたら閉じる
+    document.addEventListener("click", (e) => {
+        if (menu.classList.contains("open") && !menu.contains(e.target)) {
+            setOpen(false);
+        }
+    });
+
+    // Escキーで閉じる
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && menu.classList.contains("open")) {
+            setOpen(false);
+        }
     });
 }
 
@@ -519,4 +560,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     BindHorizontalScroll();
     bindArticleLink();
     bindPageReturn();
+    bindHamburgerMenu();
 });
