@@ -552,6 +552,9 @@ function bindHamburgerMenu() {
 document.addEventListener("DOMContentLoaded", async () => {
     initializeTutorial();
 
+    // 記事データに依存しないUIは、CSV読み込みの成否・遅延に関係なく先に有効化する
+    bindHamburgerMenu();
+
     // 記事データの取得・描画が完了してから後続の処理を実行する
     await initializeArticles();
 
@@ -562,5 +565,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     BindHorizontalScroll();
     bindArticleLink();
     bindPageReturn();
-    bindHamburgerMenu();
 });
