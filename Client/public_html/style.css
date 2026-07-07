@@ -5510,13 +5510,16 @@ body#home .slide-modal.full-screen-modal .modal-window .complete-overlay .comple
 .hamburger-menu {
   position: relative;
   margin-left: auto;
+  width: 64px;
   align-self: stretch;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
 }
 .hamburger-menu .hamburger-trigger {
   position: relative;
   z-index: 2;
+  flex: none;
   height: 100%;
   aspect-ratio: 1/1;
   border-radius: 50%;
@@ -5627,9 +5630,38 @@ body#home .slide-modal.full-screen-modal .modal-window .complete-overlay .comple
 body#home #bottom-menu .help-button, body#home #bottom-menu .create-button {
   transition: opacity 0.3s 0.15s;
 }
+body#home #bottom-menu .help-button .text, body#home #bottom-menu .create-button .text {
+  white-space: nowrap;
+}
 body#home #bottom-menu.hamburger-open .help-button, body#home #bottom-menu.hamburger-open .create-button {
   opacity: 0;
   pointer-events: none;
+}
+@media (max-width: 479px) {
+  body#home #bottom-menu .help-button, body#home #bottom-menu .create-button {
+    padding: 14px 16px;
+  }
+}
+@media (max-width: 407px) {
+  body#home #bottom-menu {
+    gap: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  body#home #bottom-menu .help-button, body#home #bottom-menu .create-button {
+    padding: 14px 10px;
+  }
+}
+@media (max-width: 369px) {
+  body#home #bottom-menu .help-button, body#home #bottom-menu .create-button {
+    padding: 12px 8px;
+  }
+  body#home #bottom-menu .help-button .text, body#home #bottom-menu .create-button .text {
+    font-size: var(--font-size-12px);
+  }
+  body#home #bottom-menu .help-button i, body#home #bottom-menu .create-button i {
+    font-size: var(--font-size-14px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

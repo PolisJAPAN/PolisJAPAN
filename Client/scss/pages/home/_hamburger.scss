@@ -11,15 +11,22 @@ $panel-width: 224px;
     // 既存ボタン（左寄せ）と反対の右端に寄せる
     margin-left: auto;
 
-    // 隣のピルボタン（.button）と高さを揃える: 行の中で伸ばして正方形にする
+    // 高さは行に追従（align-self: stretch）し、トリガーは height + aspect-ratio で真円にする。
+    // 注意: aspect-ratio由来の幅はflexの内在幅計算に反映されず、navの幅が中身基準(約20px)に
+    // なってトリガーがあふれる（右端配置だと画面外に出る）。そのためnavは現在のピル高と同じ
+    // 64pxの固定幅とし、万一ピル高が変わってトリガー幅とズレた場合も justify-content: flex-end
+    // で「画面の内側（左）」へあふれる安全設計にする。
+    width: 64px;
     align-self: stretch;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
 
     // ---- トリガー（円ボタン） ----
     .hamburger-trigger {
         position: relative;
         z-index: 2;
+        flex: none;
 
         height: 100%;
         aspect-ratio: 1 / 1;
@@ -154,11 +161,46 @@ $panel-width: 224px;
 body#home #bottom-menu {
     .help-button, .create-button {
         transition: opacity 0.3s 0.15s;
+
+        // ハンバーガー追加後は3要素で幅が逼迫するため、折り返し（2行化）を禁止し
+        // 下の狭幅メディアクエリでpaddingを詰めて1行のまま収める
+        .text {
+            white-space: nowrap;
+        }
     }
     &.hamburger-open {
         .help-button, .create-button {
             opacity: 0;
             pointer-events: none;
+        }
+    }
+
+    // 狭い画面では余白を段階的に詰めて「ピル2つ+ハンバーガー」を1行に収める
+    // （実測: フォント適用後のピル幅で 390px/375px/360px/320px を確認して調整）
+    @media (max-width: 479px) {
+        .help-button, .create-button {
+            padding: 14px 16px;
+        }
+    }
+    @media (max-width: 407px) {
+        gap: 8px;
+        padding-left: 12px;
+        padding-right: 12px;
+
+        .help-button, .create-button {
+            padding: 14px 10px;
+        }
+    }
+    @media (max-width: 369px) {
+        .help-button, .create-button {
+            padding: 12px 8px;
+
+            .text {
+                font-size: var(--font-size-12px);
+            }
+            i {
+                font-size: var(--font-size-14px);
+            }
         }
     }
 }
