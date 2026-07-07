@@ -284,11 +284,9 @@ body#home {
                         @include common.text;
                         @include common.width-fit;
                         @include common.height-fit;
-                        @include common.font-size-medium;
                         @include common.font-weight-black;
                         @include common.text-center;
                         @include common.line-spacing-medium;
-    
                     }
                 }
     

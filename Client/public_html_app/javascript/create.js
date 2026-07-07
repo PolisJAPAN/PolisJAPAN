@@ -1053,7 +1053,7 @@ const aiAssistModeHtml =`
                 <div class="stack center spacing-8px width-full">
                     <div class="modal-content-description">テーマに対して、それぞれの立場から</div>
                     <div class="modal-content-description">どのような意見があるか記入してください。</div>
-                    <div class="modal-content-description">※ 15個の意見が必要です。</div>
+                    <div class="modal-content-description">※ 8個の意見が必要です。</div>
                 </div>
                 <button class="ai-generate-button button secondary-border">
                     <div class="normal-label">
@@ -1273,7 +1273,7 @@ const manualModeHtml =`
                 <div class="stack center spacing-8px width-full">
                     <div class="modal-content-description">テーマに対して、それぞれの立場から</div>
                     <div class="modal-content-description">どのような意見があるか記入してください。</div>
-                    <div class="modal-content-description">※ 15個の意見が必要です。</div>
+                    <div class="modal-content-description">※ 8個の意見が必要です。</div>
                 </div>
                 <div class="input-group">
                     <textarea id="comment-textarea-1" class="comment-input hidden-input auto-resize target-input" rows="1" placeholder="意見を入力"></textarea>
