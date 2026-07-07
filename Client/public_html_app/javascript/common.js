@@ -2,8 +2,8 @@
 // 定数
 // ==============================
 
-/**　API通信先エンドポイント */
-const API_URL = "https://api.pol-is.jp/"
+/**　API通信先エンドポイント（localhost開発時はローカルnginxの /api/ プロキシ経由で本番APIへ。docs/クライアント動作確認ガイド.md 参照） */
+const API_URL = location.hostname === "localhost" ? "/api/" : "https://api.pol-is.jp/"
 
 /**　ロボットアクセス避けの操作キー */
 const USER_ACCESS_KEY = "UbtWv4Kcjbn4Bk0fTn"

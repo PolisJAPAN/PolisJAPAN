@@ -2,6 +2,9 @@
 // API実行関連
 // ==============================
 
+/** API通信先（localhost開発時はローカルnginxの /api/ プロキシ経由で本番APIへ。docs/クライアント動作確認ガイド.md 参照） */
+const API_BASE = location.hostname === "localhost" ? "/api/" : "https://api.pol-is.jp/";
+
 /**
  * 管理情報一覧を取得するAPIを呼び出す。
  * 
@@ -22,7 +25,7 @@ async function requestAdminInfoAPI() {
         return;
     }
 
-    const url = 'https://api.pol-is.jp/admin/info';
+    const url = API_BASE + 'admin/info';
     const payload = { access_key: input.value};
 
     try {
@@ -59,7 +62,7 @@ async function requestAdminApproveAPI(target_t_draft_id) {
         return;
     }
 
-    const url = 'https://api.pol-is.jp/admin/approve';
+    const url = API_BASE + 'admin/approve';
     const payload = { 
         access_key: input.value,
         t_draft_id: target_t_draft_id,
@@ -100,7 +103,7 @@ async function requestAdminEditAPI(target_t_draft_id) {
         return;
     }
 
-    const url = 'https://api.pol-is.jp/admin/edit';
+    const url = API_BASE + 'admin/edit';
     const payload = { 
         access_key: input.value,
         t_draft_id: target_t_draft_id,
@@ -166,7 +169,7 @@ async function requestBatchGenerateAPI() {
         return;
     }
 
-    const url = 'https://api.pol-is.jp/batch/generate';
+    const url = API_BASE + 'batch/generate';
     const payload = { 
         access_key: accessKeyInput.value,
         theme: themeInput.value,
@@ -205,7 +208,7 @@ async function requestBatchCreateAPI() {
         return;
     }
 
-    const url = 'https://api.pol-is.jp/batch/create_all';
+    const url = API_BASE + 'batch/create_all';
     const payload = { access_key: input.value};
 
     try {
