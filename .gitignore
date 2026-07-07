@@ -25,6 +25,10 @@ node_modules/
 # AWS認証情報（棚卸し用アクセスキー等）を無視
 *accessKeys*.csv
 
+# GitHubトークン等の認証情報を無視
+.pr-token
+*.token
+
 # Claude Code のローカル設定・個人スキル
 .claude/
 
