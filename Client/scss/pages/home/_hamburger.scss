@@ -95,11 +95,14 @@ $panel-morph: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
         }
 
         // button要素のmenu-item（お知らせ等）をaと同じ見た目にするリセット
+        // 注意: font shorthand(font: inherit)はfont-size/weightまで巻き込み、
+        // 詳細度で .menu-item の指定に勝ってしまうため font-family のみ継承する
         button.menu-item {
             width: 100%;
             background: none;
             border: none;
-            font: inherit;
+            font-family: inherit;
+            text-align: left;
             cursor: pointer;
         }
 
