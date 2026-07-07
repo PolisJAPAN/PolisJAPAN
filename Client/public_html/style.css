@@ -5554,7 +5554,8 @@ body#home .slide-modal.full-screen-modal .modal-window .complete-overlay .comple
   background-color: var(--color-dark);
   filter: drop-shadow(0px 4px 8px rgba(9, 8, 39, 0.25));
   pointer-events: none;
-  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.35s;
+  visibility: hidden;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.35s, visibility 0s linear 0.35s;
 }
 .hamburger-menu .hamburger-panel .panel-inner {
   width: 224px;
@@ -5614,6 +5615,8 @@ body#home .slide-modal.full-screen-modal .modal-window .complete-overlay .comple
   height: 150px;
   border-radius: 24px;
   pointer-events: all;
+  visibility: visible;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.35s, visibility 0s;
 }
 .hamburger-menu.open .hamburger-panel .menu-item,
 .hamburger-menu.open .hamburger-panel .menu-sub-row {

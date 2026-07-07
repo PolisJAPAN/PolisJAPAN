@@ -1,6 +1,9 @@
 @use "../../common" as common;
 
 $panel-width: 224px;
+$panel-morph: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              border-radius 0.35s;
 
 // ハンバーガーメニュー（モーフ展開）
 // 仕様: docs/superpowers/specs/2026-07-07-hamburger-menu-design.md
@@ -71,9 +74,11 @@ $panel-width: 224px;
         filter: drop-shadow(0px 4px 8px rgba(9, 8, 39, 0.25));
 
         pointer-events: none;
-        transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                    height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                    border-radius 0.35s;
+        // 閉状態は非表示にする（トリガー(正円)より小径の角がトリガーの右下から
+        // 約3.5pxはみ出して正円に見えなくなるため + 閉状態でのTabフォーカス防止）。
+        // 閉じるアニメーションが終わってから隠すため visibility に0.35s遅延を付ける
+        visibility: hidden;
+        transition: $panel-morph, visibility 0s linear 0.35s;
 
         .panel-inner {
             width: $panel-width;
@@ -144,6 +149,10 @@ $panel-width: 224px;
             height: 150px;
             border-radius: 24px;
             pointer-events: all;
+
+            // 開くときは遅延なしで即座に可視化（モーフの開始から見せる）
+            visibility: visible;
+            transition: $panel-morph, visibility 0s;
 
             .menu-item,
             .menu-sub-row {
