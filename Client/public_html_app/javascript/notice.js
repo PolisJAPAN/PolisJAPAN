@@ -44,19 +44,20 @@ function noticeInlineMarkdown(text) {
         /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
         '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
     );
-    // **太字**
-    text = text.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-    // 裸URLの自動リンク（生成済みタグの中は触らないよう、タグ以外の部分にだけ適用）
+    // 生成済みタグの中を壊さないよう、タグ以外の部分にだけ太字と裸URLリンク化を適用する
     text = text
         .split(/(<[^>]+>)/)
-        .map((seg) =>
-            seg.startsWith("<")
-                ? seg
-                : seg.replace(
-                      /(https?:\/\/[^\s<]+)/g,
-                      '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
-                  )
-        )
+        .map((seg) => {
+            if (seg.startsWith("<")) {
+                return seg;
+            }
+            return seg
+                .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+                .replace(
+                    /(https?:\/\/[^\s<]+)/g,
+                    '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+                );
+        })
         .join("");
     return text;
 }
@@ -118,14 +119,15 @@ async function loadNotices() {
     const notices = [];
     for (const row of rows) {
         const idText = String(row.id ?? "").trim();
-        if (!/^\d+$/.test(idText) || !row.title) {
+        const title = String(row.title ?? "").trim();
+        if (!/^\d+$/.test(idText) || !title) {
             console.warn("お知らせCSVの不正な行をスキップ:", row);
             continue;
         }
         notices.push({
             id: parseInt(idText, 10),
             date: row.date ?? "",
-            title: row.title,
+            title,
             body: row.body ?? "",
         });
     }
@@ -183,6 +185,7 @@ function renderNoticeList(notices) {
  */
 async function openNoticeModal() {
     const container = document.querySelector("#notice-modal .notice-list");
+    container.innerHTML = '<div class="notice-empty">読み込み中…</div>';
     noticeModalManager.showModal();
     try {
         const notices = await loadNotices();
@@ -247,8 +250,9 @@ function initializeNotice() {
         });
     }
 
-    // チュートリアルの表示判定（home.jsのinitializeTutorial）が終わってから新着チェックする
-    setTimeout(checkAndAutoOpenNotice, 1000);
+    // チュートリアルの自動表示（common.jsのautoShowDelayMs=800ms）が確実に先に済むよう
+    // マージンを取って新着チェックする（表示中ならスキップし、次回訪問時に出す）
+    setTimeout(checkAndAutoOpenNotice, 2000);
 }
 
 document.addEventListener("DOMContentLoaded", initializeNotice);
