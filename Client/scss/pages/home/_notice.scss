@@ -61,19 +61,63 @@
                 color: var(--color-font-dark-gray-2);
                 line-height: 1.7;
 
+                // ---- 本文用の既製スタイル（お知らせHTMLはタグ+少数クラスで書ける） ----
+                p {
+                    margin: 0 0 8px;
+                }
+                h3 {
+                    font-size: var(--font-size-14px);
+                    font-weight: 700;
+                    color: var(--color-font-dark);
+                    margin: 12px 0 4px;
+                }
+                ul, ol {
+                    padding-left: 1.4em;
+                    margin: 4px 0 8px;
+                }
+                li {
+                    margin: 2px 0;
+                }
                 a {
                     color: var(--color-main);
                     text-decoration: underline;
                     word-break: break-all;
                 }
-                ul {
-                    padding-left: 1.2em;
-                    margin: 4px 0;
-                }
-                .notice-heading {
-                    display: block;
-                    margin: 8px 0 2px;
+                strong {
                     color: var(--color-font-dark);
+                }
+                img {
+                    width: 100%;
+                    height: auto;
+                    border-radius: 16px;
+                    margin: 4px 0 8px;
+                }
+                // 補足・注意用の囲みボックス
+                .notice-box {
+                    background-color: var(--color-light);
+                    border-radius: 12px;
+                    padding: 10px 12px;
+                    margin: 8px 0;
+                    font-size: var(--font-size-12px);
+                }
+                // ボタン風リンク（既存 .button.secondary と同トーン）
+                .notice-button {
+                    display: flex;
+                    width: fit-content;
+                    align-items: center;
+                    gap: 8px;
+
+                    background-color: var(--color-dark);
+                    color: var(--color-font-light);
+                    border-radius: 32px;
+                    padding: 10px 20px;
+                    margin: 8px 0;
+
+                    font-weight: 600;
+                    text-decoration: none;
+                }
+                .notice-error {
+                    color: var(--color-font-dark-secondary);
                 }
             }
         }
