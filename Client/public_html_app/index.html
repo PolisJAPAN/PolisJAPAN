@@ -177,6 +177,10 @@
         <nav id="hamburger-menu" class="hamburger-menu" aria-label="サイトメニュー">
             <div class="hamburger-panel">
                 <div class="panel-inner">
+                    <button id="notice-menu-button" class="menu-item" type="button">
+                        <i class="bi bi-bell"></i>
+                        <div class="text">お知らせ</div>
+                    </button>
                     <a class="menu-item" href="https://pol-is.jp/contact/">
                         <i class="bi bi-envelope"></i>
                         <div class="text">お問い合わせ</div>
@@ -233,6 +237,24 @@
                     <button class="complete-close-button button secondary">
                         <div class="text">閉じる</div>
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="notice-modal" class="slide-modal full-screen-modal">
+        <div class="label-group">
+            <div class="label-header">
+                <button class="modal-close-button">
+                    <i class="bi bi-x"></i>
+                </button>
+                <div class="modal-title">お知らせ</div>
+            </div>
+            <div class="modal-text">Polis JAPANからのお知らせ</div>
+        </div>
+        <div class="modal-window">
+            <div class="modal-scroll-area">
+                <div class="modal-content">
+                    <div class="notice-list"></div>
                 </div>
             </div>
         </div>
@@ -334,6 +356,7 @@
     <script src="./javascript/common.js" defer></script>
     <script src="./javascript/home.js" defer></script>
     <script src="./javascript/create.js" defer></script>
+    <script src="./javascript/notice.js" defer></script>
 </body>
 
 </html>
