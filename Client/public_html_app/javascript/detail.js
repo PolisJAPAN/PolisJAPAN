@@ -549,19 +549,17 @@ function bindCircleGraphTooltips() {
         const groupLetter = item.dataset.group;
         if (!groupLetter) return;
 
+        // 丸い円（.graph-circle）をタップ/クリックしたときのみ発火させる
+        const circleEl = item.querySelector('.graph-circle');
+        if (!circleEl) return;
+
         const showHandler = (ev) => {
             ev.stopPropagation();
-            GroupTooltip.showForGroup(groupLetter, item);
+            GroupTooltip.showForGroup(groupLetter, circleEl);
         };
 
-        item.addEventListener('click', showHandler);
-        item.addEventListener('touchend', showHandler, { passive: true });
-        item.addEventListener('keydown', (ev) => {
-            if (ev.key === 'Enter' || ev.key === ' ') {
-                ev.preventDefault();
-                showHandler(ev);
-            }
-        });
+        circleEl.addEventListener('click', showHandler);
+        circleEl.addEventListener('touchend', showHandler, { passive: true });
     });
 }
 

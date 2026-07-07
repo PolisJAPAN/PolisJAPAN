@@ -118,6 +118,9 @@ function buildTopicInnerHTML(csvData) {
 
         const categoryLabel = CATEGORY_LABELS[categoryId] ?? '';
 
+        const titleEscaped = esc(title);
+        const titleDisplay = titleEscaped.length >= 118 ? titleEscaped.slice(0, 115) + '...' : titleEscaped;
+
         // ここで `${...}` による差し込みがすべて見えます
         return `
         <button class="article-item" href="/detail/?conversation_id=${conversationId}" data-category=${esc(categoryId)} data-id=${uniqueId} data-population=${votes}>
@@ -125,7 +128,7 @@ function buildTopicInnerHTML(csvData) {
             <div class="category-label">#${esc(categoryLabel)}</div>
             <div class="article-window cat-${esc(categoryId)}">
                 <div class="article-title-area">
-                    <div class="article-title">${esc(title)}</div>
+                    <div class="article-title ${title.length >= 50 ? 'font-size-small' : 'font-size-medium'}">${titleDisplay}</div>
                 </div>
                 <div class="article-footer">
                     <div class="article-opinion-group">
@@ -503,19 +506,17 @@ function bindArticleLink() {
 }
 
 // ウィンドウ初期化時にイベントを割り当て
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     initializeTutorial();
-    initializeArticles();
 
-    setTimeout(
-        () => {
-            bindCategoryFilter();
-            bindSort();
-            sortArticles(currentSort);
-            updateArticleVisible(currentCategory, currentWords);
-            BindHorizontalScroll();
-            bindArticleLink();
-            bindPageReturn();
-        }, 500
-    )
+    // 記事データの取得・描画が完了してから後続の処理を実行する
+    await initializeArticles();
+
+    bindCategoryFilter();
+    bindSort();
+    sortArticles(currentSort);
+    updateArticleVisible(currentCategory, currentWords);
+    BindHorizontalScroll();
+    bindArticleLink();
+    bindPageReturn();
 });
