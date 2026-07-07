@@ -94,6 +94,15 @@ $panel-morph: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
             gap: 4px;
         }
 
+        // button要素のmenu-item（お知らせ等）をaと同じ見た目にするリセット
+        button.menu-item {
+            width: 100%;
+            background: none;
+            border: none;
+            font: inherit;
+            cursor: pointer;
+        }
+
         .menu-item {
             display: flex;
             flex-direction: row;
@@ -151,7 +160,7 @@ $panel-morph: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
 
         .hamburger-panel {
             width: $panel-width;
-            height: 150px;
+            height: 196px;
             border-radius: 24px;
             right: 0;
             bottom: 0;
