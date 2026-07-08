@@ -4534,7 +4534,7 @@ body#home #main .article-item {
   gap: 16px;
   position: relative;
   width: 100%;
-  height: 200px;
+  min-height: 200px;
   border-radius: 12px;
   background-color: var(--color-light);
   color: var(--color-light);
@@ -4638,6 +4638,23 @@ body#home #main .article-item .article-window .article-footer {
   padding-right: 16px;
   padding-left: 16px;
   padding-bottom: 16px;
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+body#home #main .article-item .article-window .article-footer .article-dates {
+  margin-right: auto;
+  flex-basis: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: 12px;
+  row-gap: 2px;
+}
+body#home #main .article-item .article-window .article-footer .article-dates .date-row {
+  font-size: var(--font-size-11px);
+  color: var(--color-font-light);
+  opacity: 0.85;
+  white-space: nowrap;
 }
 body#home #main .article-item .article-window .article-footer .article-opinion-group {
   display: flex;

@@ -171,9 +171,10 @@ body#home {
             @include common.relative;
             @include common.width-full;
     
-            height: 200px;
+            // 日付表示分だけカードが伸びられるよう固定高からmin-heightに変更
+            min-height: 200px;
             border-radius: 12px;
-    
+
             background-color: var(--color-light);
             color: var(--color-light);
     
@@ -300,13 +301,19 @@ body#home {
                     @include common.padding-x-16px;
                     @include common.padding-bottom-16px;
 
+                    // 日付ブロックは自分の行を占有して折り返す（狭幅で意見/投票と競合しないため）
+                    flex-wrap: wrap;
+                    row-gap: 6px;
+
                     .article-dates {
                         margin-right: auto;
+                        flex-basis: 100%; // 1行目を占有し、意見/投票は次の行で右寄せになる
 
                         display: flex;
-                        flex-direction: column;
-                        align-items: flex-start;
-                        gap: 2px;
+                        flex-direction: row;
+                        flex-wrap: wrap; // 320px級では作成/更新が縦に折り返す
+                        column-gap: 12px;
+                        row-gap: 2px;
 
                         .date-row {
                             font-size: var(--font-size-11px);
