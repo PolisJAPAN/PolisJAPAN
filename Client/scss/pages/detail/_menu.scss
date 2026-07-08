@@ -146,7 +146,7 @@ body#detail {
             @include common.spacing-16px;
         }
     
-        .help-button, .share-button {
+        .help-button, .favorite-button, .share-button {
             @include common.spacing-8px;
             @include common.padding-x-28px;
             filter: drop-shadow(0px 8px 16px rgba(9, 8, 39, 0.5));

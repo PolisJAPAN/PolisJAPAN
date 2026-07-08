@@ -1087,7 +1087,7 @@ function initializeFavoriteButton() {
     if (!button) {
         return;
     }
-    const conversationId = new URLSearchParams(location.search).get("conversation_id");
+    const conversationId = getConversationId();
     if (!conversationId) {
         button.style.display = "none";
         return;
