@@ -1072,6 +1072,30 @@ function bindDetailLink() {
     });
 }
 
+/**
+ * お気に入りボタンを初期化する。
+ *
+ * URLの conversation_id を対象に favorites.js の共通結線を使う。
+ * conversation_id が無い場合はボタンを非表示にする。
+ *
+ * 依存: bindFavoriteButtons（favorites.js）
+ *
+ * @returns {void}
+ */
+function initializeFavoriteButton() {
+    const button = document.querySelector(".favorite-button");
+    if (!button) {
+        return;
+    }
+    const conversationId = new URLSearchParams(location.search).get("conversation_id");
+    if (!conversationId) {
+        button.style.display = "none";
+        return;
+    }
+    button.dataset.favoriteCid = conversationId;
+    bindFavoriteButtons();
+}
+
 // ウィンドウ初期化時にイベントを割り当て
 document.addEventListener("DOMContentLoaded", () => {
     bindTabs();
@@ -1083,6 +1107,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeLink();
     bindDetailLink();
     bindPageReturn();
+    initializeFavoriteButton();
     setTimeout(() => {
         bindAccordionToggle();
     }, 500);
