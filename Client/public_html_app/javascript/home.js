@@ -168,7 +168,7 @@ let currentCategory = 0;
 // 現在表示中の検索ワード。未入力の場合は空配列とする
 let currentWords = [];
 // 現在選択されているソートルール
-let currentSort = "commented";
+let currentSort = "updated";
 
 /**
  * 検索語の正規化を行う。全角・半角差を吸収し、小文字化する。
