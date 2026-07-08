@@ -4438,12 +4438,14 @@ body#home #main .inner-menu .category-tab-group .category-tab-wrapper > .categor
   margin-right: 80px;
 }
 body#home #main .inner-menu .category-tab-group .category-tab-wrapper .category-button {
-  padding: 12px;
-  padding-bottom: 16px;
   font-weight: 600;
   letter-spacing: var(--letter-spacing-2px);
   width: fit-content;
   min-width: fit-content;
+  height: 40px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
   border-radius: 8px;
   background-color: var(--color-light);
   border: 1px solid var(--color-font-dark-secondary);
