@@ -299,7 +299,23 @@ body#home {
                     @include common.spacing-16px;
                     @include common.padding-x-16px;
                     @include common.padding-bottom-16px;
-    
+
+                    .article-dates {
+                        margin-right: auto;
+
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 2px;
+
+                        .date-row {
+                            font-size: var(--font-size-11px);
+                            color: var(--color-font-light);
+                            opacity: 0.85;
+                            white-space: nowrap;
+                        }
+                    }
+
                     .article-opinion-group {
                         @include common.row;
                         @include common.row-right;
