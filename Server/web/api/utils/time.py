@@ -24,7 +24,10 @@ class Time():
     
     FILENAME_FORMAT = "%Y%m%d_%H:%M:%S"
     """ファイル名で使用可能な日時形式（例: 20250115_134530）。"""
-    
+
+    MINUTE_DATETIME_FORMAT = "%Y-%m-%d %H:%M"
+    """分単位の日時形式（例: 2025-01-15 13:45）。themes.csvの日時列で使用。"""
+
     DATE_FORMAT = "%Y-%m-%d"
     """年月日のみを表す日付フォーマット（例: 2025-01-15）。"""
 
@@ -65,7 +68,22 @@ class Time():
             str: MySQL互換の日時文字列。
         """
         return datetime_instance.strftime(cls.MYSQL_DATETIME_FORMAT)
-    
+
+    @classmethod
+    def to_minute_datetime_str(cls, datetime_instance: datetime) -> str:
+        """
+        datetime を分単位の日時文字列に変換する。
+
+        フォーマット: `%Y-%m-%d %H:%M`（表示にそのまま使え、文字列比較でソート可能）
+
+        Args:
+            datetime_instance (datetime): 対象の日時。
+
+        Returns:
+            str: 分単位の日時文字列。
+        """
+        return datetime_instance.strftime(cls.MINUTE_DATETIME_FORMAT)
+
     @classmethod
     def to_filename_format(cls, datetime_instance: datetime) -> str:
         """

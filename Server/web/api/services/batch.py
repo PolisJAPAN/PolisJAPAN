@@ -20,7 +20,7 @@ from api.utils.storage_s3 import StorageS3Error, StorageS3PreconditionError
 from api.utils.web_loader_chrome import WebLoaderChrome
 import api.models.types as types
 
-THEME_HEADERS = ["id", "category", "title", "description", "conversation_id", "report_id", "votes", "comments", "create_date"]
+THEME_HEADERS = ["id", "category", "title", "description", "conversation_id", "report_id", "votes", "comments", "create_date", "created_at", "commented_at", "updated_at"]
 """テーマ記録用CSVのカラム一覧"""
 
 CSV_CACHE_CONTROL = "max-age=300"
@@ -133,14 +133,26 @@ class BatchService(CommonService):
             total_comments = len(comments)
             total_votes = sum(int(comment["total-votes"]) for comment in comments)
 
-            Logger.debug(f"{theme['title']} before {theme['votes']} -> after {total_votes}  (Refresh -> {int(theme['votes']) != int(total_votes)})")
+            prev_votes = int(theme["votes"])
+            prev_comments = int(theme["comments"])
+            votes_changed = prev_votes != total_votes
+            comments_changed = prev_comments != total_comments
 
-            # 現在S3に保存済みの集計CSVと比較
-            if int(theme["votes"]) != int(total_votes):
+            Logger.debug(f"{theme['title']} votes {prev_votes} -> {total_votes} / comments {prev_comments} -> {total_comments} (Refresh -> {votes_changed or comments_changed})")
+
+            # 現在S3に保存済みの集計CSVと比較（投票または意見の変化で更新）
+            if votes_changed or comments_changed:
+                now_str = utils.Time.to_minute_datetime_str(utils.Time.now())
+
                 # 変更があった場合は、取得したファイルを設置用に配列に格納
                 update_row = theme.copy()
                 update_row["votes"] = str(total_votes)
                 update_row["comments"] = str(total_comments)
+                # 投票または意見が増えた日時
+                update_row["updated_at"] = now_str
+                # 新しい意見（コメント）が投稿された日時（増加時のみ）
+                if total_comments > prev_comments:
+                    update_row["commented_at"] = now_str
                 update_themes.append(update_row)
 
                 # S3にアップするリストにCSVを追加
@@ -256,7 +268,13 @@ class BatchService(CommonService):
         
         # 作成日を取得
         theme_info["create_date"] = utils.Time.to_mysql_datetime_str(utils.Time.now())
-        
+
+        # 作成・更新日時（themes.csvの新列。分単位・JST）。新規テーマはどのソートでも先頭に来るよう3列とも作成時刻で初期化する
+        now_minute_str = utils.Time.to_minute_datetime_str(utils.Time.now())
+        theme_info["created_at"] = now_minute_str
+        theme_info["commented_at"] = now_minute_str
+        theme_info["updated_at"] = now_minute_str
+
         return report_csv_str, theme_info
     
     def create_theme_on_polis(self, theme_name : str, theme_description : str, comments : list, category: str) -> dict:

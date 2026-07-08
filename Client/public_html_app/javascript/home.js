@@ -116,6 +116,11 @@ function buildTopicInnerHTML(csvData) {
         const comments = item.comments;
         const votes = item.votes;
 
+        // 日時列（旧データは未定義→空文字。空白は表示しない）
+        const createdAt = item.created_at ?? '';
+        const commentedAt = item.commented_at ?? '';
+        const updatedAt = item.updated_at ?? '';
+
         const categoryLabel = CATEGORY_LABELS[categoryId] ?? '';
 
         const titleEscaped = esc(title);
@@ -123,7 +128,7 @@ function buildTopicInnerHTML(csvData) {
 
         // ここで `${...}` による差し込みがすべて見えます
         return `
-        <button class="article-item" href="/detail/?conversation_id=${conversationId}" data-category=${esc(categoryId)} data-id=${uniqueId} data-population=${votes}>
+        <button class="article-item" href="/detail/?conversation_id=${conversationId}" data-category=${esc(categoryId)} data-id=${uniqueId} data-population=${votes} data-commented="${esc(commentedAt)}" data-updated="${esc(updatedAt)}">
             <img class="corner-bg" src="/images/common/corner-spaced.png" alt="">
             <div class="category-label">#${esc(categoryLabel)}</div>
             <div class="article-window cat-${esc(categoryId)}">
@@ -131,6 +136,11 @@ function buildTopicInnerHTML(csvData) {
                     <div class="article-title ${title.length >= 50 ? 'font-size-small' : 'font-size-medium'}">${titleDisplay}</div>
                 </div>
                 <div class="article-footer">
+                    ${createdAt || updatedAt ? `
+                    <div class="article-dates">
+                        ${createdAt ? `<div class="date-row">作成 ${esc(createdAt)}</div>` : ''}
+                        ${updatedAt ? `<div class="date-row">更新 ${esc(updatedAt)}</div>` : ''}
+                    </div>` : ''}
                     <div class="article-opinion-group">
                         <i class="bi bi-chat-left-dots-fill"></i>
                         <div class="label-text">意見</div>
@@ -160,7 +170,7 @@ let currentCategory = 0;
 // 現在表示中の検索ワード。未入力の場合は空配列とする
 let currentWords = [];
 // 現在選択されているソートルール
-let currentSort = "new";
+let currentSort = "commented";
 
 /**
  * 検索語の正規化を行う。全角・半角差を吸収し、小文字化する。
@@ -415,6 +425,18 @@ function sortArticles(type){
             const votesB = b.dataset.population;
             return votesB - votesA;
         });
+    } else if (type === "commented" || type === "updated") {
+        // 意見順/更新順 → 日時文字列(YYYY-MM-DD HH:MM)の降順。空白は末尾、同値はid降順
+        sorted = articles.sort((a, b) => {
+            const va = a.dataset[type] || "";
+            const vb = b.dataset[type] || "";
+            if (va !== vb) {
+                if (!va) return 1;
+                if (!vb) return -1;
+                return vb.localeCompare(va);
+            }
+            return b.dataset.id - a.dataset.id;
+        });
     }
 
     // DOMを並べ替え
@@ -486,7 +508,7 @@ async function initializeArticles() {
 
 /**
  * リンク要素への処理を追加
- * 
+ *
  * @returns {void}
  */
 function bindArticleLink() {
@@ -495,9 +517,9 @@ function bindArticleLink() {
     targetElements.forEach((element) => {
         element.addEventListener("click", (e) => {
             e.stopPropagation();
-            
+
             setGrobalLoading(true);
-            
+
             setTimeout(() => {
                 window.location = `${window.location.origin}${element.getAttribute("href")}`;
             }, 500);
@@ -505,9 +527,55 @@ function bindArticleLink() {
     });
 }
 
+/**
+ * ハンバーガーメニューの開閉を制御する。
+ *
+ * トリガークリックでトグル、パネル外クリック・Escキーで閉じる。
+ * 開閉状態は .hamburger-menu の .open と #bottom-menu の .hamburger-open で表現し、
+ * 見た目の変化はすべてCSS側（_hamburger.scss）が担う。
+ *
+ * @returns {void}
+ */
+function bindHamburgerMenu() {
+    const menu = document.querySelector("#hamburger-menu");
+    if (!menu) {
+        return;
+    }
+    const trigger = menu.querySelector(".hamburger-trigger");
+    const bottomMenu = document.querySelector("#bottom-menu");
+
+    const setOpen = (open) => {
+        menu.classList.toggle("open", open);
+        bottomMenu.classList.toggle("hamburger-open", open);
+        trigger.setAttribute("aria-expanded", String(open));
+    };
+
+    trigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        setOpen(!menu.classList.contains("open"));
+    });
+
+    // パネル外をタップしたら閉じる
+    document.addEventListener("click", (e) => {
+        if (menu.classList.contains("open") && !menu.contains(e.target)) {
+            setOpen(false);
+        }
+    });
+
+    // Escキーで閉じる
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && menu.classList.contains("open")) {
+            setOpen(false);
+        }
+    });
+}
+
 // ウィンドウ初期化時にイベントを割り当て
 document.addEventListener("DOMContentLoaded", async () => {
     initializeTutorial();
+
+    // 記事データに依存しないUIは、CSV読み込みの成否・遅延に関係なく先に有効化する
+    bindHamburgerMenu();
 
     // 記事データの取得・描画が完了してから後続の処理を実行する
     await initializeArticles();

@@ -1,0 +1,249 @@
+@use "../../common" as common;
+
+$panel-width: 224px;
+$panel-morph: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              right 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              border-radius 0.35s;
+
+// ハンバーガーメニュー（モーフ展開）
+// 仕様: docs/superpowers/specs/2026-07-07-hamburger-menu-design.md
+// クラスは汎用設計（将来他画面でも #bottom-menu 内に置けば動く）
+.hamburger-menu {
+    position: relative;
+
+    // 既存ボタン（左寄せ）と反対の右端に寄せる
+    margin-left: auto;
+
+    // 高さは行に追従（align-self: stretch）し、トリガーは height + aspect-ratio で真円にする。
+    // 注意: aspect-ratio由来の幅はflexの内在幅計算に反映されず、navの幅が中身基準(約20px)に
+    // なってトリガーがあふれる（右端配置だと画面外に出る）。そのためnavは現在のピル高と同じ
+    // 64pxの固定幅とし、万一ピル高が変わってトリガー幅とズレた場合も justify-content: flex-end
+    // で「画面の内側（左）」へあふれる安全設計にする。
+    width: 64px;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    // ---- トリガー（円ボタン） ----
+    .hamburger-trigger {
+        position: relative;
+        z-index: 2;
+        flex: none;
+
+        height: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 50%;
+
+        background-color: var(--color-dark);
+        border: transparent;
+        filter: drop-shadow(0px 4px 8px rgba(9, 8, 39, 0.25));
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+
+        cursor: pointer;
+        pointer-events: all;
+
+        .bar {
+            display: block;
+            width: 20px;
+            height: 2px;
+            border-radius: 2px;
+            background-color: var(--color-font-light);
+            transition: transform 0.3s, opacity 0.2s;
+        }
+    }
+
+    // ---- パネル（閉時はトリガーの背後に隠れる小さな円） ----
+    .hamburger-panel {
+        position: absolute;
+        // 閉状態はトリガー(正円)の真裏に同心円で収まるよう6px内側へ寄せる。
+        // 同じ角に接したままだと、小径の円は必ず対角方向にはみ出す（閉じアニメの
+        // 最終盤に膨らみが一瞬見える）ため、角ぴったり(0,0)には置かない
+        right: 6px;
+        bottom: 6px;
+        z-index: 1;
+
+        width: 40px;
+        height: 40px;
+        border-radius: 24px;
+        overflow: hidden;
+
+        background-color: var(--color-dark);
+        filter: drop-shadow(0px 4px 8px rgba(9, 8, 39, 0.25));
+
+        pointer-events: none;
+        // 閉状態は非表示にする（トリガー(正円)より小径の角がトリガーの右下から
+        // 約3.5pxはみ出して正円に見えなくなるため + 閉状態でのTabフォーカス防止）。
+        // 閉じるアニメーションが終わってから隠すため visibility に0.35s遅延を付ける
+        visibility: hidden;
+        transition: $panel-morph, visibility 0s linear 0.35s;
+
+        .panel-inner {
+            width: $panel-width;
+            padding: 16px 16px 60px;
+
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        // button要素のmenu-item（お知らせ等）をaと同じ見た目にするリセット
+        // 注意: font shorthand(font: inherit)はfont-size/weightまで巻き込み、
+        // 詳細度で .menu-item の指定に勝ってしまうため font-family のみ継承する
+        button.menu-item {
+            width: 100%;
+            background: none;
+            border: none;
+            font-family: inherit;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+
+            padding: 10px 12px;
+            border-radius: 32px;
+
+            color: var(--color-font-light);
+            font-size: var(--font-size-14px);
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.2s, transform 0.2s, background-color 0.3s;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.12);
+            }
+        }
+
+        .menu-sub-row {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            padding: 4px 12px 0;
+
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.2s, transform 0.2s;
+
+            .menu-sub-item {
+                color: rgba(255, 255, 255, 0.6);
+                font-size: var(--font-size-11px);
+                text-decoration: none;
+                white-space: nowrap;
+
+                &:hover {
+                    color: var(--color-font-light);
+                }
+            }
+        }
+    }
+
+    // ---- 展開状態 ----
+    &.open {
+        .hamburger-trigger {
+            .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+            .bar:nth-child(2) { opacity: 0; }
+            .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+        }
+
+        .hamburger-panel {
+            width: $panel-width;
+            height: 196px;
+            border-radius: 24px;
+            right: 0;
+            bottom: 0;
+            pointer-events: all;
+
+            // 開くときは遅延なしで即座に可視化（モーフの開始から見せる）
+            visibility: visible;
+            transition: $panel-morph, visibility 0s;
+
+            .menu-item,
+            .menu-sub-row {
+                opacity: 1;
+                transform: none;
+            }
+            .menu-item    { transition-delay: 0.18s; }
+            .menu-sub-row { transition-delay: 0.26s; }
+        }
+    }
+}
+
+// 展開中は既存ボタンをフェードアウト（閉じると復帰）
+// 既存 _menu.scss の body#home スコープ（pointer-events: all）に詳細度で勝つため body#home 配下に置く
+body#home #bottom-menu {
+    .help-button, .create-button {
+        transition: opacity 0.3s 0.15s;
+
+        // ハンバーガー追加後は3要素で幅が逼迫するため、折り返し（2行化）を禁止し
+        // 下の狭幅メディアクエリでpaddingを詰めて1行のまま収める
+        .text {
+            white-space: nowrap;
+        }
+    }
+    &.hamburger-open {
+        .help-button, .create-button {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+
+    // 狭い画面では「使い方」をアイコンのみの正円ボタンにして領域を確保する
+    // （「テーマを作成」は主要CTAのためラベル維持。実測: 390/375/360/320pxで確認）
+    @media (max-width: 479px) {
+        .help-button {
+            align-self: stretch;
+            width: 57px; // 現在のピル実高に一致（実測値）。多少ズレても角丸999pxで円形に見える
+            padding: 0;
+            justify-content: center;
+            border-radius: 999px;
+
+            .text {
+                display: none;
+            }
+            i {
+                padding-bottom: 0;
+                font-size: var(--font-size-20px);
+            }
+        }
+        .create-button {
+            padding: 14px 16px;
+        }
+    }
+    @media (max-width: 339px) {
+        .create-button {
+            padding: 14px 10px;
+        }
+    }
+}
+
+// アニメーションを好まない設定では即時開閉
+@media (prefers-reduced-motion: reduce) {
+    .hamburger-menu {
+        .hamburger-trigger .bar,
+        .hamburger-panel,
+        .hamburger-panel .menu-item,
+        .hamburger-panel .menu-sub-row {
+            transition: none;
+        }
+    }
+    body#home #bottom-menu .help-button,
+    body#home #bottom-menu .create-button {
+        transition: none;
+    }
+}
