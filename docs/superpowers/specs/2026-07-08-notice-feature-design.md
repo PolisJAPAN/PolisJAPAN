@@ -68,7 +68,7 @@ const NOTICES = [
 
 1. レジストリはJS内なのでfetch不要。`DOMContentLoaded` 後、チュートリアル自動表示（800ms）とのマージンを取って2秒後に判定
 2. `maxId = NOTICES の最大id`、`seen = Cookie notice_last_seen_id（未設定は0）`
-3. `maxId > seen` かつ チュートリアル非表示（`#tutorial.show` が無い）なら自動でモーダルを開く
+3. `maxId > seen` なら自動でモーダルを開く。**チュートリアル表示中の場合は閉じられるのを待ち（MutationObserverで `.show` の除去を検知）、0.4秒おいて続けて表示する**（閉じずに離脱した場合は次回訪問時に表示）
 4. モーダルを開いたとき（自動・手動とも）に Cookie を `maxId` へ更新（365日）
 
 ## エラー処理

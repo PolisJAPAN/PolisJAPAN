@@ -122,7 +122,9 @@ function openNoticeModal() {
 /**
  * 新着お知らせがあれば自動でモーダルを開く。
  *
- * 未読判定: 最大ID > Cookieの既読ID。チュートリアル表示中はスキップ（次回訪問時に表示）。
+ * 未読判定: 最大ID > Cookieの既読ID。
+ * チュートリアル表示中は、閉じられるのを待ってから続けて表示する
+ * （閉じずに離脱した場合は次回訪問時に表示）。
  *
  * @returns {void}
  */
@@ -132,10 +134,23 @@ function checkAndAutoOpenNotice() {
         return;
     }
     const seenId = parseInt(getCookie(NOTICE_SEEN_COOKIE) ?? "0", 10) || 0;
-    const tutorialShowing = document.querySelector("#tutorial.show") !== null;
-    if (notices[0].id > seenId && !tutorialShowing) {
-        openNoticeModal();
+    if (notices[0].id <= seenId) {
+        return;
     }
+
+    const tutorial = document.querySelector("#tutorial");
+    if (tutorial && tutorial.classList.contains("show")) {
+        // チュートリアルが閉じたら（.showが外れたら）少し間を置いて表示する
+        const observer = new MutationObserver(() => {
+            if (!tutorial.classList.contains("show")) {
+                observer.disconnect();
+                setTimeout(openNoticeModal, 400);
+            }
+        });
+        observer.observe(tutorial, { attributes: true, attributeFilter: ["class"] });
+        return;
+    }
+    openNoticeModal();
 }
 
 /**
