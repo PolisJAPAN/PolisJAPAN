@@ -89,12 +89,16 @@ body#home {
                 .sort-button {
                     @include common.row;
                     @include common.align-center;
-                    @include common.padding-8px;
-                    gap: 6px;
+                    padding: 8px 16px;
+                    gap: 10px;
                     color: var(--color-font-dark-secondary);
                     cursor: pointer;
                     border-radius: 8px;
                     height: 40px;
+
+                    // カテゴリタブと同じトーンの枠と背景
+                    background-color: var(--color-light);
+                    border: 1px solid var(--color-font-dark-secondary);
 
                     // 選択中のソート名（JSが .select-element の文言と同期する）
                     .sort-label {
