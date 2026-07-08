@@ -5711,6 +5711,7 @@ body#home #bottom-menu.hamburger-open .help-button, body#home #bottom-menu.hambu
 }
 #notice-modal .notice-item {
   background-color: var(--color-bg-gray);
+  border: 1px solid rgba(32, 36, 38, 0.08);
   border-radius: 16px;
   overflow: hidden;
 }
