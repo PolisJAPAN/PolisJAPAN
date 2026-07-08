@@ -5717,6 +5717,7 @@ body#home #bottom-menu.hamburger-open .help-button, body#home #bottom-menu.hambu
 #notice-modal .notice-item .notice-header .notice-date {
   font-size: var(--font-size-12px);
   color: var(--color-font-dark-secondary);
+  margin-bottom: 4px;
 }
 #notice-modal .notice-item .notice-header .notice-title {
   font-size: var(--font-size-14px);
