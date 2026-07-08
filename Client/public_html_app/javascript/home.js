@@ -127,7 +127,7 @@ function buildTopicInnerHTML(csvData) {
 
         // ここで `${...}` による差し込みがすべて見えます
         return `
-        <button class="article-item" href="/detail/?conversation_id=${conversationId}" data-category=${esc(categoryId)} data-id=${uniqueId} data-population=${votes} data-commented="${esc(commentedAt)}" data-updated="${esc(updatedAt)}">
+        <button class="article-item" href="/detail/?conversation_id=${conversationId}" data-category=${esc(categoryId)} data-id=${uniqueId} data-population=${votes} data-commented="${esc(commentedAt)}" data-updated="${esc(updatedAt)}" data-cid="${esc(conversationId)}">
             <img class="corner-bg" src="/images/common/corner-spaced.png" alt="">
             <div class="category-label">#${esc(categoryLabel)}</div>
             <div class="article-window cat-${esc(categoryId)}">
@@ -139,6 +139,9 @@ function buildTopicInnerHTML(csvData) {
                     <div class="article-title ${title.length >= 50 ? 'font-size-small' : 'font-size-medium'}">${titleDisplay}</div>
                 </div>
                 <div class="article-footer">
+                    <span class="favorite-toggle" role="button" tabindex="0" aria-label="お気に入り" data-favorite-cid="${esc(conversationId)}">
+                        <i class="bi bi-star"></i>
+                    </span>
                     <div class="article-opinion-group">
                         <i class="bi bi-chat-left-dots-fill"></i>
                         <div class="label-text">意見</div>
@@ -306,14 +309,23 @@ function updateArticleVisible(categoryId, words) {
             const hay = item.dataset.searchtext || norm(item.textContent || '');
             searchWordMatch = words.every(word => hay.includes(word)); // AND 条件で全てチェック
         }
-        const categoryMatch = (item.dataset.category === categoryId) || categoryId == 0; //0の場合はカテゴリ指定なし
+        // "fav" はカテゴリ横断でお気に入りのみ表示
+        const favoritesMatch = categoryId !== "fav" || getFavorites().includes(item.dataset.cid);
+        const categoryMatch = categoryId === "fav" || (item.dataset.category === categoryId) || categoryId == 0; //0の場合はカテゴリ指定なし
 
-        if (categoryMatch & searchWordMatch) {
+        if (categoryMatch && searchWordMatch && favoritesMatch) {
             item.classList.add("show");
         } else {
             item.classList.remove("show");
         }
     });
+
+    // お気に入りタブで0件のときだけ空状態メッセージを表示
+    const empty = document.querySelector(".favorites-empty");
+    if (empty) {
+        const anyVisible = [...articles].some((item) => item.classList.contains("show"));
+        empty.classList.toggle("show", categoryId === "fav" && !anyVisible);
+    }
 }
 
 /**
@@ -329,7 +341,7 @@ function setActiveTab(category) {
     const tabs = document.querySelectorAll('.category-tab-group .category-tab-wrapper .category-button[data-category]');
 
     tabs.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.category === category)
+        btn.classList.toggle('active', String(btn.dataset.category) === String(category))
     });
 };
 
@@ -381,10 +393,10 @@ function bindCategoryFilter() {
         });
     });
 
-    // 初期表示
+    // 初期表示（マークアップ上のactiveタブを現在カテゴリとして採用）
     const initialActive = document.querySelector('.category-button.active[data-category]');
     if (initialActive) {
-        filterByCategory(initialActive.dataset.category);
+        currentCategory = initialActive.dataset.category;
     }
 }
 
@@ -609,4 +621,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     BindHorizontalScroll();
     bindArticleLink();
     bindPageReturn();
+
+    bindFavoriteButtons();
+
+    // お気に入りタブ表示中に☆を外したら即座に一覧へ反映する
+    document.addEventListener("favorites:changed", () => {
+        if (currentCategory === "fav") {
+            updateArticleVisible(currentCategory, currentWords);
+        }
+    });
 });

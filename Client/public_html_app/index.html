@@ -134,6 +134,8 @@
             <div class="tab-section">
                 <div class="category-tab-group scroll-horizontal">
                     <div class="category-tab-wrapper">
+                        <button class="category-button active" data-category=0>全て</button>
+                        <button class="category-button" data-category="fav"><i class="bi bi-star-fill"></i>お気に入り</button>
                         <button class="category-button" data-category=1>社会・政治</button>
                         <button class="category-button" data-category=2>お金・資産</button>
                         <button class="category-button" data-category=3>男女・性別</button>
@@ -164,8 +166,9 @@
             </div>
         </div>
         <div class="article-container">
-            
+
         </div>
+        <div class="favorites-empty">お気に入りはまだありません。カードの☆で追加できます</div>
     </main>
 
     <div id="bottom-menu">
@@ -358,6 +361,7 @@
     </div>
 
     <script src="./javascript/common.js?v=__ASSET_VERSION__" defer></script>
+    <script src="./javascript/favorites.js?v=__ASSET_VERSION__" defer></script>
     <script src="./javascript/home.js?v=__ASSET_VERSION__" defer></script>
     <script src="./javascript/create.js?v=__ASSET_VERSION__" defer></script>
     <script src="./javascript/notice.js?v=__ASSET_VERSION__" defer></script>
