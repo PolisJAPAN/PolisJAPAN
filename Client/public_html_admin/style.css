@@ -4463,12 +4463,14 @@ body#home #main .inner-menu .sort-container .sort-button {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 8px;
-  gap: 6px;
+  padding: 8px 16px;
+  gap: 10px;
   color: var(--color-font-dark-secondary);
   cursor: pointer;
   border-radius: 8px;
   height: 40px;
+  background-color: var(--color-light);
+  border: 1px solid var(--color-font-dark-secondary);
 }
 body#home #main .inner-menu .sort-container .sort-button .sort-label {
   font-size: var(--font-size-14px);
