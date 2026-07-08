@@ -60,6 +60,21 @@ $panel-morph: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
         }
     }
 
+    // ---- バックドロップ（展開中は背面のUIを押せなくし、タップで閉じる） ----
+    .hamburger-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 0; // パネル(1)・トリガー(2)より下、ページ全体より上（#bottom-menuのスタッキング内）
+
+        display: none;
+        background: transparent;
+        pointer-events: all;
+    }
+
+    &.open .hamburger-backdrop {
+        display: block;
+    }
+
     // ---- パネル（閉時はトリガーの背後に隠れる小さな円） ----
     .hamburger-panel {
         position: absolute;

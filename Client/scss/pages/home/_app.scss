@@ -291,6 +291,26 @@ body#home {
                     }
                 }
     
+                // 日時はカード左上（カテゴリラベルの下）に縦積み。更新が上・作成が下。
+                // ウィンドウはspace-betweenの縦flexなので、フロー内先頭に置けば
+                // 「日付=上・タイトル=中央・フッター=下」になり、長いタイトルとも重ならない
+                .article-dates {
+                    align-self: flex-start;
+                    margin: 40px 0 0 16px; // 上は白い切り欠き（corner-bg/カテゴリラベル）を避ける
+
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 2px;
+
+                    .date-row {
+                        font-size: var(--font-size-11px);
+                        color: var(--color-font-light);
+                        opacity: 0.85;
+                        white-space: nowrap;
+                    }
+                }
+
                 .article-footer {
                     @include common.row;
                     @include common.row-right;
@@ -300,28 +320,6 @@ body#home {
                     @include common.spacing-16px;
                     @include common.padding-x-16px;
                     @include common.padding-bottom-16px;
-
-                    // 日付ブロックは自分の行を占有して折り返す（狭幅で意見/投票と競合しないため）
-                    flex-wrap: wrap;
-                    row-gap: 6px;
-
-                    .article-dates {
-                        margin-right: auto;
-                        flex-basis: 100%; // 1行目を占有し、意見/投票は次の行で右寄せになる
-
-                        display: flex;
-                        flex-direction: row;
-                        flex-wrap: wrap; // 320px級では作成/更新が縦に折り返す
-                        column-gap: 12px;
-                        row-gap: 2px;
-
-                        .date-row {
-                            font-size: var(--font-size-11px);
-                            color: var(--color-font-light);
-                            opacity: 0.85;
-                            white-space: nowrap;
-                        }
-                    }
 
                     .article-opinion-group {
                         @include common.row;

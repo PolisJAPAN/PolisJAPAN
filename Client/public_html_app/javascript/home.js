@@ -132,15 +132,15 @@ function buildTopicInnerHTML(csvData) {
             <img class="corner-bg" src="/images/common/corner-spaced.png" alt="">
             <div class="category-label">#${esc(categoryLabel)}</div>
             <div class="article-window cat-${esc(categoryId)}">
+                ${createdAt || updatedAt ? `
+                <div class="article-dates">
+                    ${updatedAt ? `<div class="date-row">更新 ${esc(updatedAt)}</div>` : ''}
+                    ${createdAt ? `<div class="date-row">作成 ${esc(createdAt)}</div>` : ''}
+                </div>` : ''}
                 <div class="article-title-area">
                     <div class="article-title ${title.length >= 50 ? 'font-size-small' : 'font-size-medium'}">${titleDisplay}</div>
                 </div>
                 <div class="article-footer">
-                    ${createdAt || updatedAt ? `
-                    <div class="article-dates">
-                        ${createdAt ? `<div class="date-row">作成 ${esc(createdAt)}</div>` : ''}
-                        ${updatedAt ? `<div class="date-row">更新 ${esc(updatedAt)}</div>` : ''}
-                    </div>` : ''}
                     <div class="article-opinion-group">
                         <i class="bi bi-chat-left-dots-fill"></i>
                         <div class="label-text">意見</div>
@@ -555,7 +555,17 @@ function bindHamburgerMenu() {
         setOpen(!menu.classList.contains("open"));
     });
 
-    // パネル外をタップしたら閉じる
+    // バックドロップ（展開中の背面全体を覆う）タップで閉じる。
+    // 背面のUIへはクリックが届かない（誤タップ防止）
+    const backdrop = menu.querySelector(".hamburger-backdrop");
+    if (backdrop) {
+        backdrop.addEventListener("click", (e) => {
+            e.stopPropagation();
+            setOpen(false);
+        });
+    }
+
+    // パネル外をタップしたら閉じる（バックドロップが無い場合の保険）
     document.addEventListener("click", (e) => {
         if (menu.classList.contains("open") && !menu.contains(e.target)) {
             setOpen(false);
