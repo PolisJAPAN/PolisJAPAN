@@ -291,16 +291,16 @@ body#home {
                     }
                 }
     
-                // 日時はカード左上（カテゴリラベルの下）に縦積み。更新が上・作成が下。
+                // 日時はカード右上に縦積み。更新が上・作成が下。
                 // ウィンドウはspace-betweenの縦flexなので、フロー内先頭に置けば
                 // 「日付=上・タイトル=中央・フッター=下」になり、長いタイトルとも重ならない
                 .article-dates {
-                    align-self: flex-start;
-                    margin: 40px 0 0 16px; // 上は白い切り欠き（corner-bg/カテゴリラベル）を避ける
+                    align-self: flex-end;
+                    margin: 16px 16px 0 0; // 右上（白い切り欠きは左上なので回避不要）
 
                     display: flex;
                     flex-direction: column;
-                    align-items: flex-start;
+                    align-items: flex-end;
                     gap: 2px;
 
                     .date-row {
