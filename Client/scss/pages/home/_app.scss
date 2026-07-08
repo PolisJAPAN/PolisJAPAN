@@ -1,5 +1,21 @@
 @use "../../common" as common;
 
+// カテゴリの配色（カードのグラデーションと共通定義。番号はカテゴリID）
+$category-gradients: (
+    1: linear-gradient(135deg, #fa3517 0%, #fcb80c 100%), // 社会・政治
+    2: linear-gradient(135deg, #e99928 0%, #fdc136 100%), // お金・資産
+    3: linear-gradient(135deg, #71a8ff 0%, #ff70d7 100%), // 男女・性別
+    4: linear-gradient(135deg, #289dda 0%, #1ee3eb 100%), // 外国人問題
+    5: linear-gradient(135deg, #7a58f5 0%, #e156e1 100%), // テクノロジー
+    6: linear-gradient(135deg, #0c9351 0%, #59ab84 100%), // 医療・福祉
+    7: linear-gradient(135deg, #4bdb44 0%, #aaea43 100%), // 生活
+    8: linear-gradient(135deg, #8349ff 0%, #d481fe 100%), // その他
+);
+
+// カテゴリボタンをカード色（グラデーション+白文字）にするか。
+// false にすると従来の白ボタン+グレー枠に完全に戻る（戻す可能性を考慮したフラグ）
+$category-buttons-colored: true;
+
 body#home {
     background-color: var(--color-light);
 
@@ -74,14 +90,30 @@ body#home {
                         background-color: var(--color-light);
             
                         border: 1px solid var(--color-font-dark-secondary);
-                        
+
                         border-color: var(--color-font-dark-secondary);
                         color: var(--color-font-dark-secondary);
-            
+
                         &.active {
                             border-color: var(--color-dark);
                             background-color: var(--color-dark);
                             color: var(--color-light);
+                        }
+
+                        // カード色モード（$category-buttons-colored: false で従来の白ボタンに戻る）
+                        @if $category-buttons-colored {
+                            @each $id, $gradient in $category-gradients {
+                                &[data-category="#{$id}"] {
+                                    background-image: $gradient;
+                                    border-color: transparent;
+                                    color: var(--color-font-light);
+                                }
+                            }
+
+                            // 選択中はダークのリングで示す（グラデーションの上でも視認できる）
+                            &.active {
+                                box-shadow: inset 0 0 0 2px var(--color-dark);
+                            }
                         }
                     }
                 }
@@ -252,44 +284,11 @@ body#home {
     
                 border-radius: 12px;
     
-                // 社会・政治
-                &.cat-1 {
-                    background-image: linear-gradient(135deg, #fa3517 0%, #fcb80c 100%);
-                }
-    
-                // お金・資産
-                &.cat-2 {
-                    background-image: linear-gradient(135deg, #e99928 0%, #fdc136 100%);
-                }
-    
-                // 男女・性別
-                &.cat-3 {
-                    background-image: linear-gradient(135deg, #71a8ff 0%, #ff70d7 100%);
-                }
-    
-                // 外国人問題
-                &.cat-4 {
-                    background-image: linear-gradient(135deg, #289dda 0%, #1ee3eb 100%);
-                }
-    
-                // テクノロジー
-                &.cat-5 {
-                    background-image: linear-gradient(135deg, #7a58f5 0%, #e156e1 100%);
-                }
-    
-                // 医療・福祉
-                &.cat-6 {
-                    background-image: linear-gradient(135deg, #0c9351 0%, #59ab84 100%);
-                }
-
-                // 生活
-                &.cat-7 {
-                    background-image: linear-gradient(135deg, #4bdb44 0%, #aaea43 100%);
-                }
-    
-                // その他
-                &.cat-8 {
-                    background-image: linear-gradient(135deg, #8349ff 0%, #d481fe 100%);
+                // カテゴリ別のグラデーション（定義はファイル冒頭の $category-gradients）
+                @each $id, $gradient in $category-gradients {
+                    &.cat-#{$id} {
+                        background-image: $gradient;
+                    }
                 }
     
                 .article-title-area {
