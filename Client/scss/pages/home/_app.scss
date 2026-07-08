@@ -13,8 +13,8 @@ $category-gradients: (
 );
 
 // カテゴリボタンをカード色（グラデーション+白文字）にするか。
-// false にすると従来の白ボタン+グレー枠に完全に戻る（戻す可能性を考慮したフラグ）
-$category-buttons-colored: true;
+// false にすると従来の白ボタン+グレー枠に完全に戻る（2026-07-08 試用の結果 false で運用）
+$category-buttons-colored: false;
 
 body#home {
     background-color: var(--color-light);

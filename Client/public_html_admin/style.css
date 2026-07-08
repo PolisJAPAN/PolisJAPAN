@@ -4457,49 +4457,6 @@ body#home #main .inner-menu .category-tab-group .category-tab-wrapper .category-
   background-color: var(--color-dark);
   color: var(--color-light);
 }
-body#home #main .inner-menu .category-tab-group .category-tab-wrapper .category-button[data-category="1"] {
-  background-image: linear-gradient(135deg, #fa3517 0%, #fcb80c 100%);
-  border-color: transparent;
-  color: var(--color-font-light);
-}
-body#home #main .inner-menu .category-tab-group .category-tab-wrapper .category-button[data-category="2"] {
-  background-image: linear-gradient(135deg, #e99928 0%, #fdc136 100%);
-  border-color: transparent;
-  color: var(--color-font-light);
-}
-body#home #main .inner-menu .category-tab-group .category-tab-wrapper .category-button[data-category="3"] {
-  background-image: linear-gradient(135deg, #71a8ff 0%, #ff70d7 100%);
-  border-color: transparent;
-  color: var(--color-font-light);
-}
-body#home #main .inner-menu .category-tab-group .category-tab-wrapper .category-button[data-category="4"] {
-  background-image: linear-gradient(135deg, #289dda 0%, #1ee3eb 100%);
-  border-color: transparent;
-  color: var(--color-font-light);
-}
-body#home #main .inner-menu .category-tab-group .category-tab-wrapper .category-button[data-category="5"] {
-  background-image: linear-gradient(135deg, #7a58f5 0%, #e156e1 100%);
-  border-color: transparent;
-  color: var(--color-font-light);
-}
-body#home #main .inner-menu .category-tab-group .category-tab-wrapper .category-button[data-category="6"] {
-  background-image: linear-gradient(135deg, #0c9351 0%, #59ab84 100%);
-  border-color: transparent;
-  color: var(--color-font-light);
-}
-body#home #main .inner-menu .category-tab-group .category-tab-wrapper .category-button[data-category="7"] {
-  background-image: linear-gradient(135deg, #4bdb44 0%, #aaea43 100%);
-  border-color: transparent;
-  color: var(--color-font-light);
-}
-body#home #main .inner-menu .category-tab-group .category-tab-wrapper .category-button[data-category="8"] {
-  background-image: linear-gradient(135deg, #8349ff 0%, #d481fe 100%);
-  border-color: transparent;
-  color: var(--color-font-light);
-}
-body#home #main .inner-menu .category-tab-group .category-tab-wrapper .category-button.active {
-  box-shadow: inset 0 0 0 2px var(--color-dark);
-}
 body#home #main .inner-menu .sort-container {
   position: relative;
   display: inline-block;
