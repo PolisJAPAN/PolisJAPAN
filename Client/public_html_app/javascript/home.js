@@ -116,8 +116,7 @@ function buildTopicInnerHTML(csvData) {
         const comments = item.comments;
         const votes = item.votes;
 
-        // 日時列（旧データは未定義→空文字。空白は表示しない）
-        const createdAt = item.created_at ?? '';
+        // 日時列（旧データは未定義→空文字。空白は表示しない。カード表示は更新のみ）
         const commentedAt = item.commented_at ?? '';
         const updatedAt = item.updated_at ?? '';
 
@@ -132,10 +131,9 @@ function buildTopicInnerHTML(csvData) {
             <img class="corner-bg" src="/images/common/corner-spaced.png" alt="">
             <div class="category-label">#${esc(categoryLabel)}</div>
             <div class="article-window cat-${esc(categoryId)}">
-                ${createdAt || updatedAt ? `
+                ${updatedAt ? `
                 <div class="article-dates">
-                    ${updatedAt ? `<div class="date-row">更新 ${esc(updatedAt)}</div>` : ''}
-                    ${createdAt ? `<div class="date-row">作成 ${esc(createdAt)}</div>` : ''}
+                    <div class="date-row">更新 ${esc(updatedAt)}</div>
                 </div>` : ''}
                 <div class="article-title-area">
                     <div class="article-title ${title.length >= 50 ? 'font-size-small' : 'font-size-medium'}">${titleDisplay}</div>
