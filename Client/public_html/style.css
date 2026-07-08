@@ -4625,6 +4625,10 @@ body#home #main .article-item .article-window .article-title-area .article-title
   text-align: center;
   line-height: 1.4;
 }
+body#home #main .article-item .article-window .article-dates + .article-title-area {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
 body#home #main .article-item .article-window .article-dates {
   align-self: flex-end;
   margin: 16px 16px 0 0;
