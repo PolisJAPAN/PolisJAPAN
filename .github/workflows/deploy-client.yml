@@ -34,21 +34,36 @@ jobs:
           role-to-assume: ${{ env.ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # csv/* は本番データ（バッチLambdaが管理）のため絶対に同期しない
+      # HTML内の ?v=__ASSET_VERSION__ をコミットSHAに置換（CSS/JSのキャッシュバスター。
+      # ブラウザはURL単位でキャッシュするため、デプロイごとに確実に新アセットを取得させる）
+      - name: Inject asset version (cache busting)
+        run: |
+          find Client/public_html Client/public_html_app Client/public_html_admin -name "*.html" \
+            -exec sed -i "s/__ASSET_VERSION__/${GITHUB_SHA::8}/g" {} +
+
+      # csv/* は本番データ（バッチLambdaが管理）のため絶対に同期しない。
+      # HTMLは no-cache で配信（毎回再検証させ、新デプロイのバージョン付きURLを即座に行き渡らせる）。
+      # 除外フィルタは削除判定にも適用されるため、2段同期でも消し合わない
       - name: Sync LP (pol-is.jp)
-        run: >
-          aws s3 sync ./Client/public_html/ s3://pol-is.jp/
-          --exclude ".DS_Store" --exclude "*/.DS_Store" --exclude "csv/*" --delete
+        run: |
+          aws s3 sync ./Client/public_html/ s3://pol-is.jp/ \
+            --exclude ".DS_Store" --exclude "*/.DS_Store" --exclude "csv/*" --exclude "*.html" --delete
+          aws s3 sync ./Client/public_html/ s3://pol-is.jp/ \
+            --exclude "*" --include "*.html" --cache-control "no-cache" --delete
 
       - name: Sync App (app.pol-is.jp)
-        run: >
-          aws s3 sync ./Client/public_html_app/ s3://app.pol-is.jp/
-          --exclude ".DS_Store" --exclude "*/.DS_Store" --exclude "csv/*" --delete
+        run: |
+          aws s3 sync ./Client/public_html_app/ s3://app.pol-is.jp/ \
+            --exclude ".DS_Store" --exclude "*/.DS_Store" --exclude "csv/*" --exclude "*.html" --delete
+          aws s3 sync ./Client/public_html_app/ s3://app.pol-is.jp/ \
+            --exclude "*" --include "*.html" --cache-control "no-cache" --delete
 
       - name: Sync Admin (admin.pol-is.jp)
-        run: >
-          aws s3 sync ./Client/public_html_admin/ s3://admin.pol-is.jp/
-          --exclude ".DS_Store" --exclude "*/.DS_Store" --delete
+        run: |
+          aws s3 sync ./Client/public_html_admin/ s3://admin.pol-is.jp/ \
+            --exclude ".DS_Store" --exclude "*/.DS_Store" --exclude "*.html" --delete
+          aws s3 sync ./Client/public_html_admin/ s3://admin.pol-is.jp/ \
+            --exclude "*" --include "*.html" --cache-control "no-cache" --delete
 
       - name: Invalidate CloudFront caches
         run: |
