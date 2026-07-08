@@ -455,6 +455,17 @@ function bindSort() {
     const sortButton = document.querySelector(".sort-button");
     const sortSelect = document.querySelector(".sort-select");
     const sortItems = sortSelect.querySelectorAll(".select-element");
+    const sortLabel = sortButton.querySelector(".sort-label");
+
+    // ボタンのラベルを選択中のソート名に更新する
+    const updateSortLabel = (value) => {
+        if (!sortLabel) return;
+        const selected = sortSelect.querySelector(`.select-element[data-value="${value}"]`);
+        sortLabel.textContent = selected ? selected.textContent : "";
+    };
+
+    // 初期表示（デフォルトソート名）
+    updateSortLabel(currentSort);
 
     // ドロップダウンメニューの表示切替
     sortButton.addEventListener("click", () => {
@@ -476,6 +487,9 @@ function bindSort() {
 
             // 現在のソート処理を実行
             currentSort = value;
+
+            // ボタンのラベルを選択中のソート名に更新
+            updateSortLabel(value);
 
             // セレクトを閉じる
             sortSelect.classList.remove("show");

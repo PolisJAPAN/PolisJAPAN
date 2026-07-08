@@ -4410,9 +4410,11 @@ body#home #main .inner-menu .tab-section {
   flex-grow: 1;
   flex-shrink: 0;
   flex-basis: auto;
-  max-width: calc(100% - 56px);
+  flex-shrink: 1;
+  min-width: 0;
 }
 body#home #main .inner-menu .sort-section {
+  flex: none;
   min-width: 40px;
 }
 body#home #main .inner-menu .category-tab-group {
@@ -4462,10 +4464,16 @@ body#home #main .inner-menu .sort-container .sort-button {
   flex-direction: row;
   align-items: center;
   padding: 8px;
+  gap: 6px;
   color: var(--color-font-dark-secondary);
   cursor: pointer;
   border-radius: 8px;
   height: 40px;
+}
+body#home #main .inner-menu .sort-container .sort-button .sort-label {
+  font-size: var(--font-size-14px);
+  font-weight: 600;
+  white-space: nowrap;
 }
 body#home #main .inner-menu .sort-container .sort-button i {
   font-size: var(--font-size-medium);

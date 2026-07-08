@@ -27,9 +27,12 @@ body#home {
 
             .tab-section {
                 @include common.fill;
-                max-width: calc(100% - 56px);
+                // ソートボタンがラベル分広がるため、固定計算をやめてflexで譲り合う
+                flex-shrink: 1;
+                min-width: 0;
             }
             .sort-section {
+                flex: none;
                 min-width: 40px;
             }
 
@@ -87,11 +90,19 @@ body#home {
                     @include common.row;
                     @include common.align-center;
                     @include common.padding-8px;
+                    gap: 6px;
                     color: var(--color-font-dark-secondary);
                     cursor: pointer;
                     border-radius: 8px;
                     height: 40px;
-        
+
+                    // 選択中のソート名（JSが .select-element の文言と同期する）
+                    .sort-label {
+                        font-size: var(--font-size-14px);
+                        font-weight: 600;
+                        white-space: nowrap;
+                    }
+
                     i {
                         @include common.font-size-medium;
                     }
