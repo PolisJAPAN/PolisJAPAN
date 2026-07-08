@@ -10,6 +10,7 @@
  * path: 本文HTML（フラグメント）のパス。取得時に ?v=<id> がキャッシュバスターとして付く
  */
 const NOTICES = [
+    { id: 2, date: "2026-07-08", title: "テーマ一覧に並び替えと日時表示を追加しました", path: "./notice/002-sort-and-dates.html" },
     { id: 1, date: "2026-07-08", title: "お知らせ機能を追加しました", path: "./notice/001-release.html" },
 ];
 
