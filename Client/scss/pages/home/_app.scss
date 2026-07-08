@@ -280,7 +280,7 @@ body#home {
                     @include common.width-full;
                     @include common.padding-x-16px;
                     @include common.padding-top-32px;
-    
+
                     .article-title {
                         @include common.text;
                         @include common.width-fit;
@@ -289,6 +289,11 @@ body#home {
                         @include common.text-center;
                         @include common.line-spacing-medium;
                     }
+                }
+
+                // 時刻表示があるカードは、日時行が上部を使う分タイトル領域の上下を16pxに詰める
+                .article-dates + .article-title-area {
+                    @include common.padding-y-16px;
                 }
     
                 // 日時はカード右上に縦積み。更新が上・作成が下。
