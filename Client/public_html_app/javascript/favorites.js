@@ -39,7 +39,6 @@ function isFavorite(cid) {
 /**
  * お気に入りをトグルし、トグル後の状態を返す。
  *
- * 追加方向のトグル時は初回注意ダイアログ（一度きり）を表示する。
  * localStorage不可時は状態を変えず現状を返す。
  *
  * @param {string} cid - conversation_id
@@ -56,9 +55,6 @@ function toggleFavorite(cid) {
             list.push(id);
         }
         localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(list));
-        if (index < 0) {
-            showFavoriteNoticeOnce();
-        }
         return index < 0;
     } catch {
         return isFavorite(id);
@@ -100,7 +96,10 @@ function bindFavoriteButtons(root = document) {
         el.addEventListener("click", (e) => {
             e.preventDefault();
             e.stopPropagation();
-            toggleFavorite(el.dataset.favoriteCid);
+            const added = toggleFavorite(el.dataset.favoriteCid);
+            if (added) {
+                showFavoriteNoticeOnce();
+            }
             document
                 .querySelectorAll(`[data-favorite-cid="${el.dataset.favoriteCid}"]`)
                 .forEach(updateFavoriteButtonView);
@@ -119,7 +118,6 @@ function showFavoriteNoticeOnce() {
         if (localStorage.getItem(FAVORITES_NOTICE_KEY) === "1") {
             return;
         }
-        localStorage.setItem(FAVORITES_NOTICE_KEY, "1");
     } catch {
         return;
     }
@@ -140,4 +138,10 @@ function showFavoriteNoticeOnce() {
         }
     });
     document.body.appendChild(overlay);
+    // 表示に成功してから既読化する（表示失敗時に二度と出なくなるのを防ぐ）
+    try {
+        localStorage.setItem(FAVORITES_NOTICE_KEY, "1");
+    } catch {
+        // 保存できない環境では毎回表示されるが許容
+    }
 }
