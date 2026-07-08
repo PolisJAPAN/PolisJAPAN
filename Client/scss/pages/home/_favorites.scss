@@ -1,0 +1,77 @@
+@use "../../common" as common;
+
+// お気に入り（カードの☆・お気に入りタブ・空状態）
+// 仕様: docs/superpowers/specs/2026-07-08-favorites-design.md
+body#home {
+    .article-footer .favorite-toggle {
+        margin-right: auto; // フッター左端（意見/投票は右寄せのまま）
+
+        display: flex;
+        align-items: center;
+        padding: 4px 6px;
+
+        cursor: pointer;
+        pointer-events: all;
+
+        i {
+            font-size: var(--font-size-20px);
+            color: var(--color-font-light);
+        }
+    }
+
+    .category-button[data-category="fav"] i {
+        margin-right: 4px;
+        font-size: var(--font-size-14px);
+    }
+
+    .favorites-empty {
+        display: none;
+        text-align: center;
+        color: var(--color-font-dark-secondary);
+        padding: 32px 16px;
+
+        &.show {
+            display: block;
+        }
+    }
+}
+
+// 初回注意ダイアログ（ホーム/詳細共通のためページスコープなし）
+.favorite-notice-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-index-grobal-overlay);
+
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+
+    .favorite-notice-card {
+        background: var(--color-light);
+        border-radius: 16px;
+        padding: 24px 20px;
+        max-width: 360px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        text-align: center;
+
+        .title {
+            font-weight: 700;
+            color: var(--color-font-dark);
+        }
+        .text {
+            font-size: var(--font-size-14px);
+            color: var(--color-font-dark-gray-2);
+            line-height: 1.7;
+        }
+        .favorite-notice-ok {
+            border: transparent;
+            cursor: pointer;
+        }
+    }
+}
