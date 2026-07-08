@@ -59,12 +59,17 @@ body#home {
                     }
         
                     .category-button {
-                        @include common.padding-12px;
-                        @include common.padding-bottom-16px;
                         @include common.font-weight-semibold;
                         @include common.letter-spacing-small;
                         @include common.width-fit;
                         min-width: fit-content;
+
+                        // ソートボタンと同じ高さ・上下中央揃え
+                        height: 40px;
+                        padding: 0 16px;
+                        display: flex;
+                        align-items: center;
+
                         border-radius: 8px;
                         background-color: var(--color-light);
             
