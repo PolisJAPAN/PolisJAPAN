@@ -602,6 +602,20 @@ function bindHamburgerMenu() {
             setOpen(false);
         }
     });
+
+    // 改善要望: カードと同様にローディングを挟んで同一オリジンの詳細ページへ遷移する
+    // （改善要望の収集にもPolisのテーマを使う）
+    const feedback = menu.querySelector("#feedback-menu-button");
+    if (feedback) {
+        feedback.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setGrobalLoading(true);
+            setTimeout(() => {
+                window.location = `${window.location.origin}${feedback.getAttribute("href")}`;
+            }, 500);
+        });
+    }
 }
 
 // ウィンドウ初期化時にイベントを割り当て
