@@ -2921,6 +2921,37 @@ textarea.skeleton-loading::placeholder {
   cursor: pointer;
 }
 
+.favorite-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 104px;
+  transform: translateX(-50%) translateY(8px);
+  z-index: var(--z-index-grobal-overlay);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 24px;
+  background: var(--color-dark);
+  color: var(--color-font-light);
+  filter: drop-shadow(0px 8px 16px rgba(9, 8, 39, 0.5));
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.favorite-toast i {
+  font-size: var(--font-size-16px);
+}
+.favorite-toast .text {
+  font-size: var(--font-size-14px);
+  font-weight: 600;
+}
+.favorite-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 #header {
   display: flex;
   flex-direction: row;

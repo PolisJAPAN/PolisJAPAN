@@ -789,6 +789,43 @@ textarea {
     }
 }
 
+// 2回目以降のお気に入り追加トースト（ホーム/詳細共通のためページスコープなし）
+.favorite-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 104px; // 下部ボタン群の少し上
+    transform: translateX(-50%) translateY(8px);
+    z-index: var(--z-index-grobal-overlay);
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 24px;
+
+    background: var(--color-dark);
+    color: var(--color-font-light);
+    filter: drop-shadow(0px 8px 16px rgba(9, 8, 39, 0.5));
+    white-space: nowrap;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+
+    i {
+        font-size: var(--font-size-16px);
+    }
+    .text {
+        font-size: var(--font-size-14px);
+        font-weight: 600;
+    }
+
+    &.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
 
 
 

@@ -97,8 +97,9 @@ function bindFavoriteButtons(root = document) {
             e.preventDefault();
             e.stopPropagation();
             const added = toggleFavorite(el.dataset.favoriteCid);
-            if (added) {
-                showFavoriteNoticeOnce();
+            if (added && !showFavoriteNoticeOnce()) {
+                // 初回ダイアログを出さなかった場合（2回目以降）はトーストで通知する
+                showFavoriteToast("お気に入りに追加しました");
             }
             document
                 .querySelectorAll(`[data-favorite-cid="${el.dataset.favoriteCid}"]`)
@@ -111,15 +112,15 @@ function bindFavoriteButtons(root = document) {
 /**
  * 初回のお気に入り追加時に、ブラウザ内保存であることの注意ダイアログを一度だけ表示する。
  *
- * @returns {void}
+ * @returns {boolean} ダイアログを表示した場合は true（表示済み・保存不可の場合は false）
  */
 function showFavoriteNoticeOnce() {
     try {
         if (localStorage.getItem(FAVORITES_NOTICE_KEY) === "1") {
-            return;
+            return false;
         }
     } catch {
-        return;
+        return false;
     }
     const overlay = document.createElement("div");
     overlay.className = "favorite-notice-overlay";
@@ -144,4 +145,29 @@ function showFavoriteNoticeOnce() {
     } catch {
         // 保存できない環境では毎回表示されるが許容
     }
+    return true;
+}
+
+let favoriteToastTimer = null;
+
+/**
+ * 画面下部（ボタンの上あたり）に通知トーストをフェードイン表示する。
+ * 連続タップ時は同じトーストを使い回して表示時間を延長する。
+ *
+ * @param {string} message 表示するメッセージ
+ * @returns {void}
+ */
+function showFavoriteToast(message) {
+    let toast = document.querySelector(".favorite-toast");
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.className = "favorite-toast";
+        toast.innerHTML = `<i class="bi bi-star-fill"></i><div class="text"></div>`;
+        document.body.appendChild(toast);
+    }
+    toast.querySelector(".text").textContent = message;
+    // 非表示→表示を確実にトランジションさせる（追加直後の同フレーム適用を避ける）
+    requestAnimationFrame(() => toast.classList.add("show"));
+    clearTimeout(favoriteToastTimer);
+    favoriteToastTimer = setTimeout(() => toast.classList.remove("show"), 2000);
 }
