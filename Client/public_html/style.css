@@ -2942,10 +2942,12 @@ textarea.skeleton-loading::placeholder {
 }
 .favorite-toast i {
   font-size: var(--font-size-16px);
+  padding-bottom: 3px;
 }
 .favorite-toast .text {
   font-size: var(--font-size-14px);
   font-weight: 600;
+  padding-bottom: 3px;
 }
 .favorite-toast.show {
   opacity: 1;

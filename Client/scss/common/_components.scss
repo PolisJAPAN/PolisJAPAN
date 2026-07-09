@@ -812,12 +812,15 @@ textarea {
     pointer-events: none;
     transition: opacity 0.3s, transform 0.3s;
 
+    // ボタン(@mixin button)と同様、グリフが行内で下寄りに描かれる分を補正して上下中央に見せる
     i {
         font-size: var(--font-size-16px);
+        padding-bottom: 3px;
     }
     .text {
         font-size: var(--font-size-14px);
         font-weight: 600;
+        padding-bottom: 3px;
     }
 
     &.show {
