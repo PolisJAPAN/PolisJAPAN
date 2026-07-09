@@ -2886,6 +2886,74 @@ textarea.skeleton-loading::placeholder {
   opacity: 1;
 }
 
+.favorite-notice-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-index-grobal-overlay);
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.favorite-notice-overlay .favorite-notice-card {
+  background: var(--color-light);
+  border-radius: 16px;
+  padding: 24px 20px;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+.favorite-notice-overlay .favorite-notice-card .title {
+  font-weight: 700;
+  color: var(--color-font-dark);
+}
+.favorite-notice-overlay .favorite-notice-card > .text {
+  font-size: var(--font-size-14px);
+  color: var(--color-font-dark-gray-2);
+  line-height: 1.7;
+}
+.favorite-notice-overlay .favorite-notice-card .favorite-notice-ok {
+  border: transparent;
+  cursor: pointer;
+}
+
+.favorite-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 104px;
+  transform: translateX(-50%) translateY(8px);
+  z-index: var(--z-index-grobal-overlay);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 24px;
+  background: var(--color-dark);
+  color: var(--color-font-light);
+  filter: drop-shadow(0px 8px 16px rgba(9, 8, 39, 0.5));
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.favorite-toast i {
+  font-size: var(--font-size-16px);
+  padding-bottom: 3px;
+}
+.favorite-toast .text {
+  font-size: var(--font-size-14px);
+  font-weight: 600;
+  padding-bottom: 3px;
+}
+.favorite-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 #header {
   display: flex;
   flex-direction: row;
@@ -5868,6 +5936,32 @@ body#home #bottom-menu.hamburger-open .help-button, body#home #bottom-menu.hambu
     transition: none;
   }
 }
+body#home .article-footer .favorite-toggle {
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  padding: 4px 6px;
+  cursor: pointer;
+  pointer-events: all;
+}
+body#home .article-footer .favorite-toggle i {
+  font-size: var(--font-size-20px);
+  color: var(--color-font-light);
+}
+body#home .category-button[data-category=fav] i {
+  margin-right: 4px;
+  font-size: var(--font-size-14px);
+}
+body#home .favorites-empty {
+  display: none;
+  text-align: center;
+  color: var(--color-font-dark-secondary);
+  padding: 32px 16px;
+}
+body#home .favorites-empty.show {
+  display: block;
+}
+
 body#detail {
   background-color: var(--color-bg-gray);
 }
@@ -6177,7 +6271,7 @@ body#detail #bottom-menu .bottom-menu-button-group {
   height: fit-content;
   gap: 16px;
 }
-body#detail #bottom-menu .help-button, body#detail #bottom-menu .share-button {
+body#detail #bottom-menu .help-button, body#detail #bottom-menu .favorite-button, body#detail #bottom-menu .share-button {
   gap: 8px;
   padding-right: 28px;
   padding-left: 28px;
@@ -6185,11 +6279,23 @@ body#detail #bottom-menu .help-button, body#detail #bottom-menu .share-button {
   border: transparent;
   pointer-events: all;
 }
-body#detail #bottom-menu .help-button i, body#detail #bottom-menu .share-button i {
+body#detail #bottom-menu .help-button i, body#detail #bottom-menu .favorite-button i, body#detail #bottom-menu .share-button i {
   font-size: var(--font-size-24px);
 }
-body#detail #bottom-menu .help-button:hover, body#detail #bottom-menu .share-button:hover {
+body#detail #bottom-menu .help-button .text, body#detail #bottom-menu .favorite-button .text, body#detail #bottom-menu .share-button .text {
+  white-space: nowrap;
+}
+body#detail #bottom-menu .help-button:hover, body#detail #bottom-menu .favorite-button:hover, body#detail #bottom-menu .share-button:hover {
   gap: 8px;
+}
+@media (max-width: 359px) {
+  body#detail #bottom-menu .bottom-menu-button-group {
+    gap: 8px;
+  }
+  body#detail #bottom-menu .help-button, body#detail #bottom-menu .favorite-button, body#detail #bottom-menu .share-button {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
 }
 @media (display-mode: standalone) {
   body#detail #tab-group {

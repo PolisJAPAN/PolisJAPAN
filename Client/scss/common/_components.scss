@@ -742,9 +742,90 @@ textarea {
     transition: opacity 0.3s;
     opacity: 0;
     pointer-events: none;
-    
+
     &.show {
         opacity: 1;
+    }
+}
+
+// 初回注意ダイアログ（ホーム/詳細共通のためページスコープなし）
+.favorite-notice-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-index-grobal-overlay);
+
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+
+    .favorite-notice-card {
+        background: var(--color-light);
+        border-radius: 16px;
+        padding: 24px 20px;
+        max-width: 360px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        text-align: center;
+
+        .title {
+            font-weight: 700;
+            color: var(--color-font-dark);
+        }
+        // 本文のみ（直下限定。ボタン内の .text ラベルまでグレーにしない）
+        > .text {
+            font-size: var(--font-size-14px);
+            color: var(--color-font-dark-gray-2);
+            line-height: 1.7;
+        }
+        .favorite-notice-ok {
+            border: transparent;
+            cursor: pointer;
+        }
+    }
+}
+
+// 2回目以降のお気に入り追加トースト（ホーム/詳細共通のためページスコープなし）
+.favorite-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 104px; // 下部ボタン群の少し上
+    transform: translateX(-50%) translateY(8px);
+    z-index: var(--z-index-grobal-overlay);
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 24px;
+
+    background: var(--color-dark);
+    color: var(--color-font-light);
+    filter: drop-shadow(0px 8px 16px rgba(9, 8, 39, 0.5));
+    white-space: nowrap;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+
+    // ボタン(@mixin button)と同様、グリフが行内で下寄りに描かれる分を補正して上下中央に見せる
+    i {
+        font-size: var(--font-size-16px);
+        padding-bottom: 3px;
+    }
+    .text {
+        font-size: var(--font-size-14px);
+        font-weight: 600;
+        padding-bottom: 3px;
+    }
+
+    &.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
     }
 }
 
