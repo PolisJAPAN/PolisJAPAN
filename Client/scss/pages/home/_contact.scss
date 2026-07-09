@@ -3,11 +3,22 @@
 // アプリ内お問い合わせモーダル（#contact-modal）
 body#home {
     #contact-modal {
+        // .modal-scroll-area/.modal-content は共通側で幅指定がなく、
+        // 内在幅に縮んでしまうため明示的に広げる
+        .modal-scroll-area {
+            width: 100%;
+        }
+        .modal-content {
+            width: 100%;
+        }
+
         .contact-step {
             display: none;
             flex-direction: column;
             gap: 20px;
             width: 100%;
+            max-width: 520px; // タブレット以上でフォームが間延びしないように
+            margin: 0 auto;
 
             &.show {
                 display: flex;

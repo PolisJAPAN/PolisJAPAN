@@ -5962,11 +5962,19 @@ body#home .favorites-empty.show {
   display: block;
 }
 
+body#home #contact-modal .modal-scroll-area {
+  width: 100%;
+}
+body#home #contact-modal .modal-content {
+  width: 100%;
+}
 body#home #contact-modal .contact-step {
   display: none;
   flex-direction: column;
   gap: 20px;
   width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
 }
 body#home #contact-modal .contact-step.show {
   display: flex;
