@@ -6005,6 +6005,7 @@ body#home #contact-modal .contact-input-group .contact-input:focus {
 body#home #contact-modal .contact-input-group textarea.contact-input {
   resize: vertical;
   line-height: 1.6;
+  min-height: 240px;
 }
 body#home #contact-modal .contact-input-group .contact-input-description {
   font-size: var(--font-size-12px);
