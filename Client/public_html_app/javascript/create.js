@@ -244,7 +244,7 @@ function bindCreateModal() {
         ev.preventDefault();
         createModalManager.showModal();
 
-        const closeButton = document.querySelector('.modal-window').querySelector('.complete-overlay').querySelector('.complete-close-button');
+        const closeButton = document.querySelector('#theme-create-modal .modal-window').querySelector('.complete-overlay').querySelector('.complete-close-button');
         closeButton.addEventListener("click", () => {createModalManager.closeModal();});
 
         switchComplete(false);
@@ -264,8 +264,8 @@ function bindCreateModal() {
  * @returns {void}
  */
 function bindModeButton(){
-    const aiModeButton = document.querySelector('.modal-window').querySelector('#ai-mode-button');
-    const manualModeButton = document.querySelector('.modal-window').querySelector('#manual-mode-button');
+    const aiModeButton = document.querySelector('#theme-create-modal .modal-window').querySelector('#ai-mode-button');
+    const manualModeButton = document.querySelector('#theme-create-modal .modal-window').querySelector('#manual-mode-button');
 
     aiModeButton.addEventListener("click", () => {
         switchMode("AI_ASSIST");
@@ -297,7 +297,7 @@ function bindModeButton(){
  * @returns {void}
  */
 function switchComplete(isComplete){
-    const completeOverlay = document.querySelector('.modal-window').querySelector('.complete-overlay');
+    const completeOverlay = document.querySelector('#theme-create-modal .modal-window').querySelector('.complete-overlay');
     completeOverlay.classList.toggle("show", isComplete);
 }
 
@@ -390,7 +390,7 @@ function clearModal() {
  * @returns {void}
  */
 function renderFormMode(targetMode) {
-    const formContainerElement = document.querySelector('.modal-window').querySelector('.create-form-container');
+    const formContainerElement = document.querySelector('#theme-create-modal .modal-window').querySelector('.create-form-container');
     if (!formContainerElement) return;
 
     // ラッパーごと入れ替える（未使用モードはDOMから消える）

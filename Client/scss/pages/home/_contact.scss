@@ -1,0 +1,135 @@
+@use "../../common" as common;
+
+// アプリ内お問い合わせモーダル（#contact-modal）
+body#home {
+    #contact-modal {
+        // カード内パディングはテーマ作成モーダルと同じ（PC32px/モバイル16px）
+        .modal-window {
+            @include common.padding-32px;
+
+            @media (max-width: 768px) {
+                @include common.padding-16px;
+            }
+        }
+
+        // .modal-scroll-area/.modal-content は共通側で幅指定がなく、
+        // 内在幅に縮んでしまうため明示的に広げる
+        .modal-scroll-area {
+            width: 100%;
+        }
+        .modal-content {
+            width: 100%;
+            padding-top: 16px;
+        }
+
+        .contact-step {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 720px; // テーマ一覧と同じ最大幅
+            margin: 0 auto;
+
+            &.show {
+                display: flex;
+            }
+        }
+
+        .contact-input-group {
+            @include common.stack;
+            @include common.width-full;
+            gap: 6px;
+
+            .contact-input-label {
+                @include common.font-weight-black;
+                @include common.font-size-small;
+                color: #989898;
+
+                .contact-optional {
+                    font-weight: 400;
+                    font-size: var(--font-size-12px);
+                    color: var(--color-font-dark-secondary);
+                    margin-left: 8px;
+                }
+            }
+
+            .contact-input {
+                @include common.width-full;
+                box-sizing: border-box;
+                padding: 10px 12px;
+                border: 1px solid var(--color-font-dark-secondary-2);
+                border-radius: 8px;
+                background-color: var(--color-light);
+                font-size: var(--font-size-14px);
+                color: var(--color-font-dark);
+
+                &:focus {
+                    outline: none;
+                    border-color: var(--color-main);
+                }
+            }
+
+            textarea.contact-input {
+                resize: vertical;
+                line-height: 1.6;
+                min-height: 240px;
+            }
+
+            .contact-input-description {
+                font-size: var(--font-size-12px);
+                color: var(--color-font-dark-secondary);
+            }
+
+            .contact-input-confirm {
+                @include common.width-full;
+                box-sizing: border-box;
+                padding: 10px 12px;
+                border-radius: 8px;
+                background-color: var(--color-bg-gray);
+                font-size: var(--font-size-14px);
+                color: var(--color-font-dark);
+                line-height: 1.6;
+                white-space: pre-wrap;
+                word-break: break-word;
+                min-height: 1.6em;
+            }
+        }
+
+        .contact-error {
+            display: none;
+            font-size: var(--font-size-12px);
+            color: #d33;
+
+            &.show {
+                display: block;
+            }
+        }
+
+        // ボタンは中央寄せ・共通トーン
+        .button {
+            align-self: center;
+            border: transparent;
+
+            &.secondary-border {
+                border: 1px solid var(--color-dark);
+            }
+        }
+
+        .contact-complete-wrapper {
+            align-items: center;
+            text-align: center;
+            padding: 24px 0;
+
+            .contact-complete-icon {
+                font-size: 48px;
+                color: var(--color-main);
+            }
+
+            .contact-complete-text {
+                font-size: var(--font-size-14px);
+                color: var(--color-font-dark-gray-2);
+                line-height: 1.8;
+            }
+        }
+    }
+}

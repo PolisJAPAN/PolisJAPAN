@@ -188,10 +188,14 @@
                         <i class="bi bi-bell"></i>
                         <div class="text">お知らせ</div>
                     </button>
-                    <a class="menu-item" href="https://pol-is.jp/contact/">
+                    <a id="feedback-menu-button" class="menu-item" href="/detail/?conversation_id=9knucbecnr">
+                        <i class="bi bi-lightbulb"></i>
+                        <div class="text">改善要望</div>
+                    </a>
+                    <button id="contact-menu-button" class="menu-item" type="button">
                         <i class="bi bi-envelope"></i>
                         <div class="text">お問い合わせ</div>
-                    </a>
+                    </button>
                     <div class="menu-sub-row">
                         <a class="menu-sub-item" href="https://pol-is.jp/terms/">利用規約</a>
                         <a class="menu-sub-item" href="https://pol-is.jp/policy/">プライバシーポリシー</a>
@@ -204,6 +208,76 @@
                 <span class="bar"></span>
             </button>
         </nav>
+    </div>
+
+    <div id="contact-modal" class="slide-modal full-screen-modal">
+        <div class="label-group">
+            <div class="label-header">
+                <button class="modal-close-button">
+                    <i class="bi bi-x"></i>
+                </button>
+                <div class="modal-title">お問い合わせ</div>
+            </div>
+            <div class="modal-text">返信はメールアドレス宛にご連絡します</div>
+        </div>
+        <div class="modal-window">
+            <div class="modal-scroll-area">
+                <div class="modal-content">
+
+                    <div class="contact-form-wrapper contact-step show">
+                        <div class="contact-input-group">
+                            <div class="contact-input-label">メールアドレス</div>
+                            <input type="email" id="contact-mail-input" class="contact-input" autocomplete="email">
+                            <div class="contact-input-description">お問い合わせへの返信に使用します。</div>
+                        </div>
+                        <div class="contact-input-group">
+                            <div class="contact-input-label">お名前<span class="contact-optional">任意</span></div>
+                            <input type="text" id="contact-name-input" class="contact-input" autocomplete="name">
+                        </div>
+                        <div class="contact-input-group">
+                            <div class="contact-input-label">お問い合わせ内容</div>
+                            <textarea id="contact-content-input" class="contact-input" rows="10"></textarea>
+                        </div>
+                        <div class="contact-error" id="contact-form-error"></div>
+                        <button id="contact-confirm-button" class="button secondary">
+                            <div class="text">確認する</div>
+                        </button>
+                    </div>
+
+                    <div class="contact-confirm-wrapper contact-step">
+                        <div class="contact-input-group">
+                            <div class="contact-input-label">メールアドレス</div>
+                            <div class="contact-input-confirm" id="contact-mail-confirm"></div>
+                        </div>
+                        <div class="contact-input-group">
+                            <div class="contact-input-label">お名前</div>
+                            <div class="contact-input-confirm" id="contact-name-confirm"></div>
+                        </div>
+                        <div class="contact-input-group">
+                            <div class="contact-input-label">お問い合わせ内容</div>
+                            <div class="contact-input-confirm" id="contact-content-confirm"></div>
+                        </div>
+                        <div class="contact-error" id="contact-send-error"></div>
+                        <button id="contact-send-button" class="button secondary">
+                            <i class="bi bi-send"></i>
+                            <div class="text">送信する</div>
+                        </button>
+                        <button id="contact-back-button" class="button secondary-border">
+                            <div class="text">戻る</div>
+                        </button>
+                    </div>
+
+                    <div class="contact-complete-wrapper contact-step">
+                        <i class="bi bi-check-circle contact-complete-icon"></i>
+                        <div class="contact-complete-text">送信しました。<br>お問い合わせありがとうございます。</div>
+                        <button id="contact-complete-close-button" class="button secondary">
+                            <div class="text">閉じる</div>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="theme-create-modal" class="slide-modal full-screen-modal">
@@ -365,6 +439,7 @@
     <script src="./javascript/home.js?v=__ASSET_VERSION__" defer></script>
     <script src="./javascript/create.js?v=__ASSET_VERSION__" defer></script>
     <script src="./javascript/notice.js?v=__ASSET_VERSION__" defer></script>
+    <script src="./javascript/contact.js?v=__ASSET_VERSION__" defer></script>
 </body>
 
 </html>
