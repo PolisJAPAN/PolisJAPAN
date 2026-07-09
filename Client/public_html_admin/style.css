@@ -5962,6 +5962,14 @@ body#home .favorites-empty.show {
   display: block;
 }
 
+body#home #contact-modal .modal-window {
+  padding: 32px;
+}
+@media (max-width: 768px) {
+  body#home #contact-modal .modal-window {
+    padding: 16px;
+  }
+}
 body#home #contact-modal .modal-scroll-area {
   width: 100%;
 }
@@ -5973,7 +5981,7 @@ body#home #contact-modal .contact-step {
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  max-width: 520px;
+  max-width: 720px;
   margin: 0 auto;
 }
 body#home #contact-modal .contact-step.show {

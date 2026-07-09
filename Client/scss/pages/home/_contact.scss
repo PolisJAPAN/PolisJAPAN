@@ -3,6 +3,15 @@
 // アプリ内お問い合わせモーダル（#contact-modal）
 body#home {
     #contact-modal {
+        // カード内パディングはテーマ作成モーダルと同じ（PC32px/モバイル16px）
+        .modal-window {
+            @include common.padding-32px;
+
+            @media (max-width: 768px) {
+                @include common.padding-16px;
+            }
+        }
+
         // .modal-scroll-area/.modal-content は共通側で幅指定がなく、
         // 内在幅に縮んでしまうため明示的に広げる
         .modal-scroll-area {
@@ -17,7 +26,7 @@ body#home {
             flex-direction: column;
             gap: 20px;
             width: 100%;
-            max-width: 520px; // タブレット以上でフォームが間延びしないように
+            max-width: 720px; // テーマ一覧と同じ最大幅
             margin: 0 auto;
 
             &.show {
