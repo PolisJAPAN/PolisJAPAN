@@ -776,7 +776,8 @@ textarea {
             font-weight: 700;
             color: var(--color-font-dark);
         }
-        .text {
+        // 本文のみ（直下限定。ボタン内の .text ラベルまでグレーにしない）
+        > .text {
             font-size: var(--font-size-14px);
             color: var(--color-font-dark-gray-2);
             line-height: 1.7;

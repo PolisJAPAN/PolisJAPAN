@@ -2911,7 +2911,7 @@ textarea.skeleton-loading::placeholder {
   font-weight: 700;
   color: var(--color-font-dark);
 }
-.favorite-notice-overlay .favorite-notice-card .text {
+.favorite-notice-overlay .favorite-notice-card > .text {
   font-size: var(--font-size-14px);
   color: var(--color-font-dark-gray-2);
   line-height: 1.7;

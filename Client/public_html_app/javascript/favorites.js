@@ -130,7 +130,7 @@ function showFavoriteNoticeOnce() {
                 お気に入りは<strong>このブラウザ内</strong>に保存されます。<br>
                 端末やブラウザを変えた場合や、プライベートブラウズでは引き継がれません。
             </div>
-            <button type="button" class="button secondary favorite-notice-ok"><div class="text">OK</div></button>
+            <button type="button" class="button secondary favorite-notice-ok"><i class="bi bi-check-lg"></i><div class="text">OK</div></button>
         </div>`;
     overlay.addEventListener("click", (e) => {
         if (e.target === overlay || e.target.closest(".favorite-notice-ok")) {
