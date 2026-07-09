@@ -4,13 +4,14 @@
 // ==============================
 
 /**
- * お知らせ一覧（新しいものを上に追加していく）。
+ * お知らせ一覧（この配列の順序がそのまま表示順。通常は新しいものを上に追加していく）。
  *
- * id: 増分整数（既読判定に使用。必ず過去より大きい値を振ること）
+ * id: 増分整数（既読判定に使用。必ず過去より大きい値を振ること。表示順には影響しない）
  * path: 本文HTML（フラグメント）のパス。取得時に ?v=<id> がキャッシュバスターとして付く
  */
 const NOTICES = [
     { id: 4, date: "2026-07-09", title: "お気に入り機能を追加しました", path: "./notice/004-favorites.html" },
+    { id: 5, date: "2026-07-09", title: "改善要望を募集しています", path: "./notice/005-feedback.html" },
     { id: 3, date: "2026-07-08", title: "アクセス障害と復旧のお知らせ", path: "./notice/003-incident-recovery.html" },
     { id: 2, date: "2026-07-08", title: "テーマ一覧に並び替えと日時表示を追加しました", path: "./notice/002-sort-and-dates.html" },
     { id: 1, date: "2026-07-08", title: "お知らせ機能を追加しました", path: "./notice/001-release.html" },
@@ -26,12 +27,21 @@ let noticeModalManager = null;
 const noticeBodyCache = new Map();
 
 /**
- * id降順に並べたお知らせ一覧を返す。
+ * 表示順（配列の記載順）のお知らせ一覧を返す。
  *
  * @returns {Array<{id: number, date: string, title: string, path: string}>}
  */
-function getSortedNotices() {
-    return [...NOTICES].sort((a, b) => b.id - a.id);
+function getDisplayNotices() {
+    return [...NOTICES];
+}
+
+/**
+ * 既読判定用の最大お知らせIDを返す（お知らせが無い場合は0）。
+ *
+ * @returns {number}
+ */
+function getMaxNoticeId() {
+    return NOTICES.reduce((max, n) => Math.max(max, n.id), 0);
 }
 
 /**
@@ -64,7 +74,7 @@ async function fetchNoticeBody(notice) {
  */
 function renderNoticeList() {
     const container = document.querySelector("#notice-modal .notice-list");
-    const notices = getSortedNotices();
+    const notices = getDisplayNotices();
     if (notices.length === 0) {
         container.innerHTML = '<div class="notice-empty">お知らせはありません</div>';
         return;
@@ -116,9 +126,9 @@ function renderNoticeList() {
 function openNoticeModal() {
     renderNoticeList();
     noticeModalManager.showModal();
-    const notices = getSortedNotices();
-    if (notices.length > 0) {
-        setCookie(NOTICE_SEEN_COOKIE, String(notices[0].id));
+    const maxId = getMaxNoticeId();
+    if (maxId > 0) {
+        setCookie(NOTICE_SEEN_COOKIE, String(maxId));
     }
 }
 
@@ -132,12 +142,12 @@ function openNoticeModal() {
  * @returns {void}
  */
 function checkAndAutoOpenNotice() {
-    const notices = getSortedNotices();
-    if (notices.length === 0) {
+    const maxId = getMaxNoticeId();
+    if (maxId === 0) {
         return;
     }
     const seenId = parseInt(getCookie(NOTICE_SEEN_COOKIE) ?? "0", 10) || 0;
-    if (notices[0].id <= seenId) {
+    if (maxId <= seenId) {
         return;
     }
 
