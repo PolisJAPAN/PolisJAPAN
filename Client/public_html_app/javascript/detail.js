@@ -820,6 +820,52 @@ function sortByTotalAgreeRate(list) {
 };
 
 /**
+ * グループ横断合意スコアを計算する（Polis本家 group-aware-consensus と同一式）。
+ * 各グループの平滑化賛成率 (agrees+1)/(totalVotes+2) の積。
+ * 未投票グループは0.5（中立）となり、生の0%のように不当に沈まない。
+ *
+ * 依存: toInt
+ *
+ * @param {Object} item - displayData要素（groupData配列を含む）。
+ * @returns {number|null} - スコア（0〜1）。groupDataが欠損・空なら null。
+ */
+function getGroupConsensusScore(item) {
+    const groupData = item.groupData;
+    if (!Array.isArray(groupData) || groupData.length === 0) {
+        return null;
+    }
+    return groupData.reduce((score, g) => {
+        const agrees = toInt(g.agrees);
+        const votes = toInt(g.totalVotes);
+        return score * ((agrees + 1) / (votes + 2));
+    }, 1);
+}
+
+/**
+ * グループ横断合意スコアで降順ソートする（A-2）。
+ * スコアが計算できない行（groupData欠損）は totalAgreeRate-1 を代替キーとして
+ * 末尾側に回す（スコアは常に正のため負値は必ず下位になる）。
+ * 同点の場合は totalVotes の多い順（sortByTotalAgreeRate と同じタイブレーク）。
+ *
+ * 依存: getGroupConsensusScore, toNum, toInt
+ *
+ * @param {Array<Object>} list - ソート対象配列。
+ * @returns {Array<Object>} - 新しい配列を返す（元配列は変更しない）。
+ */
+function sortByConsensusScore(list) {
+    const sortKey = (item) => {
+        const score = getGroupConsensusScore(item);
+        return score !== null ? score : toNum(item.totalAgreeRate) - 1;
+    };
+    return list.slice().sort((a, b) => {
+        const ka = sortKey(a);
+        const kb = sortKey(b);
+        if (ka !== kb) return kb - ka;
+        return toInt(b.totalVotes) - toInt(a.totalVotes); // 同点なら票数多い順
+    });
+}
+
+/**
  * 指定グループの賛成率で降順ソートする。
  * 同率の場合は当該グループの totalVotes の多い順。
  * 
@@ -901,8 +947,12 @@ async function initializeArticles() {
     // 含まれるグループ一覧を取得
     const groups = getGroups(csvJson[0]);
 
-    // 全体の賛成率が高いリストを取得
-    const sortedByTotal = sortByTotalAgreeRate(displayData);
+    // 「みんなが賛成した意見」の並び:
+    // グループが2つ以上ならグループ横断合意スコア順（A-2）、
+    // 1グループ以下は横断合意が定義できないため従来の全体賛成率順
+    const sortedByTotal = (groups.length >= 2)
+        ? sortByConsensusScore(displayData)
+        : sortByTotalAgreeRate(displayData);
 
     // 各グループの賛成率が高いリストを取得
     const sortedByGroup = groups.map((groupName) => {
