@@ -361,6 +361,32 @@ body#home {
                                 }
                             }
 
+                            // 文字数カウンター（タイトル80/説明200。上限到達で赤）
+                            .char-counter {
+                                width: 100%;
+                                text-align: right;
+                                font-size: var(--font-size-12px);
+                                color: var(--color-font-dark-secondary);
+                                margin-top: -12px; // 直上の.input-groupとの間を詰める
+
+                                &.over {
+                                    color: #d33;
+                                    font-weight: 600;
+                                }
+                            }
+
+                            // 文字数超過などのステッパー内エラー
+                            .stepper-error {
+                                display: none;
+                                width: 100%;
+                                text-align: center;
+                                font-size: var(--font-size-12px);
+                                color: #d33;
+
+                                &.show {
+                                    display: block;
+                                }
+                            }
 
                             .ai-generate-button {
                                 @include common.relative;

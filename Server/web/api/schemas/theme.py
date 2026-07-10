@@ -128,9 +128,10 @@ class ThemeGenerateDescriptionsErrorResponses(APIErrorResponses):
 class ThemePostDraftRequest(CommonRequest):
     """theme/post_draft API用リクエスト定義"""
     access_key: str = Field(min_length=1, max_length=256, description="アクセスキー")
-    theme: str = Field(description="テーマ(ユーザー設定)")
+    # 文字数上限は新規投稿のみに適用（既存データは許容）。クライアントのカウンター上限と同値
+    theme: str = Field(max_length=80, description="テーマ(ユーザー設定)")
     comments: str = Field(description="コメント(ユーザー設定)")
-    description: str = Field(description="説明(ユーザー設定)")
+    description: str = Field(max_length=200, description="説明(ユーザー設定)")
     category: int = Field(description="カテゴリ(ユーザー設定)")
 
     @classmethod
