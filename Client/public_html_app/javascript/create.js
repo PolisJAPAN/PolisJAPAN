@@ -17,6 +17,80 @@ let categorySelect = null;
 
 const splitter = "###br###"
 
+/** タイトルの最大文字数（コードポイント。サーバー側 max_length と同値） */
+const THEME_TITLE_MAX = 80;
+/** 説明の最大文字数（コードポイント。サーバー側 max_length と同値） */
+const THEME_DESCRIPTION_MAX = 200;
+
+// ==============================
+// 文字数バリデーション
+// ==============================
+
+/**
+ * コードポイント数を返す（サロゲートペアを1文字と数える）。
+ *
+ * @param {string} str
+ * @returns {number}
+ */
+function countChars(str) {
+    return [...(str ?? "")].length;
+}
+
+/**
+ * 入力に対応する文字数カウンター表示を更新する。
+ *
+ * @param {HTMLElement|null} input - #theme-title-textarea または #description-textarea
+ * @returns {void}
+ */
+function updateCharCounter(input) {
+    if (!input || !parentNode) return;
+    const counter = parentNode.querySelector(`.char-counter[data-counter-for="${input.id}"]`);
+    if (!counter) return;
+    const max = (input.id === "theme-title-textarea") ? THEME_TITLE_MAX : THEME_DESCRIPTION_MAX;
+    const count = countChars(input.value);
+    counter.textContent = `${count}/${max}`;
+    counter.classList.toggle("over", count >= max);
+}
+
+/**
+ * ステッパー内のタイトル/説明の文字数エラーを返す（なければnull）。
+ * AI生成や下書き復元などJS代入経路の超過（maxlengthが効かない）もここで捕捉する。
+ *
+ * @param {HTMLElement} stepperEl - .modal-stepper 要素
+ * @returns {string|null}
+ */
+function getLengthError(stepperEl) {
+    const title = stepperEl.querySelector("#theme-title-textarea");
+    if (title && countChars(title.value) > THEME_TITLE_MAX) {
+        return `タイトルは${THEME_TITLE_MAX}文字以内で入力してください`;
+    }
+    const desc = stepperEl.querySelector("#description-textarea");
+    if (desc && countChars(desc.value) > THEME_DESCRIPTION_MAX) {
+        return `説明は${THEME_DESCRIPTION_MAX}文字以内で入力してください`;
+    }
+    return null;
+}
+
+/**
+ * ステッパー内にエラーメッセージを表示/消去する（空文字またはnullで消去）。
+ *
+ * @param {HTMLElement} stepperEl - .modal-stepper 要素
+ * @param {string|null} message
+ * @returns {void}
+ */
+function setStepperError(stepperEl, message) {
+    let el = stepperEl.querySelector(".stepper-error");
+    if (!el) {
+        const nextButton = stepperEl.querySelector(".next-button");
+        if (!nextButton) return;
+        el = document.createElement("div");
+        el.className = "stepper-error";
+        nextButton.parentNode.insertBefore(el, nextButton);
+    }
+    el.textContent = message ?? "";
+    el.classList.toggle("show", Boolean(message));
+}
+
 // ==============================
 // API実行メソッド
 // ==============================
@@ -154,6 +228,7 @@ async function requestThemeGenerateDescriptionsAPI() {
             return;
         }
         descriptionInput.value = result["description"];
+        updateCharCounter(descriptionInput);
 
         button.classList.remove("loading");
         button.classList.add("complete");
@@ -185,6 +260,11 @@ async function requestThemeGenerateDescriptionsAPI() {
  * @returns {Promise<Array<Object>|undefined>} レスポンスJSON
  */
 async function requestThemePostDraftAPI(onComplete) {
+    // 保険: 文字数超過時は投稿しない（通常はステッパーで止まる）
+    if (countChars(themeInput?.value) > THEME_TITLE_MAX || countChars(descriptionInput?.value) > THEME_DESCRIPTION_MAX) {
+        console.warn("文字数超過のため投稿を中止");
+        return;
+    }
     const access_key = USER_ACCESS_KEY;
     const theme = themeInput.value;
     const comments = getMultiInputValues(commentInputList).join(splitter);
@@ -471,6 +551,10 @@ function restoreDraft(){
     if (commentsDraft) {setMultiInputValues(commentInputList, commentsDraft.split(splitter));}
     if (descriptionDraft) {descriptionInput.value = descriptionDraft;}
     if (categorySelectManager) {categorySelectManager.setSelectedValue(categoryDraft);}
+
+    // 復元した値をカウンターへ反映
+    updateCharCounter(themeInput);
+    updateCharCounter(descriptionInput);
 }
 
 /**
@@ -481,6 +565,7 @@ function restoreDraft(){
 function bindDraftRecorder(){
     themeInput.addEventListener("input", (e) => {
         setLocalStorage(`${mode}_CREATE_DRAFT_THEME`, e.target.value);
+        updateCharCounter(themeInput);
     });
     axisInputList.forEach((input) => {
         input.addEventListener("input", (e) => {
@@ -494,6 +579,7 @@ function bindDraftRecorder(){
     });
     descriptionInput.addEventListener("input", (e) => {
         setLocalStorage(`${mode}_CREATE_DRAFT_DESCRIPTION`, e.target.value);
+        updateCharCounter(descriptionInput);
     });
 
     categorySelectManager.addOnChange((categoryNo) => {
@@ -571,7 +657,13 @@ function bindNextButtonEvents() {
 
     nextButtons.forEach((buttonElement) => {
         buttonElement.addEventListener('click', () => {
-            
+
+            // 文字数超過なら進めない（AI生成・下書き復元などmaxlengthが効かない経路の捕捉）
+            const stepperEl = buttonElement.closest(".modal-stepper");
+            const lengthError = getLengthError(stepperEl);
+            setStepperError(stepperEl, lengthError);
+            if (lengthError) return;
+
             // ボタン自身が持つ data-control-no を数値で取得
             const buttonControlNo = Number(buttonElement.dataset.controlNo);
             
@@ -977,11 +1069,12 @@ const aiAssistModeHtml =`
         <div class="modal-stepper-content show">
             <div class="modal-stepper-content-wrapper">
                 <div class="input-group">
-                    <textarea id="theme-title-textarea" class="hidden-input auto-resize target-input" rows="1" placeholder="テーマを入力"></textarea>
+                    <textarea id="theme-title-textarea" class="hidden-input auto-resize target-input" rows="1" placeholder="テーマを入力" maxlength="80"></textarea>
                     <button class="button secondary-border clear-button" data-target="theme-title-textarea">
                         <i class="bi bi-x"></i>
                     </button>
                 </div>
+                <div class="char-counter" data-counter-for="theme-title-textarea"></div>
                 <div class="stack center spacing-8px width-full">
                     <div class="modal-content-description">40字程度までのシンプルな内容にしてみましょう。</div>
                     <div class="modal-content-description">意見や議論の余地があるオープンな問いがおすすめです。</div>
@@ -1152,11 +1245,12 @@ const aiAssistModeHtml =`
                     </div>
                 </button>
                 <div class="input-group">
-                    <textarea id="description-textarea" class="hidden-input auto-resize target-input" rows="1" placeholder="テーマの説明を入力"></textarea>
+                    <textarea id="description-textarea" class="hidden-input auto-resize target-input" rows="1" placeholder="テーマの説明を入力" maxlength="200"></textarea>
                     <button class="button secondary-border clear-button" data-target="description-textarea">
                         <i class="bi bi-x"></i>
                     </button>
                 </div>
+                <div class="char-counter" data-counter-for="description-textarea"></div>
                 <button class="next-button button secondary" data-control-no="4">
                     <div class="text">次へ</div>
                 </button>
@@ -1243,11 +1337,12 @@ const manualModeHtml =`
         <div class="modal-stepper-content show">
             <div class="modal-stepper-content-wrapper">
                 <div class="input-group">
-                    <textarea id="theme-title-textarea" class="hidden-input auto-resize target-input" rows="1" placeholder="テーマを入力"></textarea>
+                    <textarea id="theme-title-textarea" class="hidden-input auto-resize target-input" rows="1" placeholder="テーマを入力" maxlength="80"></textarea>
                     <button class="button secondary-border clear-button" data-target="theme-title-textarea">
                         <i class="bi bi-x"></i>
                     </button>
                 </div>
+                <div class="char-counter" data-counter-for="theme-title-textarea"></div>
                 <div class="stack center spacing-8px width-full">
                     <div class="modal-content-description">40字程度までのシンプルな内容にしてみましょう。</div>
                     <div class="modal-content-description">意見や議論の余地があるオープンな問いがおすすめです。</div>
@@ -1388,11 +1483,12 @@ const manualModeHtml =`
                     <div class="modal-content-description">理由などをわかりやすく記載してください。</div>
                 </div>
                 <div class="input-group">
-                    <textarea id="description-textarea" class="hidden-input auto-resize target-input" rows="1" placeholder="テーマの説明を入力"></textarea>
+                    <textarea id="description-textarea" class="hidden-input auto-resize target-input" rows="1" placeholder="テーマの説明を入力" maxlength="200"></textarea>
                     <button class="button secondary-border clear-button" data-target="description-textarea">
                         <i class="bi bi-x"></i>
                     </button>
                 </div>
+                <div class="char-counter" data-counter-for="description-textarea"></div>
                 <button class="next-button button secondary" data-control-no="3">
                     <div class="text">次へ</div>
                 </button>
