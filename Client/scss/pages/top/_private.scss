@@ -117,6 +117,18 @@
                 }
             }
 
+            .step-image {
+                margin: 16px 0 8px;
+
+                img {
+                    width: auto;
+                    max-width: min(100%, 720px);
+                    height: auto;
+                    border: 1px solid #E0E0DC;
+                    border-radius: 8px;
+                }
+            }
+
             .step-list {
                 counter-reset: step;
                 margin-top: 16px;

@@ -101,7 +101,7 @@
                         <p>結論からお伝えすると、<strong>現在のPolisJAPANの仕組みでは、プライベート版（限定公開版）を提供することはできません。</strong></p>
                         <p>このページでは、その理由と、次善の解決策として本家Polis（pol.is）を利用して「URLを知っている人だけが参加できる」議題を作成する方法をご紹介します。</p>
 
-                        <h2>1 <div class="title">現在の仕組みではプライベート版はできません</div></h2>
+                        <h2>1. <div class="title">現在の仕組みではプライベート版はできません</div></h2>
                         <p>PolisJAPANは、投票や意見グループ化などのコア機能を本家Polis（pol.is）に任せ、その上に日本語UI・テーマ一覧・分析画面などを提供する構成になっています。</p>
 
                         <div class="flow-diagram">
@@ -144,7 +144,7 @@
                             </li>
                         </ul>
 
-                        <h2>2 <div class="title">「個別デプロイ」にはAGPLライセンスの壁があります</div></h2>
+                        <h2>2. <div class="title">個別デプロイにはAGPLライセンスの壁があります</div></h2>
                         <p>Polisはオープンソースソフトウェアなので、「自社のサーバーにPolisを構築（個別デプロイ）すればプライベート版が作れるのでは？」と思われるかもしれません。技術的にはその通りですが、ここには<strong>AGPL-3.0ライセンス</strong>という大きなハードルがあります。</p>
 
                         <div class="flow-diagram">
@@ -179,7 +179,7 @@
                             </li>
                         </ul>
 
-                        <h2>3 <div class="title">次善策：本家Polisで「URLを知っている人だけ」の議題を作る</div></h2>
+                        <h2>3. <div class="title">次善策：本家Polisで「URLを知っている人だけ」の議題を作る</div></h2>
                         <p>厳密なアクセス制御はできませんが、<strong>本家Polis（pol.is）を直接使う</strong>ことで、「URLを共有された人だけが参加できる」議題を作ることができます。</p>
                         <p>本家Polisで作成した議題（Conversation）は、どこかの公開一覧に自動掲載されることはありません。ユーザー認証こそできないものの、URLを知らない人はたどり着けないという意味で、<strong>「弱いプライベート」を確保した運用</strong>が可能です。</p>
 
@@ -203,57 +203,93 @@
                             </div>
                         </div>
 
-                        <h2>4 <div class="title">作成手順</div></h2>
-                        <p>本家Polisでの議題作成の流れは次の通りです。</p>
+                        <h2>4. <div class="title">作成手順</div></h2>
+                        <p>本家Polisでの議題作成の流れは次の通りです。掲載している画面は、実際の本家Polis（pol.is）の管理画面です（2026年7月時点。画面や項目は変更される場合があります）。</p>
 
                         <ol class="step-list">
                             <li>
-                                <h3>アカウントを作成する</h3>
-                                <p><a href="https://pol.is/home" target="_blank" rel="noopener">https://pol.is/home</a> にアクセスし、画面右上の「Sign in」からアカウントを作成します。</p>
+                                <h3>アカウントを作成してログインする</h3>
+                                <p><a href="https://pol.is/signin" target="_blank" rel="noopener">https://pol.is/signin</a> にアクセスし、「Sign In」ボタンを押すとログイン画面が表示されます。初めての場合は「Sign up」からメールアドレスでアカウントを作成します（GoogleアカウントやGitHubアカウントでのログインも可能です）。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/01-signin.png" alt="pol.isのログイン画面。メールアドレスとパスワードの入力欄、Sign upリンク、Google・GitHubログインボタンがある" loading="lazy">
+                                </figure>
                             </li>
                             <li>
-                                <h3>議題（Conversation）を作成する</h3>
-                                <p>ログイン後、「Create new conversation」ボタンをクリックします。</p>
+                                <h3>新しい議題の作成を開始する</h3>
+                                <p>ログインすると自分の議題一覧（All Conversations）が表示されます。「Create new conversation」ボタンをクリックします。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/02-create.png" alt="ログイン後のAll Conversations画面。上部にCreate new conversationボタンがある" loading="lazy">
+                                </figure>
+                            </li>
+                            <li>
+                                <h3>「Create Conversation」で作成を確定する</h3>
+                                <p>有料版（Polis 2）の案内が表示されるので、下部の「Create Conversation」ボタンをクリックします。この時点で議題が作成され、議題ごとのURLが割り当てられます。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/03-create-dialog.png" alt="Polis 2の案内ダイアログ。下部にMaybe LaterとCreate Conversationの2つのボタンがある" loading="lazy">
+                                </figure>
                             </li>
                             <li>
                                 <h3>Topic と Description を入力する</h3>
-                                <p>Topic欄に議題のタイトルを、Description欄に議題の説明・背景を記入します。</p>
-                            </li>
-                            <li>
-                                <h3>準備が終わるまで議題を閉じておく</h3>
-                                <p>「Conversation is open. …」というチェックボックスは、<strong>準備が完了するまで外しておきます</strong>。チェックを外している間、参加者は議題にアクセスできません。</p>
+                                <p>作成直後に開くConfigure（設定）画面で、Topic欄に議題のタイトルを、Description欄に議題の説明・背景を記入します。入力内容は自動保存され、保存されると画面上部に「Up to date」と表示されます。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/04-configure.png" alt="Configure画面。Conversation is openのチェックボックス、Topic欄、Description欄に日本語の議題内容が入力されている" loading="lazy">
+                                </figure>
                             </li>
                             <li>
                                 <h3>Seed Comments（初期意見）を登録する</h3>
-                                <p>主催者側であらかじめ10〜20個程度の意見（論点）を登録しておくと、参加者が最初から投票しやすくなります。</p>
+                                <p>Seed Commentsの入力欄に意見を1件ずつ入力し、「Submit」をクリックします。登録に成功するとボタンが「Success!」に変わります。主催者側であらかじめ10〜20個程度の意見（論点）を登録しておくと、参加者が最初から投票しやすくなります。CSVファイルでの一括登録も可能です。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/05-seed-input.png" alt="Seed Commentsの入力欄に意見を入力した状態" loading="lazy">
+                                </figure>
+                                <figure class="step-image">
+                                    <img src="/private/img/06-seed-done.png" alt="Submit後、ボタンがSuccess!表示に変わり入力欄がクリアされた状態" loading="lazy">
+                                </figure>
                             </li>
                             <li>
                                 <h3>ユーザーインターフェースを設定する</h3>
                                 <p>「Customize the user interface」のチェックボックス群で、運用方針に合わせて設定します。</p>
                                 <ul>
-                                    <li><p>・「Participants can submit comments」：参加者による意見投稿を許可するか</p></li>
+                                    <li><p>・「Participants can see the visualization」：意見グループの可視化（グラフ）を参加者にも見せるか</p></li>
+                                    <li><p>・「Participants can submit comments」：参加者による意見投稿を許可するか（既定でオン）</p></li>
                                     <li><p>・「No comments shown without moderator approval」：投稿された意見を主催者の承認制にするか（限定メンバーでの運用では承認制をおすすめします）</p></li>
-                                    <li><p>・Facebook / Twitterログインが不要な場合は、該当のチェックを外します</p></li>
                                 </ul>
+                                <p>※ 以前あったFacebook / Twitterログインの設定項目は、現在のpol.isにはありません。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/07-ui-settings.png" alt="Customize the user interfaceのチェックボックス群。No comments shown without moderator approvalにチェックが入っている" loading="lazy">
+                                </figure>
                             </li>
                             <li>
-                                <h3>議題を公開状態にする</h3>
-                                <p>準備ができたら「Conversation is open. …」にチェックを入れて、議題を有効化します。</p>
+                                <h3>公開状態を管理する</h3>
+                                <p>Configure画面の最上部にある「Conversation is open.」チェックボックスで、議題の受付状態を切り替えます（作成直後はオン）。チェックを外すと、参加者の投票・意見投稿がすべて停止します。</p>
+                                <p>なお、チェックを外している間は主催者によるSeed Commentsの登録もエラーになるため、<strong>準備作業はオンのまま行い、URLを配る前に作業を終える</strong>のがスムーズです（URLを共有するまで参加者は誰も来られません）。開催終了後にチェックを外せば、結果を凍結して締め切ることができます。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/08-closed.png" alt="Conversation is openのチェックを外した状態のConfigure画面" loading="lazy">
+                                </figure>
                             </li>
                             <li>
                                 <h3>URLを参加者にだけ共有する</h3>
-                                <p>左メニューの「Distribute」を開くと参加用URLが表示されます。このURLを、<strong>参加してほしい相手にだけ</strong>メールや社内チャットなどのクローズドな手段で共有します。</p>
+                                <p>左メニューの「Distribute」を開くと、Share欄に参加用URL（https://pol.is/議題ID）が表示されます。このURLを、<strong>参加してほしい相手にだけ</strong>メールや社内チャットなどのクローズドな手段で共有します。自社サイトなどに埋め込むためのEmbedコードもここで取得できます。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/09-distribute.png" alt="Distribute画面。Share欄に参加用URL、Embed欄に埋め込みコードが表示されている" loading="lazy">
+                                </figure>
                             </li>
                             <li>
                                 <h3>運用する</h3>
-                                <p>開催中は左メニューの「Moderate」（意見の承認・却下）、「Monitor」（参加状況の確認）、「Report」（結果レポートの表示）を使って運用します。</p>
+                                <p>開催中は左メニューの「Moderate」で投稿された意見の承認・却下を行います（承認制にした場合、承認するまで参加者には表示されません）。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/10-moderate.png" alt="Moderate画面。Unmoderated・Accepted・Rejectedのタブで意見を管理する" loading="lazy">
+                                </figure>
+                                <p>「Monitor」では参加者数・投票数・意見数などの参加状況を確認できます。結果のレポートは「Reports」から作成・共有できます。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/11-monitor.png" alt="Monitor画面。参加者数や投票数の統計が表示される" loading="lazy">
+                                </figure>
                             </li>
                         </ol>
 
-                        <p>より詳しい画面付きの解説は、こちらの記事が参考になります。</p>
+                        <p>あわせて、こちらの解説記事も参考になります。</p>
                         <p><a href="https://note.com/tasaki_tomohiro/n/n8f0dd76ecd00" target="_blank" rel="noopener">Pol.isの使い方（note記事）</a></p>
 
-                        <h2>5 <div class="title">この方法の注意点</div></h2>
+                        <h2>5. <div class="title">この方法の注意点</div></h2>
                         <p>この方法は、あくまで「URLを知らない人はたどり着けない」という弱い限定公開です。次の点にご注意ください。</p>
                         <ul>
                             <li>

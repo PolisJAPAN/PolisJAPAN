@@ -4543,6 +4543,16 @@ textarea.skeleton-loading::placeholder {
   font-size: 18px;
   line-height: 1;
 }
+#private #private-content .content-text .step-image {
+  margin: 16px 0 8px;
+}
+#private #private-content .content-text .step-image img {
+  width: auto;
+  max-width: min(100%, 720px);
+  height: auto;
+  border: 1px solid #E0E0DC;
+  border-radius: 8px;
+}
 #private #private-content .content-text .step-list {
   counter-reset: step;
   margin-top: 16px;
