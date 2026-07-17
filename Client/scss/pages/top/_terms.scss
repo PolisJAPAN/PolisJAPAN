@@ -1,6 +1,6 @@
 @use "../../common" as common;
 
-#terms, #policy, #license {
+#terms, #policy, #license, #private {
     #footer {
         .section-bg {
             height: calc(100% + 0px);
@@ -29,7 +29,7 @@
         }
     }
 
-    #terms-content, #policy-content, #license-content {
+    #terms-content, #policy-content, #license-content, #private-content {
         margin-top: calc(128px + 146px + 32px);
         color: var(--color-font-dark);
 
@@ -134,7 +134,7 @@
     
     }
     @media (max-width: 768px) {
-        #terms-content {
+        #terms-content, #private-content {
             @include common.padding-top-0px;
         }
 
@@ -163,9 +163,9 @@
             }
         }
 
-        #terms-content {
+        #terms-content, #private-content {
             .content-wrapper {
-                
+
                 .text-card {
                     @include common.padding-32px;
         
