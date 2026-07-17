@@ -4543,6 +4543,12 @@ textarea.skeleton-loading::placeholder {
   font-size: 18px;
   line-height: 1;
 }
+#private #private-content .content-text .term-note {
+  line-height: 1.6;
+  font-size: var(--font-size-12px, 12px);
+  color: var(--color-font-dark-gray-2);
+  padding-left: 16px;
+}
 #private #private-content .content-text .step-image {
   margin: 16px 0 8px;
 }

@@ -117,6 +117,13 @@
                 }
             }
 
+            .term-note {
+                @include common.line-spacing-large;
+                font-size: var(--font-size-12px, 12px);
+                color: var(--color-font-dark-gray-2);
+                padding-left: 16px;
+            }
+
             .step-image {
                 margin: 16px 0 8px;
 
