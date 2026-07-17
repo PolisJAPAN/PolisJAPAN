@@ -64,6 +64,9 @@
                 @include common.relative;
                 @include common.height-full;
 
+                display: inline-flex;
+                align-items: center;
+
                 color: var(--color-font-dark);
                 cursor: pointer;
 
@@ -300,6 +303,8 @@
                         @include common.width-fit;
                         @include common.padding-bottom-12px;
                         @include common.relative;
+
+                        display: inline-block;
     
                         color: var(--color-light);
                         cursor: pointer;

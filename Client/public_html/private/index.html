@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>プライベート版について | Polis JAPAN</title>
+    <meta name="description" content="PolisJAPANのプライベート版（限定公開版）に関するご案内です。現在の仕組みでプライベート版を提供できない理由と、本家Polisを利用した限定公開議題の作成手順をご紹介します。">
+
+    <!-- Canonical / Robots -->
+    <link rel="canonical" href="https://pol-is.jp/private">
+    <meta name="robots" content="index, follow">
+
+    <!-- OGP -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="プライベート版について | Polis JAPAN">
+    <meta property="og:title" content="プライベート版について | Polis JAPAN">
+    <meta property="og:description" content="PolisJAPANのプライベート版（限定公開版）に関するご案内です。現在の仕組みでプライベート版を提供できない理由と、本家Polisを利用した限定公開議題の作成手順をご紹介します。">
+    <meta property="og:url" content="https://pol-is.jp/private">
+    <meta property="og:image" content="http://pol-is.jp/images/polis-icon.png">
+    <meta property="og:locale" content="ja_JP">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="プライベート版について | Polis JAPAN">
+    <meta name="twitter:description" content="PolisJAPANのプライベート版（限定公開版）に関するご案内です。">
+    <meta name="twitter:image" content="http://pol-is.jp/images/og-image.png">
+
+    <!-- Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- PWA / Favicon -->
+    <meta name="theme-color" content="#FFFFFF">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/polis-icon.png">
+
+    <!-- Fonts: Inter + Noto Sans JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/style.css?v=__ASSET_VERSION__">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <!-- Structured Data (JSON-LD / WebSite) -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "プライベート版について | Polis JAPAN",
+            "url": "https://pol-is.jp/private",
+            "inLanguage": "ja-JP"
+        }
+    </script>
+</head>
+
+<body id="private">
+    <header id="header">
+        <div id="menu">
+            <div class="menu-container">
+                <div class="menu-left">
+                    <img class="logo" src="/images/common/logo-dark.png" alt="">
+                </div>
+                <div class="menu-right">
+                    <a class="button space-expand-button secondary" href="https://pol-is.jp/">
+                        <i class="bi bi-chevron-left"></i>
+                        <div class="text">戻る</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-expand-button hidden">
+            <div class="btn-bg"></div>
+            <div class="btn-trigger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <main id="main" role="main">
+        <section id="private-content">
+            <div class="section-bg"></div>
+            <div class="content-wrapper">
+                <div class="section-title">
+                    <p class="text scroll-fade-in">PRIVATE USE</p>
+                    <h2 class="text scroll-fade-in" data-delay="0.3">プライベート版について</h2>
+                </div>
+
+                <div class="text-card scroll-fade-in" data-delay="0.5">
+                    <div class="content-text">
+                        <p>「社内・組織内のメンバーだけで使えるプライベートなPolisを作れませんか？」というお問い合わせを多くいただいています。</p>
+                        <p>結論からお伝えすると、<strong>現在のPolisJAPANの仕組みでは、プライベート版（限定公開版）を提供することはできません。</strong></p>
+                        <p>このページでは、その理由と、次善の解決策として、PolisJAPANの元になっている本家のサービス「Polis（pol.is）」を利用して「URLを知っている人だけが参加できる」議題を作成する方法をご紹介します。</p>
+
+                        <h2>1. <div class="title">現在の仕組みではプライベート版はできません</div></h2>
+                        <p>PolisJAPANは、投票や意見の分析といった中核の機能を、元となっているアメリカのサービス「本家Polis（pol.is）」に任せ、その上に日本語の画面やテーマ一覧・分析画面を提供する構成になっています。</p>
+
+                        <div class="flow-diagram">
+                            <div class="flow-node">
+                                <i class="node-icon bi bi-people-fill"></i>
+                                <div class="node-title">利用者</div>
+                                <div class="node-detail">ログイン不要<br>誰でもアクセス可能</div>
+                            </div>
+                            <i class="flow-arrow bi bi-arrow-right"></i>
+                            <div class="flow-node">
+                                <i class="node-icon bi bi-window"></i>
+                                <div class="node-title">PolisJAPAN</div>
+                                <div class="node-detail">日本語の画面・テーマ一覧・分析<br>すべてのテーマを公開一覧に掲載</div>
+                            </div>
+                            <i class="flow-arrow bi bi-arrow-right"></i>
+                            <div class="flow-node">
+                                <i class="node-icon bi bi-globe"></i>
+                                <div class="node-title">本家 Polis（pol.is）</div>
+                                <div class="node-detail">投票・意見の分析<br>データ保管（外部のサービス）</div>
+                            </div>
+                        </div>
+                        <div class="flow-caption">
+                            <i class="bi bi-x-circle-fill"></i>
+                            <span>どこにも「アクセス制限（ログイン）」を挟む場所がありません</span>
+                        </div>
+
+                        <p>この構成のため、次の3つの理由からプライベート版を実現できません。</p>
+                        <ul>
+                            <li>
+                                <h3>1. ログイン（本人確認）の仕組みがない</h3>
+                                <p>PolisJAPANにはログイン機能がなく、すべてのページを誰でも閲覧できます。「特定のメンバーだけに見せる」ための入口を用意できません。</p>
+                            </li>
+                            <li>
+                                <h3>2. テーマはすべて公開一覧に掲載される</h3>
+                                <p>PolisJAPANで作成されたテーマは、公開のテーマ一覧に掲載されることを前提とした設計になっています。</p>
+                            </li>
+                            <li>
+                                <h3>3. 中核の機能が外部のサービス上にある</h3>
+                                <p>投票や意見の分析は、本家Polis（pol.is）側のコンピューター（サーバー）上で動いています。外部のサービスであるため、PolisJAPAN側でそのアクセスを制限することはできません。</p>
+                            </li>
+                        </ul>
+
+                        <h2>2. <div class="title">個別デプロイにはAGPLライセンスの壁があります</div></h2>
+                        <p>Polisは「オープンソースソフトウェア」として公開されているため、「自社の設備にPolisを丸ごと設置（個別デプロイ）すれば、プライベート版が作れるのでは？」と思われるかもしれません。技術的にはその通りですが、ここには<strong>AGPL-3.0ライセンス</strong>という大きなハードルがあります。</p>
+                        <p class="term-note">※ オープンソースソフトウェア … プログラムの設計図（ソースコード）が一般公開されていて、誰でも無償で利用したり、手を加えたりできるソフトウェアのこと。</p>
+                        <p class="term-note">※ 個別デプロイ … 公開されているソフトウェアを、自社専用のシステムとして自社管理のコンピューター（サーバー）上に設置して動かすこと。</p>
+                        <p class="term-note">※ ライセンス … ソフトウェアの利用条件を定めたルールのこと。AGPL-3.0はその一種です。</p>
+
+                        <div class="flow-diagram">
+                            <div class="flow-node">
+                                <i class="node-icon bi bi-hdd-network"></i>
+                                <div class="node-title">自社の設備にPolisを設置</div>
+                                <div class="node-detail">独自の改修・社内システムとの連携</div>
+                            </div>
+                            <i class="flow-arrow bi bi-arrow-right"></i>
+                            <div class="flow-node">
+                                <i class="node-icon bi bi-people-fill"></i>
+                                <div class="node-title">インターネット経由で利用者へ提供</div>
+                                <div class="node-detail">社内利用・限定公開でも該当</div>
+                            </div>
+                            <i class="flow-arrow bi bi-arrow-right"></i>
+                            <div class="flow-node warning">
+                                <i class="node-icon bi bi-exclamation-triangle-fill"></i>
+                                <div class="node-title">設計図（ソースコード）の公開義務</div>
+                                <div class="node-detail">独自の改修部分も含めて<br>公開が必要になる</div>
+                            </div>
+                        </div>
+
+                        <p>AGPL-3.0には、「インターネット経由でサービスとして提供する場合でも、手を加えたプログラムの設計図（ソースコード）全体を利用者に公開する義務が生じる」という、非常に強い決まりがあります。社内だけで使う場合でも、この義務の対象になり得ます。</p>
+                        <ul>
+                            <li>
+                                <h3>商用利用・非公開の運用には向きません</h3>
+                                <p>商用利用そのものは禁止されていませんが、独自に開発した改修や社内システムとの連携部分も公開の対象になり得るため、「自社だけのノウハウとして非公開にしたい」という一般的な企業利用とは相性がよくありません。</p>
+                            </li>
+                            <li>
+                                <h3>構築・運用の費用も掛かります</h3>
+                                <p>ライセンスの問題に加えて、システムを動かし続けるためのコンピューター（サーバー）の準備・保守・セキュリティ対応など、継続的な費用と専門知識が必要になります。</p>
+                            </li>
+                        </ul>
+
+                        <h2>3. <div class="title">次善策：本家Polisで「URLを知っている人だけ」の議題を作る</div></h2>
+                        <p>ログインによる厳密な入場制限はできませんが、<strong>本家Polis（pol.is）を直接使う</strong>ことで、「URLを共有された人だけが参加できる」議題を作ることができます。</p>
+                        <p>本家Polisで作成した議題（Conversation）は、どこかの公開一覧に自動で掲載されることはありません。ログインによる本人確認こそできないものの、URLを知らない人はたどり着けないという意味で、<strong>「弱いプライベート」を確保した運用</strong>が可能です。</p>
+
+                        <div class="flow-diagram">
+                            <div class="flow-node">
+                                <i class="node-icon bi bi-person-gear"></i>
+                                <div class="node-title">主催者</div>
+                                <div class="node-detail">pol.isで議題を作成<br>URLを参加者にだけ共有</div>
+                            </div>
+                            <i class="flow-arrow bi bi-arrow-right"></i>
+                            <div class="flow-node">
+                                <i class="node-icon bi bi-envelope-check"></i>
+                                <div class="node-title">URLを知っている参加者</div>
+                                <div class="node-detail">メール・社内チャットなどで<br>URLを受け取った人だけが参加</div>
+                            </div>
+                            <i class="flow-arrow crossed bi bi-arrow-right"></i>
+                            <div class="flow-node grayed">
+                                <i class="node-icon bi bi-person-slash"></i>
+                                <div class="node-title">URLを知らない人</div>
+                                <div class="node-detail">公開一覧に載らないため<br>たどり着けない</div>
+                            </div>
+                        </div>
+
+                        <h2>4. <div class="title">作成手順</div></h2>
+                        <p>本家Polisでの議題作成の流れは次の通りです。掲載している画面は、実際の本家Polis（pol.is）の管理画面です（2026年7月時点。画面や項目は変更される場合があります）。</p>
+
+                        <ol class="step-list">
+                            <li>
+                                <h3>アカウントを作成してログインする</h3>
+                                <p><a href="https://pol.is/signin" target="_blank" rel="noopener">https://pol.is/signin</a> にアクセスし、「Sign In」ボタンを押すとログイン画面が表示されます。初めての場合は「Sign up」からメールアドレスでアカウントを作成します（GoogleアカウントやGitHubアカウントでのログインも可能です）。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/01-signin.png" alt="pol.isのログイン画面。メールアドレスとパスワードの入力欄、Sign upリンク、Google・GitHubログインボタンがある" loading="lazy">
+                                </figure>
+                            </li>
+                            <li>
+                                <h3>新しい議題の作成を開始する</h3>
+                                <p>ログインすると自分の議題一覧（All Conversations）が表示されます。「Create new conversation」ボタンをクリックします。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/02-create.png" alt="ログイン後のAll Conversations画面。上部にCreate new conversationボタンがある" loading="lazy">
+                                </figure>
+                            </li>
+                            <li>
+                                <h3>「Create Conversation」で作成を確定する</h3>
+                                <p>有料版（Polis 2）の案内が表示されますが、下部の「Create Conversation」ボタンをクリックすると、<strong>無料の従来版（Polis 1）で議題が作成されます</strong>。この時点で議題が作成され、議題ごとのURLが割り当てられます。</p>
+                                <p>※ Polis 2は有料のProプラン向けに案内されている新機能で、2026年7月時点ではまだ本格提供されていません。本ページの手順はすべて無料の従来版（Polis 1）で完結します。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/03-create-dialog.png" alt="Polis 2の案内ダイアログ。下部にMaybe LaterとCreate Conversationの2つのボタンがある" loading="lazy">
+                                </figure>
+                            </li>
+                            <li>
+                                <h3>Topic と Description を入力する</h3>
+                                <p>作成直後に開くConfigure（設定）画面で、Topic欄に議題のタイトルを、Description欄に議題の説明・背景を記入します。入力内容は自動保存され、保存されると画面上部に「Up to date」と表示されます。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/04-configure.png" alt="Configure画面。Conversation is openのチェックボックス、Topic欄、Description欄に日本語の議題内容が入力されている" loading="lazy">
+                                </figure>
+                            </li>
+                            <li>
+                                <h3>Seed Comments（初期意見）を登録する</h3>
+                                <p>Seed Commentsの入力欄に意見を1件ずつ入力し、「Submit」をクリックします。登録に成功するとボタンが「Success!」に変わります。主催者側であらかじめ10〜20個程度の意見（論点）を登録しておくと、参加者が最初から投票しやすくなります。一覧表ファイル（CSV：Excelなどの表計算ソフトで作成できる形式）での一括登録も可能です。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/05-seed-input.png" alt="Seed Commentsの入力欄に意見を入力した状態" loading="lazy">
+                                </figure>
+                                <figure class="step-image">
+                                    <img src="/private/img/06-seed-done.png" alt="Submit後、ボタンがSuccess!表示に変わり入力欄がクリアされた状態" loading="lazy">
+                                </figure>
+                            </li>
+                            <li>
+                                <h3>ユーザーインターフェースを設定する</h3>
+                                <p>「Customize the user interface」のチェックボックス群で、運用方針に合わせて設定します。</p>
+                                <ul>
+                                    <li><p>・「Participants can see the visualization」：意見グループの可視化（グラフ）を参加者にも見せるか</p></li>
+                                    <li><p>・「Participants can submit comments」：参加者による意見投稿を許可するか（既定でオン）</p></li>
+                                    <li><p>・「No comments shown without moderator approval」：投稿された意見を主催者の承認制にするか（限定メンバーでの運用では承認制をおすすめします）</p></li>
+                                </ul>
+                                <p>※ 以前あったFacebook / Twitterログインの設定項目は、現在のpol.isにはありません。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/07-ui-settings.png" alt="Customize the user interfaceのチェックボックス群。No comments shown without moderator approvalにチェックが入っている" loading="lazy">
+                                </figure>
+                            </li>
+                            <li>
+                                <h3>公開状態を管理する</h3>
+                                <p>Configure画面の最上部にある「Conversation is open.」チェックボックスで、議題の受付状態を切り替えます（作成直後はオン）。チェックを外すと、参加者の投票・意見投稿がすべて停止します。</p>
+                                <p>なお、チェックを外している間は主催者によるSeed Commentsの登録もエラーになるため、<strong>準備作業はオンのまま行い、URLを配る前に作業を終える</strong>のがスムーズです（URLを共有するまで参加者は誰も来られません）。開催終了後にチェックを外せば、結果を凍結して締め切ることができます。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/08-closed.png" alt="Conversation is openのチェックを外した状態のConfigure画面" loading="lazy">
+                                </figure>
+                            </li>
+                            <li>
+                                <h3>URLを参加者にだけ共有する</h3>
+                                <p>左メニューの「Distribute」を開くと、Share欄に参加用URL（https://pol.is/議題ID）が表示されます。このURLを、<strong>参加してほしい相手にだけ</strong>メールや社内チャットなど閉じた手段で共有します。自社のWebサイト内に議題をそのまま表示するための埋め込み用コード（Embed）もここで取得できます。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/09-distribute.png" alt="Distribute画面。Share欄に参加用URL、Embed欄に埋め込みコードが表示されている" loading="lazy">
+                                </figure>
+                            </li>
+                            <li>
+                                <h3>運用する</h3>
+                                <p>開催中は左メニューの「Moderate」で投稿された意見の承認・却下を行います（承認制にした場合、承認するまで参加者には表示されません）。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/10-moderate.png" alt="Moderate画面。Unmoderated・Accepted・Rejectedのタブで意見を管理する" loading="lazy">
+                                </figure>
+                                <p>「Monitor」では参加者数・投票数・意見数などの参加状況を確認できます。結果のレポートは「Reports」から作成・共有できます。</p>
+                                <figure class="step-image">
+                                    <img src="/private/img/11-monitor.png" alt="Monitor画面。参加者数や投票数の統計が表示される" loading="lazy">
+                                </figure>
+                            </li>
+                        </ol>
+
+                        <h2>5. <div class="title">この方法の注意点</div></h2>
+                        <p>この方法は、あくまで「URLを知らない人はたどり着けない」という弱い限定公開です。次の点にご注意ください。</p>
+                        <ul>
+                            <li>
+                                <h3>1. URLが漏れれば誰でも参加できます</h3>
+                                <p>URLの転送や漏えいがあれば、意図しない人も参加できてしまいます。参加者ごとにログインさせて本人確認する仕組みはありません。</p>
+                            </li>
+                            <li>
+                                <h3>2. URLは閉じた手段で共有してください</h3>
+                                <p>誰でも見られるSNSやWebページに掲載すると、検索などを通じて広まってしまう恐れがあります。メール・社内チャットなど、相手が限られる手段で共有してください。</p>
+                            </li>
+                            <li>
+                                <h3>3. データは本家Polis側に保存されます</h3>
+                                <p>投稿された意見・投票データは、米国のThe Computational Democracy Projectが運営するpol.isのコンピューター（サーバー）に保存されます。機密情報の取り扱いには十分ご注意ください。</p>
+                            </li>
+                            <li>
+                                <h3>4. 厳密なアクセス制限が必要な場合には適しません</h3>
+                                <p>「ログインした社員のみ」「特定メンバーのみ」といった厳密なアクセス制限が必要な場合、この方法では実現できません。</p>
+                            </li>
+                        </ul>
+
+                        <p class="author">PolisJAPAN 運営チーム</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="footer">
+        <div class="section-bg"></div>
+        <div class="footer-content">
+            <div class="footer-info-item scroll-fade-in">
+                <div class="logo-group">
+                    <img class="logo" src="/images/common/logo-white.png">
+                    <div class="copyright mobile-hidden">Copyright © 2025 PolisJAPAN All Rights Reserved</div>
+                </div>
+
+                <div class="footer-info-group">
+                    <div class="sns-icon-group">
+                        <a href="https://x.com/pol_is_japan" target="_brank">
+                            <i class="sns-icon bi bi-twitter-x"></i>
+                        </a>
+                        <a href="https://github.com/PolisJAPAN/PolisJAPAN" target="_brank">
+                            <i class="sns-icon bi bi-github"></i>
+                        </a>
+                    </div>
+                    <div class="link-group">
+                        <a class="link-text with-border"
+                            href="/terms" target="_brank">利用規約</a>
+                        <a class="link-text with-border"
+                            href="/policy" target="_brank">個人情報の取り扱いについて</a>
+                        <a class="link-text"
+                            href="/license" target="_brank">ライセンス表記</a>
+                    </div>
+                    <div class="copyright desktop-hidden">Copyright © 2025 PolisJAPAN All Rights Reserved</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/javascript/common.js?v=__ASSET_VERSION__" defer></script>
+    <script src="/javascript/terms.js?v=__ASSET_VERSION__" defer></script>
+</body>
+
+</html>

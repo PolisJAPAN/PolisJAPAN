@@ -1,0 +1,236 @@
+@use "../../common" as common;
+
+// プライベート版についてページ（/private）の図解・手順リスト用スタイル
+#private {
+    #private-content {
+        .content-text {
+            strong {
+                @include common.font-weight-bold;
+            }
+
+            .flow-diagram {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: stretch;
+                gap: 8px;
+
+                margin-top: 24px;
+                margin-bottom: 8px;
+                padding: 24px 16px;
+
+                background-color: var(--color-light);
+                border-radius: 16px;
+
+                .flow-node {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    align-items: center;
+                    flex: 1 1 0;
+                    max-width: 240px;
+
+                    padding: 16px 12px;
+                    text-align: center;
+
+                    background-color: var(--color-bg-gray);
+                    border-radius: 12px;
+
+                    .node-icon {
+                        font-size: 28px;
+                        line-height: 1;
+                        color: var(--color-main);
+                    }
+
+                    .node-title {
+                        @include common.font-weight-bold;
+                        @include common.font-size-sub-small;
+                        @include common.line-spacing-large;
+                        margin-top: 8px;
+                    }
+
+                    .node-detail {
+                        font-size: var(--font-size-12px, 12px);
+                        @include common.line-spacing-large;
+                        margin-top: 4px;
+                        color: var(--color-font-dark-gray-2);
+                    }
+
+                    &.warning {
+                        background-color: #FFF3E5;
+
+                        .node-icon {
+                            color: #E9772C;
+                        }
+                    }
+
+                    &.grayed {
+                        opacity: 0.55;
+
+                        .node-icon {
+                            color: var(--color-font-dark-gray);
+                        }
+                    }
+                }
+
+                .flow-arrow {
+                    display: flex;
+                    align-items: center;
+
+                    font-size: 24px;
+                    color: var(--color-main);
+
+                    &.crossed {
+                        position: relative;
+                        color: var(--color-font-dark-gray);
+
+                        &::after {
+                            content: "×";
+                            font-size: 20px;
+                            line-height: 1;
+                            @include common.font-weight-bold;
+                            color: #EE5658;
+                            position: absolute;
+                            top: calc(50% - 24px);
+                            left: calc(50% - 10px);
+                        }
+                    }
+                }
+            }
+
+            .flow-caption {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                gap: 8px;
+
+                margin-bottom: 16px;
+
+                @include common.font-weight-bold;
+                @include common.font-size-sub-small;
+                color: #EE5658;
+
+                .bi {
+                    font-size: 18px;
+                    line-height: 1;
+                }
+            }
+
+            .term-note {
+                @include common.line-spacing-large;
+                font-size: var(--font-size-12px, 12px);
+                color: var(--color-font-dark-gray-2);
+                padding-left: 16px;
+            }
+
+            .step-image {
+                margin: 16px 0 8px;
+
+                img {
+                    width: auto;
+                    max-width: min(100%, 720px);
+                    height: auto;
+                    border: 1px solid #E0E0DC;
+                    border-radius: 8px;
+                }
+            }
+
+            .step-list {
+                counter-reset: step;
+                margin-top: 16px;
+
+                > li {
+                    counter-increment: step;
+                    position: relative;
+
+                    padding: 0 0 24px 56px;
+
+                    &::before {
+                        content: counter(step);
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 36px;
+                        height: 36px;
+
+                        @include common.inter;
+                        @include common.font-weight-bold;
+
+                        color: var(--color-light);
+                        background-color: var(--color-main);
+                        border-radius: 50%;
+                    }
+
+                    // ステップ間をつなぐ縦線
+                    &:not(:last-child)::after {
+                        content: "";
+                        position: absolute;
+                        left: 17px;
+                        top: 40px;
+                        bottom: 4px;
+                        width: 2px;
+                        border-radius: 1px;
+                        background-color: var(--color-main);
+                        opacity: 0.25;
+                    }
+
+                    h3 {
+                        margin-top: 0;
+                        padding-top: 6px;
+                    }
+
+                    ul {
+                        li {
+                            padding-left: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        #private-content {
+            .content-text {
+                .flow-diagram {
+                    flex-direction: column;
+                    align-items: center;
+
+                    .flow-node {
+                        flex: none;
+                        width: 100%;
+                        max-width: 320px;
+                    }
+
+                    .flow-arrow {
+                        transform: rotate(90deg);
+
+                        &.crossed::after {
+                            transform: rotate(-90deg);
+                        }
+                    }
+                }
+
+                .step-list {
+                    > li {
+                        padding-left: 48px;
+
+                        &::before {
+                            width: 32px;
+                            height: 32px;
+                        }
+
+                        &:not(:last-child)::after {
+                            left: 15px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

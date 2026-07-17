@@ -3022,6 +3022,8 @@ textarea.skeleton-loading::placeholder {
   padding-left: 8px;
   position: relative;
   height: 100%;
+  display: inline-flex;
+  align-items: center;
   color: var(--color-font-dark);
   cursor: pointer;
 }
@@ -3237,6 +3239,7 @@ textarea.skeleton-loading::placeholder {
   width: fit-content;
   padding-bottom: 12px;
   position: relative;
+  display: inline-block;
   color: var(--color-light);
   cursor: pointer;
 }
@@ -4313,28 +4316,28 @@ textarea.skeleton-loading::placeholder {
   }
 }
 
-#terms #footer .section-bg, #policy #footer .section-bg, #license #footer .section-bg {
+#terms #footer .section-bg, #policy #footer .section-bg, #license #footer .section-bg, #private #footer .section-bg {
   height: calc(100% + 0px);
   top: 0px;
 }
-#terms #footer .footer-content .footer-info-item, #policy #footer .footer-content .footer-info-item, #license #footer .footer-content .footer-info-item {
+#terms #footer .footer-content .footer-info-item, #policy #footer .footer-content .footer-info-item, #license #footer .footer-content .footer-info-item, #private #footer .footer-content .footer-info-item {
   padding-top: 16px;
   margin-top: 16px;
 }
-#terms #main, #policy #main, #license #main {
+#terms #main, #policy #main, #license #main, #private #main {
   background-color: var(--color-main);
 }
-#terms #menu .menu-container .menu-right .button, #policy #menu .menu-container .menu-right .button, #license #menu .menu-container .menu-right .button {
+#terms #menu .menu-container .menu-right .button, #policy #menu .menu-container .menu-right .button, #license #menu .menu-container .menu-right .button, #private #menu .menu-container .menu-right .button {
   border-radius: 8px;
 }
-#terms #terms-content, #terms #policy-content, #terms #license-content, #policy #terms-content, #policy #policy-content, #policy #license-content, #license #terms-content, #license #policy-content, #license #license-content {
+#terms #terms-content, #terms #policy-content, #terms #license-content, #terms #private-content, #policy #terms-content, #policy #policy-content, #policy #license-content, #policy #private-content, #license #terms-content, #license #policy-content, #license #license-content, #license #private-content, #private #terms-content, #private #policy-content, #private #license-content, #private #private-content {
   margin-top: 306px;
   color: var(--color-font-dark);
 }
-#terms #terms-content .section-bg, #terms #policy-content .section-bg, #terms #license-content .section-bg, #policy #terms-content .section-bg, #policy #policy-content .section-bg, #policy #license-content .section-bg, #license #terms-content .section-bg, #license #policy-content .section-bg, #license #license-content .section-bg {
+#terms #terms-content .section-bg, #terms #policy-content .section-bg, #terms #license-content .section-bg, #terms #private-content .section-bg, #policy #terms-content .section-bg, #policy #policy-content .section-bg, #policy #license-content .section-bg, #policy #private-content .section-bg, #license #terms-content .section-bg, #license #policy-content .section-bg, #license #license-content .section-bg, #license #private-content .section-bg, #private #terms-content .section-bg, #private #policy-content .section-bg, #private #license-content .section-bg, #private #private-content .section-bg {
   background-color: var(--color-light);
 }
-#terms #terms-content .content-wrapper, #terms #policy-content .content-wrapper, #terms #license-content .content-wrapper, #policy #terms-content .content-wrapper, #policy #policy-content .content-wrapper, #policy #license-content .content-wrapper, #license #terms-content .content-wrapper, #license #policy-content .content-wrapper, #license #license-content .content-wrapper {
+#terms #terms-content .content-wrapper, #terms #policy-content .content-wrapper, #terms #license-content .content-wrapper, #terms #private-content .content-wrapper, #policy #terms-content .content-wrapper, #policy #policy-content .content-wrapper, #policy #license-content .content-wrapper, #policy #private-content .content-wrapper, #license #terms-content .content-wrapper, #license #policy-content .content-wrapper, #license #license-content .content-wrapper, #license #private-content .content-wrapper, #private #terms-content .content-wrapper, #private #policy-content .content-wrapper, #private #license-content .content-wrapper, #private #private-content .content-wrapper {
   width: 100lvw;
   max-width: 1280px;
   display: flex;
@@ -4343,7 +4346,7 @@ textarea.skeleton-loading::placeholder {
   align-items: center;
   gap: 32px;
 }
-#terms #terms-content .content-wrapper .text-card, #terms #policy-content .content-wrapper .text-card, #terms #license-content .content-wrapper .text-card, #policy #terms-content .content-wrapper .text-card, #policy #policy-content .content-wrapper .text-card, #policy #license-content .content-wrapper .text-card, #license #terms-content .content-wrapper .text-card, #license #policy-content .content-wrapper .text-card, #license #license-content .content-wrapper .text-card {
+#terms #terms-content .content-wrapper .text-card, #terms #policy-content .content-wrapper .text-card, #terms #license-content .content-wrapper .text-card, #terms #private-content .content-wrapper .text-card, #policy #terms-content .content-wrapper .text-card, #policy #policy-content .content-wrapper .text-card, #policy #license-content .content-wrapper .text-card, #policy #private-content .content-wrapper .text-card, #license #terms-content .content-wrapper .text-card, #license #policy-content .content-wrapper .text-card, #license #license-content .content-wrapper .text-card, #license #private-content .content-wrapper .text-card, #private #terms-content .content-wrapper .text-card, #private #policy-content .content-wrapper .text-card, #private #license-content .content-wrapper .text-card, #private #private-content .content-wrapper .text-card {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -4355,97 +4358,275 @@ textarea.skeleton-loading::placeholder {
   background-color: var(--color-bg-gray);
   border-radius: 32px;
 }
-#terms #terms-content .content-wrapper .text-card .content-text, #terms #policy-content .content-wrapper .text-card .content-text, #terms #license-content .content-wrapper .text-card .content-text, #policy #terms-content .content-wrapper .text-card .content-text, #policy #policy-content .content-wrapper .text-card .content-text, #policy #license-content .content-wrapper .text-card .content-text, #license #terms-content .content-wrapper .text-card .content-text, #license #policy-content .content-wrapper .text-card .content-text, #license #license-content .content-wrapper .text-card .content-text {
+#terms #terms-content .content-wrapper .text-card .content-text, #terms #policy-content .content-wrapper .text-card .content-text, #terms #license-content .content-wrapper .text-card .content-text, #terms #private-content .content-wrapper .text-card .content-text, #policy #terms-content .content-wrapper .text-card .content-text, #policy #policy-content .content-wrapper .text-card .content-text, #policy #license-content .content-wrapper .text-card .content-text, #policy #private-content .content-wrapper .text-card .content-text, #license #terms-content .content-wrapper .text-card .content-text, #license #policy-content .content-wrapper .text-card .content-text, #license #license-content .content-wrapper .text-card .content-text, #license #private-content .content-wrapper .text-card .content-text, #private #terms-content .content-wrapper .text-card .content-text, #private #policy-content .content-wrapper .text-card .content-text, #private #license-content .content-wrapper .text-card .content-text, #private #private-content .content-wrapper .text-card .content-text {
   padding: 32px;
 }
-#terms #terms-content .content-wrapper .text-card .content-text h2, #terms #policy-content .content-wrapper .text-card .content-text h2, #terms #license-content .content-wrapper .text-card .content-text h2, #policy #terms-content .content-wrapper .text-card .content-text h2, #policy #policy-content .content-wrapper .text-card .content-text h2, #policy #license-content .content-wrapper .text-card .content-text h2, #license #terms-content .content-wrapper .text-card .content-text h2, #license #policy-content .content-wrapper .text-card .content-text h2, #license #license-content .content-wrapper .text-card .content-text h2 {
+#terms #terms-content .content-wrapper .text-card .content-text h2, #terms #policy-content .content-wrapper .text-card .content-text h2, #terms #license-content .content-wrapper .text-card .content-text h2, #terms #private-content .content-wrapper .text-card .content-text h2, #policy #terms-content .content-wrapper .text-card .content-text h2, #policy #policy-content .content-wrapper .text-card .content-text h2, #policy #license-content .content-wrapper .text-card .content-text h2, #policy #private-content .content-wrapper .text-card .content-text h2, #license #terms-content .content-wrapper .text-card .content-text h2, #license #policy-content .content-wrapper .text-card .content-text h2, #license #license-content .content-wrapper .text-card .content-text h2, #license #private-content .content-wrapper .text-card .content-text h2, #private #terms-content .content-wrapper .text-card .content-text h2, #private #policy-content .content-wrapper .text-card .content-text h2, #private #license-content .content-wrapper .text-card .content-text h2, #private #private-content .content-wrapper .text-card .content-text h2 {
   font-weight: 900;
   font-size: var(--font-size-medium);
   line-height: 1.6;
   margin-top: 48px;
   margin-bottom: 8px;
 }
-#terms #terms-content .content-wrapper .text-card .content-text h2 .title, #terms #policy-content .content-wrapper .text-card .content-text h2 .title, #terms #license-content .content-wrapper .text-card .content-text h2 .title, #policy #terms-content .content-wrapper .text-card .content-text h2 .title, #policy #policy-content .content-wrapper .text-card .content-text h2 .title, #policy #license-content .content-wrapper .text-card .content-text h2 .title, #license #terms-content .content-wrapper .text-card .content-text h2 .title, #license #policy-content .content-wrapper .text-card .content-text h2 .title, #license #license-content .content-wrapper .text-card .content-text h2 .title {
+#terms #terms-content .content-wrapper .text-card .content-text h2 .title, #terms #policy-content .content-wrapper .text-card .content-text h2 .title, #terms #license-content .content-wrapper .text-card .content-text h2 .title, #terms #private-content .content-wrapper .text-card .content-text h2 .title, #policy #terms-content .content-wrapper .text-card .content-text h2 .title, #policy #policy-content .content-wrapper .text-card .content-text h2 .title, #policy #license-content .content-wrapper .text-card .content-text h2 .title, #policy #private-content .content-wrapper .text-card .content-text h2 .title, #license #terms-content .content-wrapper .text-card .content-text h2 .title, #license #policy-content .content-wrapper .text-card .content-text h2 .title, #license #license-content .content-wrapper .text-card .content-text h2 .title, #license #private-content .content-wrapper .text-card .content-text h2 .title, #private #terms-content .content-wrapper .text-card .content-text h2 .title, #private #policy-content .content-wrapper .text-card .content-text h2 .title, #private #license-content .content-wrapper .text-card .content-text h2 .title, #private #private-content .content-wrapper .text-card .content-text h2 .title {
   display: inline-block;
 }
-#terms #terms-content .content-wrapper .text-card .content-text h2 .title::first-letter, #terms #policy-content .content-wrapper .text-card .content-text h2 .title::first-letter, #terms #license-content .content-wrapper .text-card .content-text h2 .title::first-letter, #policy #terms-content .content-wrapper .text-card .content-text h2 .title::first-letter, #policy #policy-content .content-wrapper .text-card .content-text h2 .title::first-letter, #policy #license-content .content-wrapper .text-card .content-text h2 .title::first-letter, #license #terms-content .content-wrapper .text-card .content-text h2 .title::first-letter, #license #policy-content .content-wrapper .text-card .content-text h2 .title::first-letter, #license #license-content .content-wrapper .text-card .content-text h2 .title::first-letter {
+#terms #terms-content .content-wrapper .text-card .content-text h2 .title::first-letter, #terms #policy-content .content-wrapper .text-card .content-text h2 .title::first-letter, #terms #license-content .content-wrapper .text-card .content-text h2 .title::first-letter, #terms #private-content .content-wrapper .text-card .content-text h2 .title::first-letter, #policy #terms-content .content-wrapper .text-card .content-text h2 .title::first-letter, #policy #policy-content .content-wrapper .text-card .content-text h2 .title::first-letter, #policy #license-content .content-wrapper .text-card .content-text h2 .title::first-letter, #policy #private-content .content-wrapper .text-card .content-text h2 .title::first-letter, #license #terms-content .content-wrapper .text-card .content-text h2 .title::first-letter, #license #policy-content .content-wrapper .text-card .content-text h2 .title::first-letter, #license #license-content .content-wrapper .text-card .content-text h2 .title::first-letter, #license #private-content .content-wrapper .text-card .content-text h2 .title::first-letter, #private #terms-content .content-wrapper .text-card .content-text h2 .title::first-letter, #private #policy-content .content-wrapper .text-card .content-text h2 .title::first-letter, #private #license-content .content-wrapper .text-card .content-text h2 .title::first-letter, #private #private-content .content-wrapper .text-card .content-text h2 .title::first-letter {
   color: var(--color-main);
 }
-#terms #terms-content .content-wrapper .text-card .content-text h3, #terms #policy-content .content-wrapper .text-card .content-text h3, #terms #license-content .content-wrapper .text-card .content-text h3, #policy #terms-content .content-wrapper .text-card .content-text h3, #policy #policy-content .content-wrapper .text-card .content-text h3, #policy #license-content .content-wrapper .text-card .content-text h3, #license #terms-content .content-wrapper .text-card .content-text h3, #license #policy-content .content-wrapper .text-card .content-text h3, #license #license-content .content-wrapper .text-card .content-text h3 {
+#terms #terms-content .content-wrapper .text-card .content-text h3, #terms #policy-content .content-wrapper .text-card .content-text h3, #terms #license-content .content-wrapper .text-card .content-text h3, #terms #private-content .content-wrapper .text-card .content-text h3, #policy #terms-content .content-wrapper .text-card .content-text h3, #policy #policy-content .content-wrapper .text-card .content-text h3, #policy #license-content .content-wrapper .text-card .content-text h3, #policy #private-content .content-wrapper .text-card .content-text h3, #license #terms-content .content-wrapper .text-card .content-text h3, #license #policy-content .content-wrapper .text-card .content-text h3, #license #license-content .content-wrapper .text-card .content-text h3, #license #private-content .content-wrapper .text-card .content-text h3, #private #terms-content .content-wrapper .text-card .content-text h3, #private #policy-content .content-wrapper .text-card .content-text h3, #private #license-content .content-wrapper .text-card .content-text h3, #private #private-content .content-wrapper .text-card .content-text h3 {
   font-weight: 600;
   font-size: var(--font-size-sub-small);
   line-height: 1.6;
   margin-top: 8px;
 }
-#terms #terms-content .content-wrapper .text-card .content-text p, #terms #policy-content .content-wrapper .text-card .content-text p, #terms #license-content .content-wrapper .text-card .content-text p, #policy #terms-content .content-wrapper .text-card .content-text p, #policy #policy-content .content-wrapper .text-card .content-text p, #policy #license-content .content-wrapper .text-card .content-text p, #license #terms-content .content-wrapper .text-card .content-text p, #license #policy-content .content-wrapper .text-card .content-text p, #license #license-content .content-wrapper .text-card .content-text p {
+#terms #terms-content .content-wrapper .text-card .content-text p, #terms #policy-content .content-wrapper .text-card .content-text p, #terms #license-content .content-wrapper .text-card .content-text p, #terms #private-content .content-wrapper .text-card .content-text p, #policy #terms-content .content-wrapper .text-card .content-text p, #policy #policy-content .content-wrapper .text-card .content-text p, #policy #license-content .content-wrapper .text-card .content-text p, #policy #private-content .content-wrapper .text-card .content-text p, #license #terms-content .content-wrapper .text-card .content-text p, #license #policy-content .content-wrapper .text-card .content-text p, #license #license-content .content-wrapper .text-card .content-text p, #license #private-content .content-wrapper .text-card .content-text p, #private #terms-content .content-wrapper .text-card .content-text p, #private #policy-content .content-wrapper .text-card .content-text p, #private #license-content .content-wrapper .text-card .content-text p, #private #private-content .content-wrapper .text-card .content-text p {
   font-size: var(--font-size-sub-small);
   line-height: 1.8;
 }
-#terms #terms-content .content-wrapper .text-card .content-text ul li, #terms #policy-content .content-wrapper .text-card .content-text ul li, #terms #license-content .content-wrapper .text-card .content-text ul li, #policy #terms-content .content-wrapper .text-card .content-text ul li, #policy #policy-content .content-wrapper .text-card .content-text ul li, #policy #license-content .content-wrapper .text-card .content-text ul li, #license #terms-content .content-wrapper .text-card .content-text ul li, #license #policy-content .content-wrapper .text-card .content-text ul li, #license #license-content .content-wrapper .text-card .content-text ul li {
+#terms #terms-content .content-wrapper .text-card .content-text ul li, #terms #policy-content .content-wrapper .text-card .content-text ul li, #terms #license-content .content-wrapper .text-card .content-text ul li, #terms #private-content .content-wrapper .text-card .content-text ul li, #policy #terms-content .content-wrapper .text-card .content-text ul li, #policy #policy-content .content-wrapper .text-card .content-text ul li, #policy #license-content .content-wrapper .text-card .content-text ul li, #policy #private-content .content-wrapper .text-card .content-text ul li, #license #terms-content .content-wrapper .text-card .content-text ul li, #license #policy-content .content-wrapper .text-card .content-text ul li, #license #license-content .content-wrapper .text-card .content-text ul li, #license #private-content .content-wrapper .text-card .content-text ul li, #private #terms-content .content-wrapper .text-card .content-text ul li, #private #policy-content .content-wrapper .text-card .content-text ul li, #private #license-content .content-wrapper .text-card .content-text ul li, #private #private-content .content-wrapper .text-card .content-text ul li {
   padding-left: 16px;
   font-size: var(--font-size-sub-small);
   line-height: 1.8;
 }
-#terms #terms-content .content-wrapper .text-card .content-text ul li p, #terms #policy-content .content-wrapper .text-card .content-text ul li p, #terms #license-content .content-wrapper .text-card .content-text ul li p, #policy #terms-content .content-wrapper .text-card .content-text ul li p, #policy #policy-content .content-wrapper .text-card .content-text ul li p, #policy #license-content .content-wrapper .text-card .content-text ul li p, #license #terms-content .content-wrapper .text-card .content-text ul li p, #license #policy-content .content-wrapper .text-card .content-text ul li p, #license #license-content .content-wrapper .text-card .content-text ul li p {
+#terms #terms-content .content-wrapper .text-card .content-text ul li p, #terms #policy-content .content-wrapper .text-card .content-text ul li p, #terms #license-content .content-wrapper .text-card .content-text ul li p, #terms #private-content .content-wrapper .text-card .content-text ul li p, #policy #terms-content .content-wrapper .text-card .content-text ul li p, #policy #policy-content .content-wrapper .text-card .content-text ul li p, #policy #license-content .content-wrapper .text-card .content-text ul li p, #policy #private-content .content-wrapper .text-card .content-text ul li p, #license #terms-content .content-wrapper .text-card .content-text ul li p, #license #policy-content .content-wrapper .text-card .content-text ul li p, #license #license-content .content-wrapper .text-card .content-text ul li p, #license #private-content .content-wrapper .text-card .content-text ul li p, #private #terms-content .content-wrapper .text-card .content-text ul li p, #private #policy-content .content-wrapper .text-card .content-text ul li p, #private #license-content .content-wrapper .text-card .content-text ul li p, #private #private-content .content-wrapper .text-card .content-text ul li p {
   padding-left: 32px;
 }
-#terms #terms-content .content-wrapper .text-card .content-text a, #terms #policy-content .content-wrapper .text-card .content-text a, #terms #license-content .content-wrapper .text-card .content-text a, #policy #terms-content .content-wrapper .text-card .content-text a, #policy #policy-content .content-wrapper .text-card .content-text a, #policy #license-content .content-wrapper .text-card .content-text a, #license #terms-content .content-wrapper .text-card .content-text a, #license #policy-content .content-wrapper .text-card .content-text a, #license #license-content .content-wrapper .text-card .content-text a {
+#terms #terms-content .content-wrapper .text-card .content-text a, #terms #policy-content .content-wrapper .text-card .content-text a, #terms #license-content .content-wrapper .text-card .content-text a, #terms #private-content .content-wrapper .text-card .content-text a, #policy #terms-content .content-wrapper .text-card .content-text a, #policy #policy-content .content-wrapper .text-card .content-text a, #policy #license-content .content-wrapper .text-card .content-text a, #policy #private-content .content-wrapper .text-card .content-text a, #license #terms-content .content-wrapper .text-card .content-text a, #license #policy-content .content-wrapper .text-card .content-text a, #license #license-content .content-wrapper .text-card .content-text a, #license #private-content .content-wrapper .text-card .content-text a, #private #terms-content .content-wrapper .text-card .content-text a, #private #policy-content .content-wrapper .text-card .content-text a, #private #license-content .content-wrapper .text-card .content-text a, #private #private-content .content-wrapper .text-card .content-text a {
   font-size: var(--font-size-sub-small);
   line-height: 1.8;
   color: var(--color-main);
 }
-#terms #terms-content .content-wrapper .text-card .content-text .author, #terms #policy-content .content-wrapper .text-card .content-text .author, #terms #license-content .content-wrapper .text-card .content-text .author, #policy #terms-content .content-wrapper .text-card .content-text .author, #policy #policy-content .content-wrapper .text-card .content-text .author, #policy #license-content .content-wrapper .text-card .content-text .author, #license #terms-content .content-wrapper .text-card .content-text .author, #license #policy-content .content-wrapper .text-card .content-text .author, #license #license-content .content-wrapper .text-card .content-text .author {
+#terms #terms-content .content-wrapper .text-card .content-text .author, #terms #policy-content .content-wrapper .text-card .content-text .author, #terms #license-content .content-wrapper .text-card .content-text .author, #terms #private-content .content-wrapper .text-card .content-text .author, #policy #terms-content .content-wrapper .text-card .content-text .author, #policy #policy-content .content-wrapper .text-card .content-text .author, #policy #license-content .content-wrapper .text-card .content-text .author, #policy #private-content .content-wrapper .text-card .content-text .author, #license #terms-content .content-wrapper .text-card .content-text .author, #license #policy-content .content-wrapper .text-card .content-text .author, #license #license-content .content-wrapper .text-card .content-text .author, #license #private-content .content-wrapper .text-card .content-text .author, #private #terms-content .content-wrapper .text-card .content-text .author, #private #policy-content .content-wrapper .text-card .content-text .author, #private #license-content .content-wrapper .text-card .content-text .author, #private #private-content .content-wrapper .text-card .content-text .author {
   margin-top: 32px;
 }
-#terms #terms-content .content-wrapper .text-card .content-text .library-group, #terms #policy-content .content-wrapper .text-card .content-text .library-group, #terms #license-content .content-wrapper .text-card .content-text .library-group, #policy #terms-content .content-wrapper .text-card .content-text .library-group, #policy #policy-content .content-wrapper .text-card .content-text .library-group, #policy #license-content .content-wrapper .text-card .content-text .library-group, #license #terms-content .content-wrapper .text-card .content-text .library-group, #license #policy-content .content-wrapper .text-card .content-text .library-group, #license #license-content .content-wrapper .text-card .content-text .library-group {
+#terms #terms-content .content-wrapper .text-card .content-text .library-group, #terms #policy-content .content-wrapper .text-card .content-text .library-group, #terms #license-content .content-wrapper .text-card .content-text .library-group, #terms #private-content .content-wrapper .text-card .content-text .library-group, #policy #terms-content .content-wrapper .text-card .content-text .library-group, #policy #policy-content .content-wrapper .text-card .content-text .library-group, #policy #license-content .content-wrapper .text-card .content-text .library-group, #policy #private-content .content-wrapper .text-card .content-text .library-group, #license #terms-content .content-wrapper .text-card .content-text .library-group, #license #policy-content .content-wrapper .text-card .content-text .library-group, #license #license-content .content-wrapper .text-card .content-text .library-group, #license #private-content .content-wrapper .text-card .content-text .library-group, #private #terms-content .content-wrapper .text-card .content-text .library-group, #private #policy-content .content-wrapper .text-card .content-text .library-group, #private #license-content .content-wrapper .text-card .content-text .library-group, #private #private-content .content-wrapper .text-card .content-text .library-group {
   padding-top: 48px;
   padding-bottom: 8px;
   text-align: center;
 }
-#terms #terms-content .content-wrapper .text-card .content-text .library-group .library-name, #terms #policy-content .content-wrapper .text-card .content-text .library-group .library-name, #terms #license-content .content-wrapper .text-card .content-text .library-group .library-name, #policy #terms-content .content-wrapper .text-card .content-text .library-group .library-name, #policy #policy-content .content-wrapper .text-card .content-text .library-group .library-name, #policy #license-content .content-wrapper .text-card .content-text .library-group .library-name, #license #terms-content .content-wrapper .text-card .content-text .library-group .library-name, #license #policy-content .content-wrapper .text-card .content-text .library-group .library-name, #license #license-content .content-wrapper .text-card .content-text .library-group .library-name {
+#terms #terms-content .content-wrapper .text-card .content-text .library-group .library-name, #terms #policy-content .content-wrapper .text-card .content-text .library-group .library-name, #terms #license-content .content-wrapper .text-card .content-text .library-group .library-name, #terms #private-content .content-wrapper .text-card .content-text .library-group .library-name, #policy #terms-content .content-wrapper .text-card .content-text .library-group .library-name, #policy #policy-content .content-wrapper .text-card .content-text .library-group .library-name, #policy #license-content .content-wrapper .text-card .content-text .library-group .library-name, #policy #private-content .content-wrapper .text-card .content-text .library-group .library-name, #license #terms-content .content-wrapper .text-card .content-text .library-group .library-name, #license #policy-content .content-wrapper .text-card .content-text .library-group .library-name, #license #license-content .content-wrapper .text-card .content-text .library-group .library-name, #license #private-content .content-wrapper .text-card .content-text .library-group .library-name, #private #terms-content .content-wrapper .text-card .content-text .library-group .library-name, #private #policy-content .content-wrapper .text-card .content-text .library-group .library-name, #private #license-content .content-wrapper .text-card .content-text .library-group .library-name, #private #private-content .content-wrapper .text-card .content-text .library-group .library-name {
   font-weight: 900;
   font-size: var(--font-size-medium);
   line-height: 1.6;
 }
-#terms #terms-content .content-wrapper .text-card .content-text .library-group .library-version, #terms #policy-content .content-wrapper .text-card .content-text .library-group .library-version, #terms #license-content .content-wrapper .text-card .content-text .library-group .library-version, #policy #terms-content .content-wrapper .text-card .content-text .library-group .library-version, #policy #policy-content .content-wrapper .text-card .content-text .library-group .library-version, #policy #license-content .content-wrapper .text-card .content-text .library-group .library-version, #license #terms-content .content-wrapper .text-card .content-text .library-group .library-version, #license #policy-content .content-wrapper .text-card .content-text .library-group .library-version, #license #license-content .content-wrapper .text-card .content-text .library-group .library-version {
+#terms #terms-content .content-wrapper .text-card .content-text .library-group .library-version, #terms #policy-content .content-wrapper .text-card .content-text .library-group .library-version, #terms #license-content .content-wrapper .text-card .content-text .library-group .library-version, #terms #private-content .content-wrapper .text-card .content-text .library-group .library-version, #policy #terms-content .content-wrapper .text-card .content-text .library-group .library-version, #policy #policy-content .content-wrapper .text-card .content-text .library-group .library-version, #policy #license-content .content-wrapper .text-card .content-text .library-group .library-version, #policy #private-content .content-wrapper .text-card .content-text .library-group .library-version, #license #terms-content .content-wrapper .text-card .content-text .library-group .library-version, #license #policy-content .content-wrapper .text-card .content-text .library-group .library-version, #license #license-content .content-wrapper .text-card .content-text .library-group .library-version, #license #private-content .content-wrapper .text-card .content-text .library-group .library-version, #private #terms-content .content-wrapper .text-card .content-text .library-group .library-version, #private #policy-content .content-wrapper .text-card .content-text .library-group .library-version, #private #license-content .content-wrapper .text-card .content-text .library-group .library-version, #private #private-content .content-wrapper .text-card .content-text .library-group .library-version {
   font-size: var(--font-size-sub-small);
   line-height: 1.8;
 }
-#terms #terms-content .content-wrapper .text-card .content-text .library-group .library-license, #terms #policy-content .content-wrapper .text-card .content-text .library-group .library-license, #terms #license-content .content-wrapper .text-card .content-text .library-group .library-license, #policy #terms-content .content-wrapper .text-card .content-text .library-group .library-license, #policy #policy-content .content-wrapper .text-card .content-text .library-group .library-license, #policy #license-content .content-wrapper .text-card .content-text .library-group .library-license, #license #terms-content .content-wrapper .text-card .content-text .library-group .library-license, #license #policy-content .content-wrapper .text-card .content-text .library-group .library-license, #license #license-content .content-wrapper .text-card .content-text .library-group .library-license {
+#terms #terms-content .content-wrapper .text-card .content-text .library-group .library-license, #terms #policy-content .content-wrapper .text-card .content-text .library-group .library-license, #terms #license-content .content-wrapper .text-card .content-text .library-group .library-license, #terms #private-content .content-wrapper .text-card .content-text .library-group .library-license, #policy #terms-content .content-wrapper .text-card .content-text .library-group .library-license, #policy #policy-content .content-wrapper .text-card .content-text .library-group .library-license, #policy #license-content .content-wrapper .text-card .content-text .library-group .library-license, #policy #private-content .content-wrapper .text-card .content-text .library-group .library-license, #license #terms-content .content-wrapper .text-card .content-text .library-group .library-license, #license #policy-content .content-wrapper .text-card .content-text .library-group .library-license, #license #license-content .content-wrapper .text-card .content-text .library-group .library-license, #license #private-content .content-wrapper .text-card .content-text .library-group .library-license, #private #terms-content .content-wrapper .text-card .content-text .library-group .library-license, #private #policy-content .content-wrapper .text-card .content-text .library-group .library-license, #private #license-content .content-wrapper .text-card .content-text .library-group .library-license, #private #private-content .content-wrapper .text-card .content-text .library-group .library-license {
   font-size: var(--font-size-sub-small);
   line-height: 1.8;
 }
-#terms #terms-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #terms #policy-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #terms #license-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #policy #terms-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #policy #policy-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #policy #license-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #license #terms-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #license #policy-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #license #license-content .content-wrapper .text-card .content-text .library-group .library-license-detail {
+#terms #terms-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #terms #policy-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #terms #license-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #terms #private-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #policy #terms-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #policy #policy-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #policy #license-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #policy #private-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #license #terms-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #license #policy-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #license #license-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #license #private-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #private #terms-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #private #policy-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #private #license-content .content-wrapper .text-card .content-text .library-group .library-license-detail, #private #private-content .content-wrapper .text-card .content-text .library-group .library-license-detail {
   font-size: var(--font-size-sub-small);
   line-height: 1.8;
 }
 @media (max-width: 768px) {
-  #terms #terms-content, #policy #terms-content, #license #terms-content {
+  #terms #terms-content, #terms #private-content, #policy #terms-content, #policy #private-content, #license #terms-content, #license #private-content, #private #terms-content, #private #private-content {
     padding-top: 0px;
   }
-  #terms #menu .menu-container .menu-left, #policy #menu .menu-container .menu-left, #license #menu .menu-container .menu-left {
+  #terms #menu .menu-container .menu-left, #policy #menu .menu-container .menu-left, #license #menu .menu-container .menu-left, #private #menu .menu-container .menu-left {
     flex-shrink: 1;
   }
-  #terms #menu .menu-container .menu-left .logo, #policy #menu .menu-container .menu-left .logo, #license #menu .menu-container .menu-left .logo {
+  #terms #menu .menu-container .menu-left .logo, #policy #menu .menu-container .menu-left .logo, #license #menu .menu-container .menu-left .logo, #private #menu .menu-container .menu-left .logo {
     width: 100%;
     object-fit: contain;
   }
-  #terms #menu .menu-container .menu-right, #policy #menu .menu-container .menu-right, #license #menu .menu-container .menu-right {
+  #terms #menu .menu-container .menu-right, #policy #menu .menu-container .menu-right, #license #menu .menu-container .menu-right, #private #menu .menu-container .menu-right {
     display: flex;
     flex-direction: row;
     padding-left: 16px;
   }
-  #terms #menu .menu-container .menu-right .space-expand-button, #policy #menu .menu-container .menu-right .space-expand-button, #license #menu .menu-container .menu-right .space-expand-button {
+  #terms #menu .menu-container .menu-right .space-expand-button, #policy #menu .menu-container .menu-right .space-expand-button, #license #menu .menu-container .menu-right .space-expand-button, #private #menu .menu-container .menu-right .space-expand-button {
     padding: 14px 16px;
   }
-  #terms #footer .footer-info-item, #policy #footer .footer-info-item, #license #footer .footer-info-item {
+  #terms #footer .footer-info-item, #policy #footer .footer-info-item, #license #footer .footer-info-item, #private #footer .footer-info-item {
     border-top: solid 1px transparent;
   }
-  #terms #terms-content .content-wrapper .text-card, #policy #terms-content .content-wrapper .text-card, #license #terms-content .content-wrapper .text-card {
+  #terms #terms-content .content-wrapper .text-card, #terms #private-content .content-wrapper .text-card, #policy #terms-content .content-wrapper .text-card, #policy #private-content .content-wrapper .text-card, #license #terms-content .content-wrapper .text-card, #license #private-content .content-wrapper .text-card, #private #terms-content .content-wrapper .text-card, #private #private-content .content-wrapper .text-card {
     padding: 32px;
   }
-  #terms #terms-content .content-wrapper .text-card .content-text, #policy #terms-content .content-wrapper .text-card .content-text, #license #terms-content .content-wrapper .text-card .content-text {
+  #terms #terms-content .content-wrapper .text-card .content-text, #terms #private-content .content-wrapper .text-card .content-text, #policy #terms-content .content-wrapper .text-card .content-text, #policy #private-content .content-wrapper .text-card .content-text, #license #terms-content .content-wrapper .text-card .content-text, #license #private-content .content-wrapper .text-card .content-text, #private #terms-content .content-wrapper .text-card .content-text, #private #private-content .content-wrapper .text-card .content-text {
     padding: 0px;
+  }
+}
+
+#private #private-content .content-text strong {
+  font-weight: 700;
+}
+#private #private-content .content-text .flow-diagram {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 24px;
+  margin-bottom: 8px;
+  padding: 24px 16px;
+  background-color: var(--color-light);
+  border-radius: 16px;
+}
+#private #private-content .content-text .flow-diagram .flow-node {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  flex: 1 1 0;
+  max-width: 240px;
+  padding: 16px 12px;
+  text-align: center;
+  background-color: var(--color-bg-gray);
+  border-radius: 12px;
+}
+#private #private-content .content-text .flow-diagram .flow-node .node-icon {
+  font-size: 28px;
+  line-height: 1;
+  color: var(--color-main);
+}
+#private #private-content .content-text .flow-diagram .flow-node .node-title {
+  font-weight: 700;
+  font-size: var(--font-size-sub-small);
+  line-height: 1.6;
+  margin-top: 8px;
+}
+#private #private-content .content-text .flow-diagram .flow-node .node-detail {
+  font-size: var(--font-size-12px, 12px);
+  line-height: 1.6;
+  margin-top: 4px;
+  color: var(--color-font-dark-gray-2);
+}
+#private #private-content .content-text .flow-diagram .flow-node.warning {
+  background-color: #FFF3E5;
+}
+#private #private-content .content-text .flow-diagram .flow-node.warning .node-icon {
+  color: #E9772C;
+}
+#private #private-content .content-text .flow-diagram .flow-node.grayed {
+  opacity: 0.55;
+}
+#private #private-content .content-text .flow-diagram .flow-node.grayed .node-icon {
+  color: var(--color-font-dark-gray);
+}
+#private #private-content .content-text .flow-diagram .flow-arrow {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  color: var(--color-main);
+}
+#private #private-content .content-text .flow-diagram .flow-arrow.crossed {
+  position: relative;
+  color: var(--color-font-dark-gray);
+}
+#private #private-content .content-text .flow-diagram .flow-arrow.crossed::after {
+  content: "×";
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 700;
+  color: #EE5658;
+  position: absolute;
+  top: calc(50% - 24px);
+  left: calc(50% - 10px);
+}
+#private #private-content .content-text .flow-caption {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-weight: 700;
+  font-size: var(--font-size-sub-small);
+  color: #EE5658;
+}
+#private #private-content .content-text .flow-caption .bi {
+  font-size: 18px;
+  line-height: 1;
+}
+#private #private-content .content-text .term-note {
+  line-height: 1.6;
+  font-size: var(--font-size-12px, 12px);
+  color: var(--color-font-dark-gray-2);
+  padding-left: 16px;
+}
+#private #private-content .content-text .step-image {
+  margin: 16px 0 8px;
+}
+#private #private-content .content-text .step-image img {
+  width: auto;
+  max-width: min(100%, 720px);
+  height: auto;
+  border: 1px solid #E0E0DC;
+  border-radius: 8px;
+}
+#private #private-content .content-text .step-list {
+  counter-reset: step;
+  margin-top: 16px;
+}
+#private #private-content .content-text .step-list > li {
+  counter-increment: step;
+  position: relative;
+  padding: 0 0 24px 56px;
+}
+#private #private-content .content-text .step-list > li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  font-family: var(--inter-font-family);
+  font-weight: 700;
+  color: var(--color-light);
+  background-color: var(--color-main);
+  border-radius: 50%;
+}
+#private #private-content .content-text .step-list > li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 17px;
+  top: 40px;
+  bottom: 4px;
+  width: 2px;
+  border-radius: 1px;
+  background-color: var(--color-main);
+  opacity: 0.25;
+}
+#private #private-content .content-text .step-list > li h3 {
+  margin-top: 0;
+  padding-top: 6px;
+}
+#private #private-content .content-text .step-list > li ul li {
+  padding-left: 0;
+}
+@media (max-width: 768px) {
+  #private #private-content .content-text .flow-diagram {
+    flex-direction: column;
+    align-items: center;
+  }
+  #private #private-content .content-text .flow-diagram .flow-node {
+    flex: none;
+    width: 100%;
+    max-width: 320px;
+  }
+  #private #private-content .content-text .flow-diagram .flow-arrow {
+    transform: rotate(90deg);
+  }
+  #private #private-content .content-text .flow-diagram .flow-arrow.crossed::after {
+    transform: rotate(-90deg);
+  }
+  #private #private-content .content-text .step-list > li {
+    padding-left: 48px;
+  }
+  #private #private-content .content-text .step-list > li::before {
+    width: 32px;
+    height: 32px;
+  }
+  #private #private-content .content-text .step-list > li:not(:last-child)::after {
+    left: 15px;
   }
 }
 
