@@ -163,15 +163,16 @@ async def post_draft(request: Request, request_body:theme_schemas.ThemePostDraft
     # 1.サービスの取得
     service : ThemeService = request.state.service
 
-    # なし
-
     # 2.DB更新前の事前処理
     # アクセスキーがサーバーに設置された値と一致しなければエラー
-    # 送信内容をパース
+    if request_body.access_key != configs.constants.USER_ACCESS_KEY:
+        raise theme_schemas.ThemePostDraftErrorResponses.InvalidAccessKeyError
 
     # 3.DB更新処理実行
     try:
         # 送信された内容を、下書きの新規レコードとして挿入
+        # GENERATED: 管理画面での承認後に batch-create が pol.is へ公開する
+        # （APPROVED 直入れだとモデレーションなしで自動公開されてしまう）
         t_draft = await service.draft_store.insert_draft(
             title = "",
             origin_url = "",
@@ -180,7 +181,7 @@ async def post_draft(request: Request, request_body:theme_schemas.ThemePostDraft
             theme_description = request_body.description,
             theme_comments = request_body.comments,
             theme_category = request_body.category,
-            post_status = types.PostStatus.APPROVED.value,
+            post_status = types.PostStatus.GENERATED.value,
         )
         await service.draft_store.commit()
     except Exception as e:
