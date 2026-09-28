@@ -132,3 +132,19 @@ async def test_increment_publish_retry_persists(store):
 
     loaded = await store.select_by_id(draft.id)
     assert loaded.publish_retry_count == 1  # 永続化されている
+
+
+async def test_update_post_status_to_approved_resets_retry_count(store):
+    # 再承認 = リトライ回数の振り出し（隔離→再承認後に1回の失敗で即再隔離されないため）
+    draft = await store.insert_draft(
+        title="", origin_url="", origin_html="",
+        theme_name="再承認", theme_description="", theme_comments="", theme_category=1, post_status=2,
+    )
+    for _ in range(5):
+        draft = await store.increment_publish_retry(draft)
+    draft = await store.update_post_status(draft, 102)  # FAILED相当
+
+    draft = await store.update_post_status(draft, 2)    # APPROVED相当(再承認)
+    loaded = await store.select_by_id(draft.id)
+    assert loaded.publish_retry_count == 0
+    assert loaded.post_status == 2
