@@ -79,3 +79,66 @@ def test_fill_input_bmp_text_still_uses_send_keys():
     loader.fill_input("css selector", "textarea", BMP_TEXT)
 
     assert any(BMP_TEXT in args for args in el.sent_keys)
+
+
+class StaleOnTypeElement(FakeElement):
+    """本文入力時のみStaleElementReferenceExceptionを投げる要素。"""
+    def send_keys(self, *args):
+        from selenium.common.exceptions import StaleElementReferenceException
+        for arg in args:
+            if str(arg) == BMP_TEXT:
+                raise StaleElementReferenceException("stale element reference")
+        super().send_keys(*args)
+
+
+def test_fill_input_does_not_swallow_stale_element_error():
+    # BMP制限以外のWebDriverExceptionは従来どおり伝播する（握りつぶさない）
+    import pytest
+    from selenium.common.exceptions import StaleElementReferenceException
+    el = StaleOnTypeElement()
+    drv = FakeDriver(el)
+    loader = _loader(drv)
+
+    with pytest.raises(StaleElementReferenceException):
+        loader.fill_input("css selector", "textarea", BMP_TEXT)
+
+
+def test_fill_input_non_bmp_on_unwritable_element_raises():
+    # JS直書きできない要素形状(inputでもtextareaでもcontenteditableでもない)で
+    # BMP外文字を渡された場合、無言の空振りではなく明示的に失敗する
+    import pytest
+    el = FakeElement()
+    el.tag_name = "div"  # get_attribute("contenteditable")はNone
+    drv = FakeDriver(el)
+    loader = _loader(drv)
+
+    with pytest.raises(RuntimeError):
+        loader.fill_input("css selector", "div.editor", NON_BMP_TEXT)
+
+
+def test_fill_input_with_enter_presses_enter_after_value_is_set():
+    # with_enter=True のEnterは値の反映(JS直書き含む)より後に送られること
+    from selenium.webdriver.common.keys import Keys
+    el = FakeElement()
+    drv = FakeDriver(el)
+    events = []
+    orig_send = el.send_keys
+    orig_script = drv.execute_script
+
+    def send_spy(*args):
+        orig_send(*args)
+        if Keys.RETURN in args:
+            events.append("enter")
+
+    def script_spy(script, *args):
+        if any(NON_BMP_TEXT in str(a) for a in args):
+            events.append("js-write")
+        return orig_script(script, *args)
+
+    el.send_keys = send_spy
+    drv.execute_script = script_spy
+
+    loader = _loader(drv)
+    loader.fill_input("css selector", "textarea", NON_BMP_TEXT, with_enter=True)
+
+    assert events == ["js-write", "enter"]

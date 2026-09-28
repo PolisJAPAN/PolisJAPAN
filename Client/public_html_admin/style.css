@@ -7524,8 +7524,8 @@ body#admin #main .theme-container .theme-item .theme-info .new-tag {
   align-items: center;
   font-size: var(--font-size-small);
   color: var(--color-light);
-  background-color: #ff4848;
   border-radius: 8px;
+  background-color: #ff4848;
   display: none;
 }
 body#admin #main .theme-container .theme-item .theme-info .failed-tag {
@@ -7538,8 +7538,8 @@ body#admin #main .theme-container .theme-item .theme-info .failed-tag {
   align-items: center;
   font-size: var(--font-size-small);
   color: var(--color-light);
-  background-color: #e07800;
   border-radius: 8px;
+  background-color: #e07800;
 }
 body#admin #main .theme-container .theme-item #theme-title-textarea {
   font-weight: 900;

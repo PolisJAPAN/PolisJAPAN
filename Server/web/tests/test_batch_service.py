@@ -298,3 +298,24 @@ async def test_publish_failure_recording_error_does_not_mask_original():
          patch.object(BatchService, "create_theme", AsyncMock(side_effect=RuntimeError("BMP error"))):
         with pytest.raises(RuntimeError, match="BMP error"):
             await service.publish_approved_drafts(limit=1)
+
+
+async def test_publish_failure_rolls_back_before_recording():
+    # mysqlバックエンドで、失敗記録のcommitが先行下書きの未確定変更(conversation_id等)を
+    # 巻き込んで永続化しないよう、記録前にrollbackすること
+    drafts = [_draft(1, "毒入り")]
+    service = _failing_service(drafts, retry_count_after_increment=1)
+    order = []
+    service.draft_store.rollback = AsyncMock(side_effect=lambda: order.append("rollback"))
+    inner = service.draft_store.increment_publish_retry.side_effect
+    async def _inc_traced(draft):
+        order.append("increment")
+        return await inner(draft)
+    service.draft_store.increment_publish_retry = AsyncMock(side_effect=_inc_traced)
+
+    with patch.object(BatchService, "get_theme_csv", AsyncMock(return_value=("raw", []))), \
+         patch.object(BatchService, "create_theme", AsyncMock(side_effect=RuntimeError("boom"))):
+        with pytest.raises(RuntimeError):
+            await service.publish_approved_drafts(limit=1)
+
+    assert order == ["rollback", "increment"]

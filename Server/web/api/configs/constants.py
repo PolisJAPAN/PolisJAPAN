@@ -26,6 +26,9 @@ SPLITTER = "###br###"
 DATA_BACKEND = "mysql"
 """下書きデータの保存先: mysql | dynamodb。serverless環境のみdynamodbに上書きされる"""
 
-PUBLISH_RETRY_LIMIT = 5
+PUBLISH_RETRY_LIMIT = 9
 """Polis投稿(batch-create)のリトライ上限。到達した下書きはFAILEDに隔離し後続を塞がない。
-Lambdaの非同期リトライ(1サイクル3試行)を踏まえ、2サイクル目まで一過性エラーを許容する値"""
+実測ではスケジュール1サイクル(15分)あたり3試行（EventBridge Schedulerのretry_policyは0だが、
+Lambda非同期呼び出し既定の2回リトライが生きている）。9回=3サイクル≒30分強なので、
+pol.is側の30分未満の一過性障害では健全な下書きを誤隔離しない。
+誤隔離されても管理画面の再承認1クリックで復帰できる（アラームメールが失敗ごとに飛ぶ）"""

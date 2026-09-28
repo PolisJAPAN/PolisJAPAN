@@ -208,6 +208,8 @@ class BatchService(CommonService):
             # テーマを作成
             # 失敗時はリトライ回数を記録し、上限到達でFAILEDに隔離してから再送出する
             # （1件の失敗し続ける下書きが後続の承認済下書きを永久に塞がないため）
+            # 対象はcreate_theme（下書き内容起因の失敗が起こりうる箇所）のみ。
+            # 以降のCSV/S3/ストア更新の失敗はインフラ起因のため下書きには数えない
             try:
                 report_csv_str, theme_info = await self.create_theme(theme_list, str(t_draft.theme_name), str(t_draft.theme_description), comments, str(t_draft.theme_category))
             except Exception:
@@ -249,14 +251,18 @@ class BatchService(CommonService):
         呼び出し元が元の例外を再送出する前提のため、ここでの記録失敗は
         ログに残すのみで例外は伝播させない（元の失敗原因を隠さない）。
         """
+        draft_id = t_draft.id
         try:
+            # 先行下書きの未確定変更(conversation_id等)を後段のcommitで巻き込んで
+            # 永続化しないよう、記録の前にセッションを巻き戻す（dynamodbではno-op）
+            await self.draft_store.rollback()
             t_draft = await self.draft_store.increment_publish_retry(t_draft)
             if t_draft.publish_retry_count >= configs.constants.PUBLISH_RETRY_LIMIT:
                 await self.draft_store.update_post_status(t_draft, types.PostStatus.FAILED.value)
                 Logger.error(f"下書き(id={t_draft.id})が{t_draft.publish_retry_count}回連続で投稿失敗したため隔離しました(FAILED)。管理画面から再承認で再投稿できます")
             await self.draft_store.commit()
         except Exception as record_error:
-            Logger.error(f"投稿失敗の記録に失敗: id={t_draft.id}, reason={record_error}")
+            Logger.error(f"投稿失敗の記録に失敗: id={draft_id}, reason={record_error}")
 
     # ###########################################################################
     # Polis登録関連
