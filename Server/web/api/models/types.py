@@ -4,15 +4,17 @@ class PostStatus(Enum):
     """
         ポスト状態を管理するステート
         0 : 生成済
-        1 : 承認済 
-        2 : 投稿済 
+        1 : 承認済
+        2 : 投稿済
         101 : 却下済
+        102 : 投稿失敗（リトライ上限到達で隔離。再承認で再投稿可能）
     """
     SUGGESTED = 0
     GENERATED = 1
     APPROVED = 2
     POSTED = 3
     REJECTED = 101
+    FAILED = 102
 
 class LogLevel:
     """

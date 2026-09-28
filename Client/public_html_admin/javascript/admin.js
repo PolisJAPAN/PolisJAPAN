@@ -319,6 +319,7 @@ function buildThemeInnerHTML() {
                         <div class="date-text">${formatIsoToJapaneseDate(create_date)}</div>
                     </div>
                     <div class="new-tag">NEW!</div>
+                    ${post_status == 102 ? `<div class="failed-tag">投稿失敗</div>` : ""}
                 </div>
                 <div class="theme-description">
                     <div class="title-text">説明</div>
@@ -331,7 +332,7 @@ function buildThemeInnerHTML() {
                 <div class="button-row">
                     <button class="edit-button button secondary">更新</button>
                     <button class="delete-button button primary">削除</button>
-                    <button class="approve-button button primary ${post_status >= 2 ? "disabled" : ""}">承認</button>
+                    <button class="approve-button button primary ${post_status >= 2 && post_status != 102 ? "disabled" : ""}">承認</button>
                 </div>
             </div>
     `;

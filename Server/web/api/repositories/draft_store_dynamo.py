@@ -70,6 +70,7 @@ class DynamoDraftStore:
             report_id=item.get("report_id", ""),
             post_status=int(item.get("post_status", 0)),
             status=int(item.get("status", 1)),
+            publish_retry_count=int(item.get("publish_retry_count", 0)),
             create_date=_dt(item.get("create_date")),
             update_date=_dt(item.get("update_date")),
         )
@@ -175,6 +176,9 @@ class DynamoDraftStore:
 
     async def update_post_status(self, draft: Draft, post_status: int) -> Draft:
         return await self._update_fields(draft, {"post_status": post_status})
+
+    async def increment_publish_retry(self, draft: Draft) -> Draft:
+        return await self._update_fields(draft, {"publish_retry_count": draft.publish_retry_count + 1})
 
     async def update_content(self, draft: Draft, theme_name, theme_description, theme_comments, theme_category) -> Draft:
         fields = {}

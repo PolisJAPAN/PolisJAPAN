@@ -13,8 +13,9 @@ from selenium.common.exceptions import (
         ElementClickInterceptedException, 
         ElementNotInteractableException, 
         JavascriptException, 
-        StaleElementReferenceException, 
+        StaleElementReferenceException,
         TimeoutException,
+        WebDriverException,
     )
 from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
@@ -445,13 +446,19 @@ class WebLoaderChrome:
                         pass
 
             # 4) まずは通常の send_keys
+            #    ChromeDriver は BMP 外の文字(絵文字等)を打鍵できず WebDriverException になるため、
+            #    含まれる場合は send_keys を使わず手順 6 の JS 直書きに任せる
             try:
                 if is_contenteditable:
                     # contenteditable は一旦空にしてから
                     drv.execute_script("arguments[0].innerHTML = '';", el)
-                el.send_keys(text)
+                if not any(ord(ch) > 0xFFFF for ch in text):
+                    el.send_keys(text)
             except ElementNotInteractableException:
                 # 下の JS 直接設定へフォールバック
+                pass
+            except WebDriverException:
+                # 打鍵不能な文字などのケースも JS 直接設定へフォールバック
                 pass
 
             # 5) 必要なら Enter

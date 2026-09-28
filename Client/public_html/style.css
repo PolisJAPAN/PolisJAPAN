@@ -7528,6 +7528,19 @@ body#admin #main .theme-container .theme-item .theme-info .new-tag {
   border-radius: 8px;
   display: none;
 }
+body#admin #main .theme-container .theme-item .theme-info .failed-tag {
+  font-weight: 900;
+  padding: 8px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--font-size-small);
+  color: var(--color-light);
+  background-color: #e07800;
+  border-radius: 8px;
+}
 body#admin #main .theme-container .theme-item #theme-title-textarea {
   font-weight: 900;
   font-size: var(--font-size-medium);

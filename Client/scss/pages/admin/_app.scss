@@ -189,6 +189,19 @@ body#admin {
                         border-radius: 8px;
                         display: none;
                     }
+
+                    .failed-tag {
+                        @include common.font-weight-black;
+                        @include common.padding-8px;
+                        @include common.height-full;
+                        @include common.stack;
+                        @include common.center;
+                        @include common.align-center;
+                        @include common.font-size-small;
+                        color: var(--color-light);
+                        background-color: #e07800;
+                        border-radius: 8px;
+                    }
                 }
 
                 #theme-title-textarea {

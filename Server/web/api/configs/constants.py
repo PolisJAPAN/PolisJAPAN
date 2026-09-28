@@ -25,3 +25,7 @@ SPLITTER = "###br###"
 
 DATA_BACKEND = "mysql"
 """下書きデータの保存先: mysql | dynamodb。serverless環境のみdynamodbに上書きされる"""
+
+PUBLISH_RETRY_LIMIT = 5
+"""Polis投稿(batch-create)のリトライ上限。到達した下書きはFAILEDに隔離し後続を塞がない。
+Lambdaの非同期リトライ(1サイクル3試行)を踏まえ、2サイクル目まで一過性エラーを許容する値"""

@@ -235,3 +235,66 @@ async def test_publish_approved_drafts_rolls_back_on_store_error():
             await service.publish_approved_drafts()
 
     service.draft_store.rollback.assert_awaited_once()
+
+
+# ---------------------------------------------------------------------------
+# 投稿失敗時の隔離（ポイズンピル対策）
+# 1件の下書きが失敗し続けても、リトライ上限で隔離され後続を塞がないこと。
+# ---------------------------------------------------------------------------
+
+def _failing_service(drafts, retry_count_after_increment):
+    service = _service_with_store(drafts)
+
+    async def _inc(draft):
+        draft.publish_retry_count = retry_count_after_increment
+        return draft
+
+    service.draft_store.increment_publish_retry = AsyncMock(side_effect=_inc)
+    return service
+
+
+async def test_publish_failure_increments_retry_and_reraises():
+    drafts = [_draft(1, "毒入り")]
+    service = _failing_service(drafts, retry_count_after_increment=1)
+
+    with patch.object(BatchService, "get_theme_csv", AsyncMock(return_value=("raw", []))), \
+         patch.object(BatchService, "create_theme", AsyncMock(side_effect=RuntimeError("BMP error"))):
+        with pytest.raises(RuntimeError):
+            await service.publish_approved_drafts(limit=1)
+
+    # リトライ回数を永続化し、例外は再送出(アラーム発火のため)
+    service.draft_store.increment_publish_retry.assert_awaited_once()
+    assert service.draft_store.increment_publish_retry.await_args.args[0].id == 1
+    # 上限未満では隔離しない
+    service.draft_store.update_post_status.assert_not_awaited()
+
+
+async def test_publish_failure_quarantines_at_retry_limit():
+    import api.configs as configs
+    import api.models.types as types
+    drafts = [_draft(1, "毒入り")]
+    service = _failing_service(
+        drafts, retry_count_after_increment=configs.constants.PUBLISH_RETRY_LIMIT)
+
+    with patch.object(BatchService, "get_theme_csv", AsyncMock(return_value=("raw", []))), \
+         patch.object(BatchService, "create_theme", AsyncMock(side_effect=RuntimeError("BMP error"))):
+        with pytest.raises(RuntimeError):
+            await service.publish_approved_drafts(limit=1)
+
+    # 上限到達で FAILED(102) に隔離 → 次回以降は後続の下書きが処理される
+    service.draft_store.update_post_status.assert_awaited_once()
+    args = service.draft_store.update_post_status.await_args.args
+    assert args[0].id == 1
+    assert args[1] == types.PostStatus.FAILED.value
+
+
+async def test_publish_failure_recording_error_does_not_mask_original():
+    # 隔離処理自体が失敗しても、元の例外が伝播すること
+    drafts = [_draft(1, "毒入り")]
+    service = _service_with_store(drafts)
+    service.draft_store.increment_publish_retry = AsyncMock(side_effect=RuntimeError("store down"))
+
+    with patch.object(BatchService, "get_theme_csv", AsyncMock(return_value=("raw", []))), \
+         patch.object(BatchService, "create_theme", AsyncMock(side_effect=RuntimeError("BMP error"))):
+        with pytest.raises(RuntimeError, match="BMP error"):
+            await service.publish_approved_drafts(limit=1)
