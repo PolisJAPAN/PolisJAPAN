@@ -3,16 +3,19 @@ from enum import Enum
 class PostStatus(Enum):
     """
         ポスト状態を管理するステート
-        0 : 生成済
-        1 : 承認済 
-        2 : 投稿済 
-        101 : 却下済
+        0 : 提案済 (SUGGESTED)
+        1 : 生成済 (GENERATED)
+        2 : 承認済 (APPROVED)
+        3 : 投稿済 (POSTED)
+        101 : 却下済 (REJECTED)
+        102 : 投稿失敗 (FAILED。リトライ上限到達で隔離。再承認で再投稿可能)
     """
     SUGGESTED = 0
     GENERATED = 1
     APPROVED = 2
     POSTED = 3
     REJECTED = 101
+    FAILED = 102
 
 class LogLevel:
     """

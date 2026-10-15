@@ -13,8 +13,9 @@ from selenium.common.exceptions import (
         ElementClickInterceptedException, 
         ElementNotInteractableException, 
         JavascriptException, 
-        StaleElementReferenceException, 
+        StaleElementReferenceException,
         TimeoutException,
+        WebDriverException,
     )
 from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
@@ -445,23 +446,28 @@ class WebLoaderChrome:
                         pass
 
             # 4) まずは通常の send_keys
+            #    ChromeDriver は BMP 外の文字(絵文字等)を打鍵できず WebDriverException になるため、
+            #    含まれる場合は send_keys を使わず手順 5 の JS 直書きに任せる
+            has_non_bmp = any(ord(ch) > 0xFFFF for ch in text)
+            if has_non_bmp and tag not in ("input", "textarea") and not is_contenteditable:
+                # JS直書きも効かない要素形状では無言の空振り(空のまま成功扱い)になるため明示的に失敗させる
+                raise RuntimeError(f"fill_input failed: non-BMP text on unwritable element (selector={selector}, tag={tag})")
             try:
                 if is_contenteditable:
                     # contenteditable は一旦空にしてから
                     drv.execute_script("arguments[0].innerHTML = '';", el)
-                el.send_keys(text)
+                if not has_non_bmp:
+                    el.send_keys(text)
             except ElementNotInteractableException:
                 # 下の JS 直接設定へフォールバック
                 pass
+            except WebDriverException as e:
+                # BMP制限による打鍵不能のみ JS 直接設定へフォールバック
+                # （stale element等の実障害まで握りつぶさない）
+                if "BMP" not in str(e):
+                    raise
 
-            # 5) 必要なら Enter
-            if with_enter:
-                try:
-                    el.send_keys(Keys.RETURN)
-                except Exception:
-                    pass
-
-            # 6) 値が入っていない/反映されていない場合は JS 直書き + input/change 発火
+            # 5) 値が入っていない/反映されていない場合は JS 直書き + input/change 発火
             #    - textarea/input: value プロパティを設定
             #    - contenteditable: textContent を設定
             try:
@@ -491,6 +497,13 @@ class WebLoaderChrome:
             except JavascriptException:
                 # JS 実行が許可されていない/shadow DOM などで失敗した場合は握りつぶす
                 pass
+
+            # 6) 必要なら Enter（値の反映(JS直書き含む)後に送る。先に送ると空のまま送信される）
+            if with_enter:
+                try:
+                    el.send_keys(Keys.RETURN)
+                except Exception:
+                    pass
 
         except TimeoutException:
             raise RuntimeError(f"fill_input timeout: element not found or not visible (selector={selector})")

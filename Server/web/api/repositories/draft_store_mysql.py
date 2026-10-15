@@ -38,6 +38,12 @@ class MySQLDraftStore:
     async def update_post_status(self, draft, post_status: int):
         return await cruds.TDraft.update_post_status(self.db, draft, post_status)
 
+    async def increment_publish_retry(self, draft):
+        # t_draftテーブルに対応カラムが無いためメモリ上でのみ加算する
+        # （本番のbatch-createはdynamodbバックエンドのみ。mysqlでは隔離されず従来挙動のまま）
+        draft.publish_retry_count = getattr(draft, "publish_retry_count", 0) + 1
+        return draft
+
     async def update_content(self, draft, theme_name, theme_description, theme_comments, theme_category):
         return await cruds.TDraft.update_content(self.db, draft, theme_name, theme_description, theme_comments, theme_category)
 

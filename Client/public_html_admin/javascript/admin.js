@@ -5,6 +5,16 @@
 /** API通信先（localhost開発時はローカルnginxの /api/ プロキシ経由で本番APIへ。docs/クライアント動作確認ガイド.md 参照） */
 const API_BASE = location.hostname === "localhost" ? "/api/" : "https://api.pol-is.jp/";
 
+// サーバーの api.models.types.PostStatus と対応（変更時は両方を更新すること）
+const POST_STATUS = {
+    SUGGESTED: 0,
+    GENERATED: 1,
+    APPROVED: 2,
+    POSTED: 3,
+    REJECTED: 101,
+    FAILED: 102,
+};
+
 /**
  * 管理情報一覧を取得するAPIを呼び出す。
  * 
@@ -319,6 +329,7 @@ function buildThemeInnerHTML() {
                         <div class="date-text">${formatIsoToJapaneseDate(create_date)}</div>
                     </div>
                     <div class="new-tag">NEW!</div>
+                    ${post_status == POST_STATUS.FAILED ? `<div class="failed-tag">投稿失敗</div>` : ""}
                 </div>
                 <div class="theme-description">
                     <div class="title-text">説明</div>
@@ -331,7 +342,7 @@ function buildThemeInnerHTML() {
                 <div class="button-row">
                     <button class="edit-button button secondary">更新</button>
                     <button class="delete-button button primary">削除</button>
-                    <button class="approve-button button primary ${post_status >= 2 ? "disabled" : ""}">承認</button>
+                    <button class="approve-button button primary ${post_status >= POST_STATUS.APPROVED && post_status != POST_STATUS.FAILED ? "disabled" : ""}">承認</button>
                 </div>
             </div>
     `;

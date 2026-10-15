@@ -19,6 +19,7 @@ from typing import Any, Optional
 import boto3
 from boto3.dynamodb.conditions import Attr, Key
 
+import api.models.types as types
 from api.repositories.draft import Draft
 from api.utils.time import Time
 
@@ -70,6 +71,7 @@ class DynamoDraftStore:
             report_id=item.get("report_id", ""),
             post_status=int(item.get("post_status", 0)),
             status=int(item.get("status", 1)),
+            publish_retry_count=int(item.get("publish_retry_count", 0)),
             create_date=_dt(item.get("create_date")),
             update_date=_dt(item.get("update_date")),
         )
@@ -174,7 +176,14 @@ class DynamoDraftStore:
         return draft
 
     async def update_post_status(self, draft: Draft, post_status: int) -> Draft:
-        return await self._update_fields(draft, {"post_status": post_status})
+        fields: dict[str, Any] = {"post_status": post_status}
+        # (再)承認はリトライ回数の振り出し（FAILED隔離→再承認後に1回の失敗で即再隔離されないため）
+        if post_status == types.PostStatus.APPROVED.value:
+            fields["publish_retry_count"] = 0
+        return await self._update_fields(draft, fields)
+
+    async def increment_publish_retry(self, draft: Draft) -> Draft:
+        return await self._update_fields(draft, {"publish_retry_count": draft.publish_retry_count + 1})
 
     async def update_content(self, draft: Draft, theme_name, theme_description, theme_comments, theme_category) -> Draft:
         fields = {}

@@ -176,7 +176,8 @@ body#admin {
                         height: 36px;
                     }
         
-                    .new-tag {
+                    // NEW!/投稿失敗など、テーマ情報行に並ぶステータスタグの共通装飾
+                    @mixin status-tag {
                         @include common.font-weight-black;
                         @include common.padding-8px;
                         @include common.height-full;
@@ -185,9 +186,18 @@ body#admin {
                         @include common.align-center;
                         @include common.font-size-small;
                         color: var(--color-light);
-                        background-color: #ff4848;
                         border-radius: 8px;
+                    }
+
+                    .new-tag {
+                        @include status-tag;
+                        background-color: #ff4848;
                         display: none;
+                    }
+
+                    .failed-tag {
+                        @include status-tag;
+                        background-color: #e07800;
                     }
                 }
 
