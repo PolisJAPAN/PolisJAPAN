@@ -34,3 +34,9 @@ variable "environment_variables" {
   type      = map(string)
   sensitive = true
 }
+
+variable "alerts_topic_arn" {
+  description = "投稿滞留リマインドの通知先SNSトピックARN（空なら権限を付与しない）"
+  type        = string
+  default     = ""
+}

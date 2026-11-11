@@ -53,7 +53,7 @@ resource "aws_iam_role_policy" "batch" {
 
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [
+    Statement = concat([
       {
         Sid      = "Logs"
         Effect   = "Allow"
@@ -84,7 +84,15 @@ resource "aws_iam_role_policy" "batch" {
         Action   = ["ssm:GetParameter", "ssm:GetParameters"]
         Resource = var.ssm_parameter_arns
       },
-    ]
+      ],
+      # 投稿滞留のリマインド通知（batch-createのみ。api/lambda_handlers/backlog_monitor.py）
+      each.key == "create" && var.alerts_topic_arn != "" ? [{
+        Sid      = "AlertsPublish"
+        Effect   = "Allow"
+        Action   = ["sns:Publish"]
+        Resource = [var.alerts_topic_arn]
+      }] : [],
+    )
   })
 }
 
