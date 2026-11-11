@@ -8,20 +8,26 @@ APP_ENV=serverless 前提（DraftStoreはDynamoDB、RDB接続なし）。
 """
 import asyncio
 
+from api.lambda_handlers import backlog_monitor
 from api.logger import Logger
 from api.repositories import create_draft_store
 from api.services.batch import BatchService
+from api.utils.time import Time
 
 
 async def _run() -> dict:
+    started_at = Time.now()
     service = BatchService()
     await service.initialize_utils()
     service.db_session = None
     service.draft_store = create_draft_store(None)
+    processed = 0
     try:
         processed = await service.publish_approved_drafts(limit=1)
         return {"is_success": True, "processed": processed}
     finally:
+        # 成功・失敗どちらでも滞留状況を報告する（失敗時こそ必要。報告自体は例外を出さない）
+        await backlog_monitor.report(service.draft_store, processed, started_at)
         s3 = getattr(service, "s3", None)
         if s3 is not None:
             await s3.close()

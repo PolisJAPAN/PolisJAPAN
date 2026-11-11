@@ -102,3 +102,101 @@ resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
   alarm_actions = [aws_sns_topic.alerts.arn]
   ok_actions    = [aws_sns_topic.alerts.arn]
 }
+
+# ---- 投稿バッチ(batch-create)の滞留アラーム ----
+# メトリクスは batch-create が起動のたびにEMFで出力する
+# （Server/web/api/lambda_handlers/backlog_monitor.py）。
+# Errorsアラームは失敗下書きがFAILEDに隔離されるとすぐOKに戻るため、
+# 「解消するまでALARMのまま」になる件数ベースのアラームで補う
+# （2026-10に45件・約4週間の滞留を見逃した再発防止）。
+
+locals {
+  backlog_namespace  = "PolisJAPAN/Batch"
+  backlog_dimensions = { FunctionName = "polisjapan-batch-create" }
+}
+
+# 投稿失敗(FAILED)の下書きが1件でも残っている間はALARM
+resource "aws_cloudwatch_metric_alarm" "publish_failed_drafts" {
+  count = var.enable_publish_backlog_alarms ? 1 : 0
+
+  alarm_name          = "polisjapan-batch-create-failed-drafts"
+  alarm_description   = "Polisへの投稿に失敗して隔離された下書き(FAILED)が残っている。原因を解消し、管理画面で再承認するまで投稿されない"
+  namespace           = local.backlog_namespace
+  metric_name         = "FailedDrafts"
+  dimensions          = local.backlog_dimensions
+  statistic           = "Maximum"
+  period              = 1800
+  evaluation_periods  = 1
+  threshold           = 1
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  # 報告の途絶は no-report アラームが担当。ここでは状態を維持してフラップさせない
+  treat_missing_data = "ignore"
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
+}
+
+# 投稿待ち(APPROVED)があるのに2時間1件も投稿できていない
+# （隔離の対象外の失敗=CSV/S3/ストア更新の失敗が続くケースを拾う）
+resource "aws_cloudwatch_metric_alarm" "publish_stalled" {
+  count = var.enable_publish_backlog_alarms ? 1 : 0
+
+  alarm_name          = "polisjapan-batch-create-stalled"
+  alarm_description   = "投稿待ちの下書きがあるのに2時間1件もPolisへ投稿できていない"
+  evaluation_periods  = 1
+  threshold           = 1
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  treat_missing_data  = "ignore"
+
+  metric_query {
+    id          = "stalled"
+    expression  = "IF(pending >= 1 AND published < 1, 1, 0)"
+    label       = "投稿待ちあり かつ 投稿0件"
+    return_data = true
+  }
+
+  metric_query {
+    id = "pending"
+    metric {
+      namespace   = local.backlog_namespace
+      metric_name = "PendingDrafts"
+      dimensions  = local.backlog_dimensions
+      stat        = "Minimum"
+      period      = 7200
+    }
+  }
+
+  metric_query {
+    id = "published"
+    metric {
+      namespace   = local.backlog_namespace
+      metric_name = "PublishedDrafts"
+      dimensions  = local.backlog_dimensions
+      stat        = "Sum"
+      period      = 7200
+    }
+  }
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
+}
+
+# batch-createからの報告が1時間途絶えた（スケジューラ停止・起動不能など）
+resource "aws_cloudwatch_metric_alarm" "publish_no_report" {
+  count = var.enable_publish_backlog_alarms ? 1 : 0
+
+  alarm_name          = "polisjapan-batch-create-no-report"
+  alarm_description   = "batch-createの滞留状況の報告が1時間途絶えた（15分間隔で届くはず）。スケジューラ停止やLambda起動不能の可能性"
+  namespace           = local.backlog_namespace
+  metric_name         = "PendingDrafts"
+  dimensions          = local.backlog_dimensions
+  statistic           = "SampleCount"
+  period              = 3600
+  evaluation_periods  = 1
+  threshold           = 1
+  comparison_operator = "LessThanThreshold"
+  treat_missing_data  = "breaching"
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
+}

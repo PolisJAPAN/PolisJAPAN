@@ -36,10 +36,12 @@ module "batch" {
   drafts_table_arn   = module.data.drafts_table_arn
   ssm_parameter_arns = module.data.ssm_parameter_arns
   scheduler_state    = var.scheduler_state
+  alerts_topic_arn   = module.monitoring.alerts_topic_arn
 
   environment_variables = merge(local.common_lambda_env, {
     POLIS_LOGIN_USER     = data.aws_ssm_parameter.secrets["polis-login-user"].value
     POLIS_LOGIN_PASSWORD = data.aws_ssm_parameter.secrets["polis-login-password"].value
+    ALERTS_TOPIC_ARN     = module.monitoring.alerts_topic_arn
   })
 }
 
@@ -71,6 +73,7 @@ module "monitoring" {
     length(module.api) > 0 ? [module.api[0].function_name] : [],
     length(module.batch) > 0 ? module.batch[0].function_names : [],
   )
+  enable_publish_backlog_alarms = var.api_image_uri != "" && var.batch_create_image_uri != ""
 }
 
 # ------------------------------------------------------------

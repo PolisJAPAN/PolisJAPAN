@@ -16,3 +16,9 @@ variable "lambda_function_names" {
   type        = list(string)
   default     = []
 }
+
+variable "enable_publish_backlog_alarms" {
+  description = "投稿バッチ(batch-create)の滞留アラームを作成するか"
+  type        = bool
+  default     = false
+}
