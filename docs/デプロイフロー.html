@@ -195,7 +195,7 @@
       <table>
         <tr><th>Dockerfile</th><th>ECR リポジトリ</th><th>使われる Lambda</th></tr>
         <tr><td><code>Server/web/Dockerfile.lambda</code></td><td><code>polisjapan-api</code></td><td>api / batch-update（同一イメージ・ハンドラ指定のみ変更）</td></tr>
-        <tr><td><code>Server/web/Dockerfile.lambda-chromium</code></td><td><code>polisjapan-batch-create</code></td><td>batch-create（Selenium + headless Chromium）</td></tr>
+        <tr><td><code>Server/web/Dockerfile.lambda-chromium</code></td><td><code>polisjapan-batch-create</code></td><td>batch-create（Selenium + Chrome for Testing。バージョン固定）</td></tr>
       </table>
     </div>
     <div class="warn">
@@ -206,7 +206,7 @@
     <ol class="steps">
       <li>GitHub Actions のワークフローが緑であること（healthcheckまで含む）</li>
       <li>変更内容に応じて: AI テーマ生成 E2E／管理画面の一覧・承認操作／CSV が5分以内に更新されること</li>
-      <li>CloudWatch アラーム（batch-update / batch-create の Errors）が発火していないこと</li>
+      <li>CloudWatch アラーム（api / batch-update / batch-create の Errors、投稿滞留の 3 本）が発火していないこと。batch-create は、イメージ切替直後の 1 回目だけ Chrome の起動がタイムアウトして Errors が一度鳴ることがある（自動リトライで回復）</li>
     </ol>
     <h3>手動デプロイ（Actions障害時のフォールバック）</h3>
     <pre><code># ECR ログイン
@@ -250,10 +250,10 @@ aws lambda update-function-code --profile terraform --function-name polisjapan-a
         <tr><td><code>modules/api</code></td><td>Lambda「api」+ API Gateway + ACM + カスタムドメイン</td></tr>
         <tr><td><code>modules/batch</code></td><td>Lambda「batch-update / create」+ EventBridge Scheduler</td></tr>
         <tr><td><code>modules/admin-site</code></td><td>admin.pol-is.jp（S3 + CloudFront + IP 制限 Function）</td></tr>
-        <tr><td><code>modules/monitoring</code></td><td>Route53 ヘルスチェック + アラーム + SNS 通知</td></tr>
+        <tr><td><code>modules/monitoring</code></td><td>Route53 ヘルスチェック + アラーム（Lambda Errors・投稿滞留）+ SNS 通知</td></tr>
       </table>
     </div>
-    <p>既存リソース（S3 / CloudFront / Route53 / ACM / contact・share Lambda / SES）も import 済みで、<strong>計 115 リソースがコード管理下</strong>。データを持つリソース（S3 / Route53 / DynamoDB）には <code>prevent_destroy</code> 設定済み。</p>
+    <p>既存リソース（S3 / CloudFront / Route53 / ACM / contact・share Lambda / SES）も import 済みで、<strong>計 125 リソースがコード管理下</strong>（2026-11-12 時点）。データを持つリソース（S3 / Route53 / DynamoDB）には <code>prevent_destroy</code> 設定済み。</p>
     <div class="warn">
       <strong>⚠ シークレット値は Terraform に書かない</strong>
       SSM パラメータはガワだけ Terraform で作り、値は <code>aws ssm put-parameter --type SecureString --overwrite</code> で手動投入する（tfstate には Lambda 環境変数として復号値が残るため、tfstate バケットは非公開厳守）。
@@ -267,9 +267,9 @@ aws lambda update-function-code --profile terraform --function-name polisjapan-a
     <table>
       <tr><th>ジョブ</th><th>間隔</th><th>内容</th></tr>
       <tr><td>batch-update</td><td>5 分</td><td>pol.is からレポート CSV を取得し、S3 の <code>themes.csv</code>・レポート CSV を Cache-Control 付きで更新</td></tr>
-      <tr><td>batch-create</td><td>15 分</td><td>APPROVED の下書きを Selenium で pol.is に作成（1 回の起動で 1 件だけ処理）</td></tr>
+      <tr><td>batch-create</td><td>15 分</td><td>APPROVED の下書きを Selenium で pol.is に作成（1 回の起動で 1 件だけ処理。9 回連続で失敗した下書きは FAILED に隔離）</td></tr>
     </table>
-    <p>起動は EventBridge Scheduler。失敗時は Lambda の Errors アラーム → SNS「Polis-Server-Alert」→ メール通知。</p>
+    <p>起動は EventBridge Scheduler。失敗時は Lambda の Errors アラーム → SNS「polisjapan-alerts」→ メール通知。投稿の滞留（FAILED の残存・投稿の停滞・報告の途絶）も同じ通知先のアラームで検知する（<code>docs/仕様書.md</code> §7.1）。</p>
   </div>
 </section>
 
@@ -281,7 +281,7 @@ aws lambda update-function-code --profile terraform --function-name polisjapan-a
     <li>Terraform 手順: <code>Infra/terraform/README.md</code></li>
     <li>クライアント同期コマンド: <code>Client/README.md</code></li>
   </ul>
-  <div style="margin-top:8px">最終更新: 2026-07-07（GitHub Actions 自動デプロイ導入）</div>
+  <div style="margin-top:8px">最終更新: 2026-11-12（監視・通知先・リソース数を現状に更新）／2026-07-07（GitHub Actions 自動デプロイ導入）</div>
 </footer>
 
 </div>

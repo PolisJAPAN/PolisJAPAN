@@ -1,8 +1,10 @@
 # PolisJAPAN Terraform
 
-サーバーレス移行（`docs/サーバーレス移行設計書.md`）の新環境をコード管理するTerraform構成。
+PolisJAPAN の本番環境（フルサーバーレス構成）をコード管理するTerraform構成。
 
-## 方針
+> **現在の状態（2026-11-12）**: 移行は完了している。カットオーバーは 2026-07-05、旧環境（EC2・EIP・VPC など）の撤去は 2026-07-06 に済み、スケジューラは ENABLED で稼働中。下の「方針」「Bootstrap」「段階的なapply手順」「カットオーバー時の操作」は**移行時の記録**であり、通常の変更は `terraform plan` → `apply` だけでよい。
+
+## 方針（移行時の記録）
 
 - **新規リソースの作成のみ**を行う。稼働中の既存リソース（EC2・既存CloudFront/S3・Route53の既存レコード）には一切触れない
 - Route53には「追加」だけ行う（ACM検証用CNAME、新設の admin.pol-is.jp）。`api.pol-is.jp` の切り替えはカットオーバーRunbookで手動実施
@@ -17,10 +19,10 @@ modules/
 ├── api/         # Lambda(api) + API Gateway + ACM + カスタムドメイン
 ├── batch/       # Lambda(batch-update/create) + EventBridge Scheduler
 ├── admin-site/  # admin.pol-is.jp: S3 + CloudFront + CF Function(IP制限)
-└── monitoring/  # Route53ヘルスチェック + アラーム + SNSメール通知
+└── monitoring/  # Route53ヘルスチェック + アラーム（Lambda Errors・投稿滞留）+ SNSメール通知
 ```
 
-## Bootstrap（初回のみ）
+## Bootstrap（初回のみ・実施済み）
 
 tfstate用バケットを手動作成する:
 
@@ -33,7 +35,7 @@ aws s3api put-public-access-block --bucket polisjapan-tfstate \
   --profile terraform
 ```
 
-## 段階的なapply手順
+## 段階的なapply手順（初回構築時の記録）
 
 Lambdaはコンテナイメージが先にECRに存在しないと作成できないため、2段階でapplyする。
 
@@ -56,13 +58,13 @@ aws ssm put-parameter --name /polisjapan/openai-api-key --type SecureString --va
 terraform apply
 ```
 
-## カットオーバー時の操作
+## カットオーバー時の操作（2026-07-05 実施済み）
 
 1. `docs/サーバーレス移行設計書.md` §5 Runbook に従う
 2. Route53 の `api.pol-is.jp` を、出力 `api_custom_domain_target` のエイリアスへ手動で切り替える
 3. `scheduler_state = "ENABLED"` にして `terraform apply`（旧cron停止後に実施）
 
-## 管理対象（2026-07-06 既存リソース取り込み完了・計115リソース）
+## 管理対象（2026-07-06 既存リソース取り込み完了。2026-11-12 時点で計 125 リソース）
 
 新環境一式（Lambda/API GW/DynamoDB/EventBridge/SSM/ECR/監視/admin-site）に加え、既存リソースもすべてimport済み:
 S3（pol-is.jp / app.pol-is.jp とサブ設定）、CloudFront×4、ACM×6、Route53ゾーン+全レコード、
@@ -73,7 +75,7 @@ contact/share Lambda + API Gateway本体/ステージ、SES（ドメインID/DKI
 - contact/share の **Lambdaコード**（ignore_changes。コンソールデプロイのまま）と **API GWメソッド/統合定義・IAMサービスロール**（凍結済みレガシー。`body`を指定していないためTerraformが子リソースに触れることはない）
 - SESのメールアドレスID（個人アドレスをコードに残さない）
 - IAMユーザー（terraform-deploy等。自己権限の管理事故防止）
-- 旧EC2・EIP・SG・VPC・旧SNS・cw-syn-resultsバケット・e2e-sandbox（Phase 5で削除予定のため取り込まない）
+- 旧EC2・EIP・SG・VPC・旧SNS・cw-syn-resultsバケット・e2e-sandbox（取り込まずに 2026-07-06 に削除済み）
 
 **データ保護**: S3バケット（lp/app/archive）・Route53ゾーン・DynamoDBに `prevent_destroy` を設定済み。
 取り込み前の全データバックアップは `s3://polisjapan-archive/pre-import-backup/` とローカルに保全。
@@ -82,7 +84,7 @@ contact/share Lambda + API Gateway本体/ステージ、SES（ドメインID/DKI
 
 - SSMパラメータの値はTerraformでは管理しない（`ignore_changes`）。ただしLambda環境変数への注入のため **tfstateには復号値が含まれる**。tfstateバケットは非公開・暗号化・バージョニングを必須とし、terraform-deployユーザー以外にアクセス権を与えないこと
 - `terraform.tfvars` はIP許可リスト等を含むため `.gitignore` 対象
-- ~~既知の残タスク: `services/batch.py` の pol.is ログイン情報ハードコード~~ → 解消済み（2026-07-07 環境変数化・フォールバック実値も削除）。**過去コミットに実値が残っているため pol.is パスワードのローテーションは必要**（Phase 5）
+- ~~既知の残タスク: `services/batch.py` の pol.is ログイン情報ハードコード~~ → 解消済み（2026-07-07 環境変数化・フォールバック実値も削除）。過去コミットに実値が残っていた pol.is パスワードは 2026-07-07 にローテーション済み
 
 ## GitHub Actions による自動デプロイ（2026-07-07〜）
 
