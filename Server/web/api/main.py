@@ -12,12 +12,21 @@ from api.core.middleware.timeout_middleware import TimeoutMiddleware
 # タイムアウト値
 REQUEST_TIMEOUT = 300
 
+# Swagger(/docs, /redoc, /openapi.json)を公開しない環境。
+# 本番LambdaはAPP_ENV=serverlessで動くため、productionだけを見ると本番で公開されてしまう
+DOCS_DISABLED_ENVS = ("production", "serverless")
+
+
+def create_app(app_env: str) -> FastAPI:
+    """環境に応じてSwaggerの公開有無を切り替えたFastAPIアプリを作る。"""
+    if app_env in DOCS_DISABLED_ENVS:
+        return FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+    return FastAPI()
+
+
 # FastAPIアプリの構築
 APP_ENV = os.getenv("APP_ENV", "production")
-if APP_ENV == "production":
-    app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
-else:
-    app = FastAPI()
+app = create_app(APP_ENV)
 
 app.add_middleware(TimeoutMiddleware, timeout=REQUEST_TIMEOUT)
 
