@@ -15,3 +15,22 @@ def test_app_has_expected_routes():
     assert "/batch/healthcheck" in paths
     assert "/theme/post_draft" in paths
     assert "/admin/info" in paths
+
+
+def test_swagger_is_disabled_in_deployed_envs():
+    from api.main import create_app
+
+    # 本番LambdaはAPP_ENV=serverless。productionと同様にSwaggerを公開しない
+    for env in ("production", "serverless"):
+        app = create_app(env)
+        assert (app.docs_url, app.redoc_url, app.openapi_url) == (None, None, None)
+        paths = {getattr(route, "path", None) for route in app.routes}
+        assert not ({"/docs", "/redoc", "/openapi.json"} & paths)
+
+
+def test_swagger_is_enabled_in_local_envs():
+    from api.main import create_app
+
+    for env in ("localhost", "development"):
+        app = create_app(env)
+        assert app.docs_url == "/docs" and app.openapi_url == "/openapi.json"
