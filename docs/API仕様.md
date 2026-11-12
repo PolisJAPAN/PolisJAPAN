@@ -20,6 +20,35 @@
 
 定期バッチ（batch-update・batch-create）は HTTP を経由せず、EventBridge Scheduler が Lambda を直接起動する（`Server/web/api/lambda_handlers/batch_update.py`、`Server/web/api/lambda_handlers/batch_create.py`）。同じ処理を HTTP で手動実行する入口が `/batch/update` と `/batch/create_all` である。
 
+次の図は、誰がどの API 群を呼ぶか（と、API を通らない通信）を示す。
+
+```mermaid
+flowchart LR
+    subgraph sgCaller["呼び出し元"]
+        app["WEB アプリ<br/>app.pol-is.jp"]
+        adminUi["管理画面<br/>admin.pol-is.jp"]
+        lp["LP<br/>pol-is.jp"]
+        viewer["共有リンクを開く人<br/>SNS のプレビュー取得"]
+        r53["Route53 ヘルスチェック"]
+        sched["EventBridge Scheduler"]
+    end
+    apiHost["api.pol-is.jp<br/>API Gateway HTTP API → Lambda polisjapan-api"]
+    contactHost["contact.pol-is.jp<br/>Lambda PolisJAPAN-Contact → SES"]
+    shareHost["share.pol-is.jp<br/>Lambda PolisJAPAN-GetOGP"]
+    batchLambda["batch-update・batch-create の Lambda"]
+    csvFiles["app.pol-is.jp/csv/ の CSV"]
+    polis["pol.is"]
+    app -->|"/theme/*"| apiHost
+    adminUi -->|"/admin/*・/batch/create_all・/batch/delete"| apiHost
+    r53 -->|"/batch/healthcheck"| apiHost
+    app -->|"/contact"| contactHost
+    lp -->|"/contact"| contactHost
+    viewer -->|"/link"| shareHost
+    sched -->|"HTTP を通さず直接起動"| batchLambda
+    app -->|"API を通さず直接読む"| csvFiles
+    app -->|"投票・意見の投稿（埋め込み）"| polis
+```
+
 ---
 
 ## 2. 共通事項（`api.pol-is.jp`）
@@ -70,6 +99,47 @@ Cookie やヘッダーによる認証・セッションは使わない（休眠�
 | `/batch/healthcheck` | なし | なし | — |
 | `/admin/info`、`/admin/approve`、`/admin/edit` | `BATCH_ACCESS_KEY` | `ADMIN_ALLOW_IPS` | キー → IP → 対象の存在 |
 
+次の図は、上の表の検査の順と、それぞれで失敗したときに返るコードを示す。
+
+```mermaid
+flowchart TD
+    which{"呼ばれた API"}
+    run["処理を実行"]
+    lenCheck{"access_key が 1〜256 文字か"}
+    userKey{"USER_ACCESS_KEY と一致するか"}
+    batchKey{"BATCH_ACCESS_KEY と一致するか"}
+    delExists{"下書きがあるか"}
+    adminKey{"BATCH_ACCESS_KEY と一致するか"}
+    ipCheck{"接続元 IP が ADMIN_ALLOW_IPS に含まれるか"}
+    adminExists{"下書きがあるか"}
+    e500["500"]
+    e481["481 アクセスキーが一致しない"]
+    e482del["482 対象のテーマが見つかりません。"]
+    e482ip["482 IP が許可リストに無い"]
+    e483["483 下書きが存在しません。"]
+    which -->|"/batch/healthcheck"| run
+    which -->|"/theme/post_draft"| lenCheck
+    lenCheck -->|"はい（値は照合しない）"| run
+    lenCheck -->|"いいえ"| e500
+    which -->|"/theme/generate_*"| userKey
+    userKey -->|"はい"| run
+    userKey -->|"いいえ"| e481
+    which -->|"/batch/update・create_all・delete"| batchKey
+    batchKey -->|"いいえ"| e481
+    batchKey -->|"はい（update・create_all）"| run
+    batchKey -->|"はい（delete）"| delExists
+    delExists -->|"はい"| run
+    delExists -->|"いいえ"| e482del
+    which -->|"/admin/*"| adminKey
+    adminKey -->|"いいえ"| e481
+    adminKey -->|"はい"| ipCheck
+    ipCheck -->|"いいえ"| e482ip
+    ipCheck -->|"はい（info）"| run
+    ipCheck -->|"はい（approve・edit）"| adminExists
+    adminExists -->|"はい"| run
+    adminExists -->|"いいえ"| e483
+```
+
 - IP の判定は `Server/web/api/utils/security.py` の `is_allowed_ip` で、Lambda に渡された接続元 IP（API Gateway が受け取った送信元）を許可リストの各 CIDR と比べる。IP として解釈できない値は拒否する。
 - 管理画面 `admin.pol-is.jp` 自体も CloudFront Function で同じ許可リストを検査している（設定はインフラ構成.md）。API 側の検査はそれとは別に掛かる。
 - 定期バッチの Lambda はアクセスキーを検査しない。起動できるのは IAM で許可された EventBridge Scheduler だけだからである。
@@ -109,6 +179,36 @@ API の処理は `Server/web/api/core/common_route.py` の `CommonRoute` を通�
 | アプリのタイムアウト（§2.7） | 504 | `{"detail": "Request processing time excedeed limit"}` |
 | API Gateway のタイムアウト（§2.7） | 503 | API Gateway の標準の応答 |
 | CORS のプリフライトで許可されないオリジン（§2.8） | 400 | `Disallowed CORS origin` |
+
+次の図は、応答のコードと形がどこで決まるかを示す。
+
+```mermaid
+flowchart TD
+    req["リクエスト"]
+    preflight{"CORS のプリフライトか"}
+    route{"パスとメソッドが定義にあるか"}
+    common["CommonRoute で処理"]
+    r400["400 Disallowed CORS origin"]
+    r404["404 Not Found"]
+    r405["405 Method Not Allowed"]
+    r503["503 API Gateway の標準の応答"]
+    r200["200 API ごとの JSON"]
+    rKnown["481・482・483<br/>message と trace_id の JSON"]
+    r500["500<br/>message と trace_id の JSON"]
+    logs["CloudWatch Logs に trace-id の行を出力"]
+    req --> preflight
+    preflight -->|"はい・許可されないオリジン"| r400
+    preflight -->|"いいえ"| route
+    route -->|"パスが無い"| r404
+    route -->|"メソッドが違う"| r405
+    route -->|"ある"| common
+    common -->|"成功"| r200
+    common -->|"認証・対象の存在の例外"| rKnown
+    common -->|"入力の検証エラー・外部サービスの失敗・想定外の例外"| r500
+    common -->|"約 30 秒以内に応答しない"| r503
+    rKnown --> logs
+    r500 --> logs
+```
 
 #### `trace_id`
 
@@ -170,6 +270,37 @@ AI 生成（`/theme/generate_*`）は外部の検索と OpenAI を呼ぶため�
 実装: `Server/web/api/routers/theme.py`、`Server/web/api/schemas/theme.py`、`Server/web/api/services/theme.py`。クライアント: `Client/public_html_app/javascript/create.js`。
 
 複数の値をまとめて 1 項目で送るときは、区切り文字 `###br###`（`Server/web/api/configs/constants.py` の `SPLITTER`）でつなぐ。
+
+次の図は、テーマ作成モーダルの AI アシストで API を呼ぶ順と、入力内容の保存を示す。
+
+```mermaid
+sequenceDiagram
+    participant U as 利用者
+    participant M as テーマ作成モーダル create.js
+    participant LS as ブラウザの localStorage
+    participant API as api.pol-is.jp
+    participant EXT as DuckDuckGo・LangSmith・OpenAI
+    U->>M: テーマを入力し、立場の AI 生成を押す
+    M->>API: POST /theme/generate_axis（theme）
+    API->>EXT: ニュース検索、プロンプト取得、生成
+    API-->>M: axis（立場の配列）
+    M->>LS: AI_ASSIST_CREATE_DRAFT_AXIS に保存
+    U->>M: 意見の AI 生成を押す
+    M->>API: POST /theme/generate_comments（theme, axis）
+    API->>EXT: 立場ごとに検索と生成（同時実行数 3）
+    API-->>M: comments（意見の配列）
+    M->>LS: AI_ASSIST_CREATE_DRAFT_COMMENTS に保存
+    U->>M: 説明文の AI 生成を押す
+    M->>API: POST /theme/generate_descriptions（theme, axis, comments）
+    API->>EXT: ニュース検索、プロンプト取得、生成
+    API-->>M: description
+    M->>LS: AI_ASSIST_CREATE_DRAFT_DESCRIPTION に保存
+    U->>M: カテゴリを選んで投稿する
+    M->>API: POST /theme/post_draft（theme, comments, description, category）
+    API-->>M: is_success true
+    M->>LS: AI_ASSIST の 5 キーを消す
+    Note over M,API: 生成の 3 本は何も保存しない。約 30 秒を超えると結果が届かない（2.7）
+```
 
 ### 4.1 AI 生成の共通の仕組み
 
@@ -256,6 +387,34 @@ AI 生成（`/theme/generate_*`）は外部の検索と OpenAI を呼ぶため�
 - DynamoDB `polisjapan-drafts` に下書きを 1 件追加する。`post_status` は 2（APPROVED）、`title`・`origin_url`・`origin_html` は空文字、`conversation_id`・`report_id` は空文字。id の採番はデータ仕様.md。
 - その後、batch-create（15 分間隔）が古い下書きから 1 件ずつ pol.is にテーマを作り、`themes.csv` に追加する。投稿からおおむね 15 分以内に一般公開され、待ちの下書きが多ければその分遅れる。
 - S3・pol.is・OpenAI には、この API の中では何もしない。
+
+次の図は、`/theme/post_draft` の呼び出しから pol.is で一般公開されるまでの流れを示す。
+
+```mermaid
+sequenceDiagram
+    participant M as テーマ作成モーダル
+    participant API as api.pol-is.jp
+    participant DB as DynamoDB polisjapan-drafts
+    participant SCH as EventBridge Scheduler
+    participant BC as batch-create
+    participant P as pol.is
+    participant S3 as S3 app.pol-is.jp の csv
+    M->>API: POST /theme/post_draft
+    API->>DB: 下書きを追加（post_status 2 APPROVED）
+    API-->>M: is_success true（審査なし）
+    loop 15 分ごと
+        SCH->>BC: 起動
+        BC->>DB: APPROVED の下書きを読み、最も古い 1 件を選ぶ
+        BC->>P: サインイン、作成、シードの意見、可視化、レポート作成
+        alt pol.is での作成に成功
+            BC->>S3: themes.csv に行を追加
+            BC->>S3: レポート CSV を置く
+            BC->>DB: POSTED（3）にし conversation_id と report_id を記録
+        else 失敗
+            BC->>DB: publish_retry_count を 1 増やす（9 で FAILED）
+        end
+    end
+```
 
 本番でこの API を試してはならない（§10）。
 
@@ -487,6 +646,33 @@ AI 生成（`/theme/generate_*`）は外部の検索と OpenAI を呼ぶため�
 - 1 通目を送ってから 2 通目を送る。`mail` が空や不正で 2 通目が失敗しても、運営宛ての 1 通目は届いており、応答は 500 になる。
 - 問い合わせの内容はどこにも保存しない。ただし Lambda が受け取った本文をそのままログに出力するので、CloudWatch Logs `/aws/lambda/PolisJAPAN-Contact` にメールアドレスと内容が残る（`docs/データ仕様.md`）。
 - 有効な本文で呼ぶと実際にメールが 2 通送られる。疎通の確認は、JSON でない本文（例外の経路に入り、メールは送られない）で行う（`Server/lambda/contact/README.md`）。
+
+次の図は、お問い合わせの送信の流れと、応答の分かれ方を示す。
+
+```mermaid
+sequenceDiagram
+    participant F as お問い合わせ画面
+    participant CF as CloudFront
+    participant GW as API Gateway REST
+    participant L as Lambda PolisJAPAN-Contact
+    participant LOG as CloudWatch Logs
+    participant SES as SES
+    F->>CF: POST /contact（JSON 本文 mail, name, content）
+    CF->>GW: 転送（キャッシュ無効）
+    GW->>L: 起動
+    alt 本文が JSON として読めない
+        L-->>F: 500 internal error（メールは送らない）
+    else 読める
+        L->>LOG: 受け取った本文をそのまま出力
+        L->>SES: 運営の受信アドレスへ転送（1 通目）
+        L->>SES: mail のアドレスへ自動返信（2 通目）
+        alt 2 通とも送れた
+            L-->>F: 200 ok と ses_message_id
+        else SES の送信に失敗
+            L-->>F: 500 send error
+        end
+    end
+```
 
 ### 8.4 呼び出し元
 

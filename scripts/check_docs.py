@@ -193,6 +193,35 @@ def check_selectors(cfg: dict, files: list[str]) -> list[str]:
     return errors
 
 
+MERMAID_BLOCK = re.compile(r"^```mermaid\n(.*?)^```", re.S | re.M)
+MERMAID_TYPES = ("flowchart", "graph", "sequenceDiagram", "stateDiagram-v2", "erDiagram", "classDiagram")
+
+
+def check_mermaid(cfg: dict, files: list[str]) -> list[str]:
+    """Mermaid の図が、GitHub で描画できない書き方になっていないこと（書き方の規則は docs/README.md）。"""
+    errors = []
+    for doc in doc_files(cfg, files):
+        text = read(doc)
+        for m in MERMAID_BLOCK.finditer(text):
+            line_no = text.count("\n", 0, m.start()) + 1
+            body = m.group(1)
+            lines = [l.strip() for l in body.splitlines() if l.strip()]
+            where = f"{doc}:{line_no}: Mermaid"
+            if not lines or not lines[0].startswith(MERMAID_TYPES):
+                errors.append(f"{where} の 1 行目が図の種類（{' / '.join(MERMAID_TYPES)}）ではない")
+                continue
+            if "`" in body or "#" in body:
+                errors.append(f"{where} の中にバッククォートか # がある")
+            if lines[0].startswith(("flowchart", "graph")):
+                if sum(l.startswith("subgraph") for l in lines) != sum(l == "end" for l in lines):
+                    errors.append(f"{where} の subgraph と end の数が合わない")
+                if re.search(r"\b\w+(\[(?![\"(\[/])|\{(?![\"{]))", body):
+                    errors.append(f"{where} にラベルを二重引用符で囲んでいないノードがある")
+                if body.count('"') % 2:
+                    errors.append(f"{where} の二重引用符の数が合わない")
+    return errors
+
+
 def static_checks(cfg: dict) -> list[str]:
     files = tracked_files()
     return (
@@ -201,6 +230,7 @@ def static_checks(cfg: dict) -> list[str]:
         + check_routes(cfg)
         + check_facts(cfg)
         + check_selectors(cfg, files)
+        + check_mermaid(cfg, files)
     )
 
 
