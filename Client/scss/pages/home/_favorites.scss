@@ -1,7 +1,7 @@
 @use "../../common" as common;
 
 // お気に入り（カードの☆・お気に入りタブ・空状態）
-// 仕様: docs/superpowers/specs/2026-07-08-favorites-design.md
+// 仕様: docs/画面仕様書.md
 body#home {
     .article-footer .favorite-toggle {
         margin-right: auto; // フッター左端（意見/投票は右寄せのまま）

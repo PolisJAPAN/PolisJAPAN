@@ -1,0 +1,41 @@
+name: Check Docs
+
+# 文書と実装のずれを検査する（本番には何も反映しない）。
+#   静的チェック: 文書の索引・パス・API 一覧・セレクタ・設定値が現在のコードと一致するか
+#   連動チェック: コードを変えたのに、対応する文書を変えていない変更がないか
+# 設定は docs/docmap.json、運用ルールは docs/README.md。
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check docs
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.sha }}
+        run: |
+          if [ "$EVENT" = "pull_request" ]; then
+            RANGE="$PR_BASE...$PR_HEAD"
+          elif git cat-file -e "$PUSH_BEFORE^{commit}" 2>/dev/null; then
+            RANGE="$PUSH_BEFORE..$PUSH_AFTER"
+          else
+            RANGE=""
+          fi
+          if [ -n "$RANGE" ]; then
+            python3 scripts/check_docs.py --range "$RANGE"
+          else
+            python3 scripts/check_docs.py
+          fi

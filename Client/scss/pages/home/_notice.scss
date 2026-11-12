@@ -1,7 +1,7 @@
 @use "../../common" as common;
 
 // お知らせモーダル（アコーディオンリスト）
-// 仕様: docs/superpowers/specs/2026-07-08-notice-feature-design.md
+// 仕様: docs/画面仕様書.md
 #notice-modal {
     .notice-list {
         display: flex;

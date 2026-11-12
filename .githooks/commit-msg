@@ -1,0 +1,7 @@
+#!/bin/sh
+# コードを変えたのに対応する文書を変えていないコミットを止める。
+# 有効化: git config core.hooksPath .githooks （運用ルールは docs/README.md）
+# マージコミットは対象外（取り込む側のコミットで検査済みのため）。
+root=$(git rev-parse --show-toplevel)
+[ -f "$(git rev-parse --git-dir)/MERGE_HEAD" ] && exit 0
+exec python3 "$root/scripts/check_docs.py" --staged --message-file "$1"

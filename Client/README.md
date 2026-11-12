@@ -23,7 +23,7 @@
 docker-compose up
 ```
 ### S3アップロード
-> **通常は手動アップロード不要です（2026-07-07〜）。** mainブランチへのpushでGitHub Actions（`.github/workflows/deploy-client.yml`）が自動的にS3同期とCloudFront無効化を行います。以下はActions障害時などのフォールバック手順です。
+> **通常は手動アップロード不要です。** mainブランチへのpushでGitHub Actions（`.github/workflows/deploy-client.yml`）が自動的にS3同期とCloudFront無効化を行います。以下はActions障害時などのフォールバック手順です。
 ```
 aws s3 sync ./public_html_app/ s3://app.pol-is.jp/ --exclude ".DS_Store"  --exclude "*/.DS_Store" --exclude "csv/*"  --delete --dryrun
 aws s3 sync ./public_html_app/ s3://app.pol-is.jp/ --exclude ".DS_Store"  --exclude "*/.DS_Store" --exclude "csv/*"  --delete
@@ -45,13 +45,3 @@ aws s3 sync s3://app.pol-is.jp/csv/ ./public_html_app/csv/ --exclude ".DS_Store"
 aws s3 sync s3://app.pol-is.jp/csv/ ./public_html_app/csv/ --exclude ".DS_Store"  --exclude "*/.DS_Store" --delete
 ```
 
-### （旧）EC2でのサーバー起動 ※サーバーレス移行済みのため現在は使用しません
-> バックエンドは Lambda / API Gateway に移行済みです（`Infra/terraform/` で管理）。
-> 以下は移行前の EC2 + Docker 運用時の手順です（関連ファイル docker-compose.prd.yml 等は 2026-07-07 に削除済み。必要なら git 履歴を参照）。
-```
-cd server/
-docker logs PolisJAPAN_web -f -t
-docker compose -p PolisJAPAN -f docker-compose.yml -f docker-compose.prd.yml down
-docker compose -p PolisJAPAN -f docker-compose.yml -f docker-compose.prd.yml build
-docker compose -p PolisJAPAN -f docker-compose.yml -f docker-compose.prd.yml up --remove-orphans
-```
