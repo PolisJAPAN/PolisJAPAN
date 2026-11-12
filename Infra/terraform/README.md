@@ -1,6 +1,6 @@
 # PolisJAPAN Terraform
 
-PolisJAPAN の本番環境（フルサーバーレス構成）をコード管理する Terraform 構成。変更の手順と障害対応は `docs/運用手順書.md`、システムの仕様は `docs/仕様書.md` を参照。
+PolisJAPAN の本番環境（フルサーバーレス構成）をコード管理する Terraform 構成。変更の手順と障害対応は `docs/運用手順書.md`、リソースの構成と設定は `docs/インフラ構成.md` を参照。
 
 ## 構成
 

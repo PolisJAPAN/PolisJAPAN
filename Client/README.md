@@ -6,7 +6,7 @@
 - 静的ファイルを配信するWEBサーバーとしては非効率な仕組みですので、本番公開時はpublic_html内をファイルストレージにアップして公開してください。
 
 ## SCSSについて
-- `scss/` フォルダで SCSS を分割管理します（`_variables.scss` など）。
+- `scss/` フォルダで SCSS を分割管理します（構成は `docs/クライアント設計.md`）。
 - `style.scss` でサブscssを読み込み、最終的に CSS にコンパイルします。
 - コンパイル後の CSS は、3 サイトそれぞれの `style.css`（`public_html/`・`public_html_app/`・`public_html_admin/`）に出力されます。
 - HTML 側は各サイトの `style.css` を読み込みます。

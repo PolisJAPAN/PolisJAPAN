@@ -1,6 +1,6 @@
 # PolisJAPAN
 
-pol.is を使った日本語の合意形成サービス。静的サイト（LP・WEB アプリ・管理画面）と、API・バッチの Lambda で構成する。文書の索引は `docs/README.md`。
+pol.is を使った日本語の合意形成サービス。静的サイト（LP・WEB アプリ・管理画面）と、API・バッチの Lambda で構成する。`docs/` の文書がこのシステムの正本である。索引は `docs/README.md`、最初に読むのは `docs/サービス概要.md` と `docs/アーキテクチャ.md`。
 
 ## 文書の更新（必須）
 
@@ -8,10 +8,13 @@ pol.is を使った日本語の合意形成サービス。静的サイト（LP�
 
 | 変更したもの | 更新する文書 |
 | --- | --- |
-| `Client/` の画面・JS・SCSS | `docs/画面仕様書.md`。操作やテストに関わるなら `docs/操作ユースケース.md`、`docs/本番定期テストケース.md` も |
-| `Server/web/api/`、Dockerfile | `docs/仕様書.md`。運用に関わるなら `docs/運用手順書.md` も |
-| `Infra/terraform/` | `docs/運用手順書.md`、`docs/仕様書.md`、`Infra/terraform/README.md` |
+| `Client/` の画面・JS・SCSS | `docs/画面仕様書.md`、`docs/クライアント設計.md`。操作やテストに関わるなら `docs/操作ユースケース.md`、`docs/本番定期テストケース.md` も |
+| API の入出力 | `docs/API仕様.md` |
+| CSV・DynamoDB・ブラウザに保存するデータ | `docs/データ仕様.md` |
+| `Server/` の処理、バッチ、Dockerfile | `docs/サーバー設計.md`。運用に関わるなら `docs/運用手順書.md` も |
+| `Infra/terraform/` | `docs/インフラ構成.md`、`Infra/terraform/README.md`。手順が変わるなら `docs/運用手順書.md` も |
 | `.github/workflows/` | `docs/運用手順書.md` |
+| 全体の構成、設計判断 | `docs/アーキテクチャ.md` |
 
 - 作業を終える前に `python3 scripts/check_docs.py` を実行し、OK になることを確認する。
 - 文書に影響しない変更は、コミットメッセージに `Docs: 変更不要（理由）` を入れる。理由は具体的に書く。検査を通すためだけに使わない。
@@ -28,6 +31,6 @@ pol.is を使った日本語の合意形成サービス。静的サイト（LP�
 
 ## 開発
 
-- ローカル環境: `README.md`。画面の確認方法: `docs/クライアント動作確認ガイド.md`。
+- 環境の準備と変更の流れ: `docs/開発ガイド.md`。画面の確認方法: `docs/クライアント動作確認ガイド.md`。
 - サーバーのテスト: `Server/web` で `pytest`。
 - コミット時の検査を有効にする: `git config core.hooksPath .githooks`
