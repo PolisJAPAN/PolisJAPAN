@@ -121,7 +121,23 @@
         "docs/開発ガイド.md",
         "docs/インフラ構成.md",
         "docs/README.md",
-        "Client/README.md"
+        "Client/README.md",
+        "docs/本番定期テストケース.md"
+      ]
+    },
+    {
+      "name": "本番定期テスト（Playwright）",
+      "paths": [
+        "tests/e2e/*"
+      ],
+      "exclude": [
+        "tests/e2e/package-lock.json",
+        "tests/e2e/.gitignore"
+      ],
+      "docs": [
+        "docs/本番定期テストケース.md",
+        "docs/運用手順書.md",
+        "docs/開発ガイド.md"
       ]
     }
   ],

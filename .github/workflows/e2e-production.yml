@@ -1,0 +1,90 @@
+name: Production E2E (daily)
+
+# 本番の画面を 1 日 1 回テストする（docs/本番定期テストケース.md）。
+# 失敗と警告は、SNS トピック polisjapan-alerts（メール）で知らせる。
+# 認証は OIDC。通知用のロールは sns:Publish だけを持つ
+# （Infra/terraform/environments/production/github_actions.tf）。
+on:
+  schedule:
+    - cron: "0 19 * * *" # 日本時間 4:00
+  workflow_dispatch:
+
+permissions:
+  id-token: write # OIDC トークン取得に必要
+  contents: read
+
+concurrency:
+  group: e2e-production
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ap-northeast-3
+  ROLE_ARN: arn:aws:iam::133078632695:role/polisjapan-gha-e2e-notify
+  TOPIC_ARN: arn:aws:sns:ap-northeast-3:133078632695:polisjapan-alerts
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: tests/e2e
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: tests/e2e/package-lock.json
+
+      - name: Install
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      # 失敗しても後続の通知を行う。失敗したケースは Playwright が最大 2 回やり直す
+      - name: Run tests
+        id: run
+        continue-on-error: true
+        env:
+          # お問い合わせの送信（TC-CT04）で送信者欄に入れる、受信できるテスト用のアドレス
+          E2E_CONTACT_EMAIL: ${{ secrets.E2E_CONTACT_EMAIL }}
+        run: npx playwright test
+
+      - name: Summarize
+        id: summary
+        continue-on-error: true
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: node lib/report.js
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        if: steps.summary.outputs.notify != 'false'
+        with:
+          role-to-assume: ${{ env.ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Notify
+        if: steps.summary.outputs.notify != 'false'
+        run: |
+          if [ "${{ steps.summary.outputs.failed }}" = "0" ]; then
+            subject="[PolisJAPAN] 本番定期テスト: 警告 ${{ steps.summary.outputs.warned }} 件"
+          else
+            subject="[PolisJAPAN] 本番定期テスト: 失敗 ${{ steps.summary.outputs.failed }} 件"
+          fi
+          [ -s results/summary.txt ] || echo "本番定期テストの結果を集計できませんでした。実行の記録を確認してください。" > results/summary.txt
+          aws sns publish --topic-arn "$TOPIC_ARN" --subject "$subject" --message file://results/summary.txt
+
+      # 画面の記録（トレースとスクリーンショット）。TC-CT04 はアドレスを含むため記録しない
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-artifacts
+          path: tests/e2e/results/artifacts
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Fail the job when tests failed
+        if: steps.summary.outputs.failed != '0'
+        run: exit 1
