@@ -818,7 +818,7 @@ function getMultiInputValues(inputElements) {
             return "";
         }
         return inputElement.value ?? "";
-    }).filter((value) => value !== "");
+    }).filter((value) => value.trim() !== "");
 }
 
 /**

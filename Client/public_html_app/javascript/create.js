@@ -900,6 +900,7 @@ function checkInputsFilled(modalStepper) {
 /**
  * 指定ステッパーの target-input / target-select がすべて入力済みかを判定する。
  *
+ * - data-min-filled を持つステッパーは、その個数以上の入力があれば充足
  * - テキスト入力は空白トリムで判定
  * - セレクトはカテゴリ選択の有無を参照
  *
@@ -911,10 +912,15 @@ function isInputsFilled(modalStepper) {
 
     const targetSelects = modalStepper.querySelectorAll(".target-select");
 
-    // 全入力が空でないかを判定
-    let allFilled = Array.from(targetInputs).every(
+    // data-min-filled があるステッパーは、その個数以上が入力済みなら充足とする
+    // （マニュアルモードの意見: 15 欄のうち 8 個以上）。無ければ全入力が必須。
+    const minFilled = Number(modalStepper.dataset.minFilled || 0);
+    const filledCount = Array.from(targetInputs).filter(
         (inputElement) => inputElement.value.trim() !== ""
-    );
+    ).length;
+    let allFilled = (minFilled > 0)
+        ? filledCount >= minFilled
+        : filledCount === targetInputs.length;
     
     if (targetSelects && Array.from(targetSelects).length > 0){
         const category = categorySelectManager.getSelectedValue();
@@ -1354,7 +1360,7 @@ const manualModeHtml =`
             </div>
         </div>
     </div>
-    <div id="comments-stepper" class="modal-stepper" data-control-no="2">
+    <div id="comments-stepper" class="modal-stepper" data-control-no="2" data-min-filled="8">
         <div class="modal-stepper-header">
             <div class="check-base">
                 <i class="bi bi-check"></i>
@@ -1368,7 +1374,7 @@ const manualModeHtml =`
                 <div class="stack center spacing-8px width-full">
                     <div class="modal-content-description">テーマに対して、それぞれの立場から</div>
                     <div class="modal-content-description">どのような意見があるか記入してください。</div>
-                    <div class="modal-content-description">※ 8個の意見が必要です。</div>
+                    <div class="modal-content-description">※ 8個以上の意見が必要です（最大15個）。</div>
                 </div>
                 <div class="input-group">
                     <textarea id="comment-textarea-1" class="comment-input hidden-input auto-resize target-input" rows="1" placeholder="意見を入力"></textarea>

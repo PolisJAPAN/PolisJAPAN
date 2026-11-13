@@ -591,26 +591,28 @@ function adjustTargetAcordion() {
 }
 
 function bindAccordionToggle() {
-    const accordionButtonList = document.querySelectorAll('.accordion-button');
-    
-    accordionButtonList.forEach((accordionButton) => {
-        accordionButton.addEventListener('click', () => {
-            console.log("アコーディオン開閉処理発火");
-            
-            const targetSelector = accordionButton.dataset.target;
-            if (!targetSelector) { return; }
+    // ボタンは CSV の読み込み後に生成されるため、生成のタイミングに依存しないよう
+    // 親要素でクリックを受ける（イベント委譲）。
+    const container = document.querySelector('.report-list-container');
+    if (!container) { return; }
 
-            const targetElement = document.querySelector(targetSelector);
-            if (!targetElement) { return; }
+    container.addEventListener('click', (event) => {
+        const accordionButton = event.target.closest('.accordion-button');
+        if (!accordionButton || !container.contains(accordionButton)) { return; }
 
-            const shouldShow = !targetElement.classList.contains('show');
-            targetElement.classList.toggle('show', shouldShow);
+        const targetSelector = accordionButton.dataset.target;
+        if (!targetSelector) { return; }
 
-            adjustTargetAcordion();
-            scrollPolisReportToAccordion(targetElement, shouldShow);
+        const targetElement = document.querySelector(targetSelector);
+        if (!targetElement) { return; }
 
-            accordionButton.textContent = shouldShow ? "閉じる" : "もっと見る"
-        });
+        const shouldShow = !targetElement.classList.contains('show');
+        targetElement.classList.toggle('show', shouldShow);
+
+        adjustTargetAcordion();
+        scrollPolisReportToAccordion(targetElement, shouldShow);
+
+        accordionButton.textContent = shouldShow ? "閉じる" : "もっと見る"
     });
 }
 
@@ -1158,7 +1160,5 @@ document.addEventListener("DOMContentLoaded", () => {
     bindDetailLink();
     bindPageReturn();
     initializeFavoriteButton();
-    setTimeout(() => {
-        bindAccordionToggle();
-    }, 500);
+    bindAccordionToggle();
 });
