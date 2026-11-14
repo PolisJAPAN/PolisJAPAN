@@ -611,7 +611,7 @@ class BatchService(CommonService):
         prompt = self.get_prompt_callable("get_background_selector")
         
         # 2) モデル（GPT-5 を指定）
-        llm = ChatOpenAI(model="gpt-5-nano")
+        llm = ChatOpenAI(model=configs.constants.OPENAI_MODEL_LIGHT)
 
         # 3) 出力パーサ（ChatMessage → str）
         parser = StrOutputParser()
@@ -708,7 +708,7 @@ class BatchService(CommonService):
         Returns:
             RunnableSerializable: LCELチェイン
         """
-        llm, parser = ChatOpenAI(model="gpt-5"), StrOutputParser()
+        llm, parser = ChatOpenAI(model=configs.constants.OPENAI_MODEL_STANDARD), StrOutputParser()
         return  self.get_prompt_callable("get_theme") | llm | parser
     
     def get_axis_chain(self) -> RunnableSerializable:
@@ -718,7 +718,7 @@ class BatchService(CommonService):
         Returns:
             RunnableSerializable: LCELチェイン
         """
-        llm, parser = ChatOpenAI(model="gpt-5"), StrOutputParser()
+        llm, parser = ChatOpenAI(model=configs.constants.OPENAI_MODEL_STANDARD), StrOutputParser()
         return  self.get_prompt_callable("get_axis") | llm | parser | RunnableLambda(lambda x: x.splitlines())
     
     def get_comments_per_axis_chain(self) -> RunnableSerializable:
@@ -728,7 +728,7 @@ class BatchService(CommonService):
         Returns:
             RunnableSerializable: LCELチェイン
         """
-        llm, parser = ChatOpenAI(model="gpt-5-nano"), StrOutputParser()
+        llm, parser = ChatOpenAI(model=configs.constants.OPENAI_MODEL_LIGHT), StrOutputParser()
         comments_prompt = self.get_prompt_callable("get_comments")
         
         # 空白行はフィルターでカットして返却
@@ -793,7 +793,7 @@ class BatchService(CommonService):
         Returns:
             _type_: LCELチェイン
         """
-        llm, parser = ChatOpenAI(model="gpt-5-nano"), StrOutputParser()
+        llm, parser = ChatOpenAI(model=configs.constants.OPENAI_MODEL_LIGHT), StrOutputParser()
 
         # コメント辞書をプロンプト用の1本の文字列へ整形
         def build_comments_text(x: Dict[str, Any]) -> Dict[str, Any]:
@@ -837,7 +837,7 @@ class BatchService(CommonService):
             return int(model.category)
 
             
-        llm = ChatOpenAI(model="gpt-5-nano")
+        llm = ChatOpenAI(model=configs.constants.OPENAI_MODEL_LIGHT)
         parser = PydanticOutputParser(pydantic_object=CategoryModel)
         # プロンプトに含めるフォーマット指示
         format_instructions = parser.get_format_instructions()

@@ -1,3 +1,4 @@
+import re
 import json
 from functools import partial
 from typing import Any, Dict, List, Optional
@@ -25,6 +26,29 @@ class ThemeService(CommonService):
     テーマ関連の処理を集約したサービスクラス
     """
     
+    @staticmethod
+    def normalize_axis_lines(lines: list[str]) -> list[str]:
+        """
+        モデルが返した対立軸の行を、立場ごとの一覧に整える
+
+        行頭の「- 」と前後の空白、空の行を取り除く。モデルが 2 つの立場を
+        「A vs B」「A／B」のように 1 行で返したときは、区切りで分ける。
+
+        Args:
+            lines (list[str]): モデルの出力を行ごとに分けたもの
+
+        Returns:
+            list[str]: 立場の一覧
+        """
+        axis_list = [text.lstrip('- ').strip() for text in lines]
+        axis_list = [text for text in axis_list if text]
+        if len(axis_list) == 1:
+            parts = [part.strip() for part in re.split(r"\s+vs\.?\s+|\s*[／/]\s*", axis_list[0], flags=re.IGNORECASE)]
+            parts = [part for part in parts if part]
+            if len(parts) >= 2:
+                axis_list = parts
+        return axis_list
+
     async def generate_axis(self, theme: str) -> list[str]:
         
         # 1. LCELのエントリーポイントになるデータ
@@ -47,7 +71,7 @@ class ThemeService(CommonService):
             "theme": theme
         })
         
-        result["axis_list"] = [text.lstrip('- ').strip() for text in result["axis_list"]]
+        result["axis_list"] = self.normalize_axis_lines(result["axis_list"])
         
         Logger.debug(result)
         
@@ -197,7 +221,7 @@ class ThemeService(CommonService):
         Returns:
             RunnableSerializable: LCELチェイン
         """
-        llm, parser = ChatOpenAI(model="gpt-5"), StrOutputParser()
+        llm, parser = ChatOpenAI(model=configs.constants.OPENAI_MODEL_STANDARD), StrOutputParser()
         return  self.get_prompt_callable("get_theme") | llm | parser
     
     def get_axis_chain(self) -> RunnableSerializable:
@@ -207,7 +231,7 @@ class ThemeService(CommonService):
         Returns:
             RunnableSerializable: LCELチェイン
         """
-        llm, parser = ChatOpenAI(model="gpt-5-nano", reasoning_effort="low", verbosity="low"), StrOutputParser()
+        llm, parser = ChatOpenAI(model=configs.constants.OPENAI_MODEL_LIGHT, reasoning_effort="low", verbosity="low"), StrOutputParser()
         return  self.get_prompt_callable("get_axis_standalone") | llm | parser | RunnableLambda(lambda x: x.splitlines())
     
     def get_comments_per_axis_chain(self) -> RunnableSerializable:
@@ -217,7 +241,7 @@ class ThemeService(CommonService):
         Returns:
             RunnableSerializable: LCELチェイン
         """
-        llm, parser = ChatOpenAI(model="gpt-5-nano", reasoning_effort="low", verbosity="low"), StrOutputParser()
+        llm, parser = ChatOpenAI(model=configs.constants.OPENAI_MODEL_LIGHT, reasoning_effort="low", verbosity="low"), StrOutputParser()
         comments_prompt = self.get_prompt_callable("get_comments_standalone")
         
         # 空白行はフィルターでカットして返却
@@ -282,7 +306,7 @@ class ThemeService(CommonService):
         Returns:
             _type_: LCELチェイン
         """
-        llm, parser = ChatOpenAI(model="gpt-5-nano", reasoning_effort="low", verbosity="low"), StrOutputParser()
+        llm, parser = ChatOpenAI(model=configs.constants.OPENAI_MODEL_LIGHT, reasoning_effort="low", verbosity="low"), StrOutputParser()
         return (
             self.get_prompt_callable("get_description_standalone")
             | llm
@@ -311,7 +335,7 @@ class ThemeService(CommonService):
             return int(model.category)
 
             
-        llm = ChatOpenAI(model="gpt-5-nano")
+        llm = ChatOpenAI(model=configs.constants.OPENAI_MODEL_LIGHT)
         parser = PydanticOutputParser(pydantic_object=CategoryModel)
         # プロンプトに含めるフォーマット指示
         format_instructions = parser.get_format_instructions()

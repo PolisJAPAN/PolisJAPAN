@@ -23,6 +23,11 @@ BIGINT_U_MAX   	    = 18446744073709551615
 
 SPLITTER = "###br###"
 
+OPENAI_MODEL_STANDARD = "gpt-6.1-sol"
+"""OpenAI の標準モデル。品質を優先する処理で使う"""
+OPENAI_MODEL_LIGHT = "gpt-6-luna"
+"""OpenAI の軽量モデル。応答の速さと費用を優先する処理（利用者向けの AI 生成）で使う"""
+
 DATA_BACKEND = "mysql"
 """下書きデータの保存先: mysql | dynamodb。serverless環境のみdynamodbに上書きされる"""
 
