@@ -24,7 +24,7 @@ BIGINT_U_MAX   	    = 18446744073709551615
 SPLITTER = "###br###"
 
 OPENAI_MODEL_STANDARD = "gpt-6.1-sol"
-"""OpenAI の標準モデル。品質を優先する処理で使う"""
+"""OpenAI の標準モデル。AI 出力の評価（Server/web/evals）で、判定役として使う"""
 OPENAI_MODEL_LIGHT = "gpt-6-luna"
 """OpenAI の軽量モデル。応答の速さと費用を優先する処理（利用者向けの AI 生成）で使う"""
 

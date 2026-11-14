@@ -3,11 +3,9 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
-from dataclasses import dataclass
 from time import monotonic, sleep
-from typing import List, Optional
+from typing import Optional
 
-from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import (
         ElementClickInterceptedException, 
@@ -27,22 +25,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from api.utils.time import Time
 
-@dataclass
-class PageInfo:
-    """
-    ページ情報を保持するデータクラス。
-
-    Attributes:
-        url (str): ページのURL。
-        title (str): ページタイトル。
-        h1 (Optional[str]): 最初の <h1> タグのテキスト。
-        links (List[str]): ページ内のリンク一覧（hrefのリスト）。
-    """
-    
-    url: str
-    title: str
-    h1: Optional[str]
-    links: List[str]
 
 
 class WebLoaderChrome:
@@ -50,7 +32,6 @@ class WebLoaderChrome:
     Selenium + Chrome WebDriverを利用してページを取得・操作するユーティリティクラス。
 
     - ヘッドレスモード対応（`--headless=new`）
-    - BeautifulSoupによるHTML解析補助を実装
     - スクリーンショット、クリック、フォーム送信、入力操作などを提供
 
     Attributes:
@@ -154,35 +135,6 @@ class WebLoaderChrome:
     # -------------------------
     # public
     # -------------------------
-    def get_page_info(self, url: str, wait_sec: int = 15) -> PageInfo:
-        """
-        指定URLのページを開き、タイトル・H1・リンク情報を取得する。
-
-        Args:
-            url (str): 対象のURL。
-            wait_sec (int): body要素が出現するまでの最大待機秒数。
-
-        Returns:
-            PageInfo: ページ情報（タイトル・h1・リンク一覧）。
-        """
-        drv = self._driver
-        
-        drv.get(url)
-
-        WebDriverWait(drv, wait_sec).until(
-            EC.presence_of_element_located((By.TAG_NAME, "body"))
-        )
-
-        html = drv.page_source
-        soup = BeautifulSoup(html, "html.parser")
-
-        title = (soup.title.string.strip() if soup.title and soup.title.string else "")
-        h1_tag = soup.find("h1")
-        h1 = h1_tag.get_text(strip=True) if h1_tag else None
-        links = [a.get("href") for a in soup.select("a[href]")]
-        links = [str(l) for l in links if l]
-
-        return PageInfo(url=url, title=title, h1=h1, links=links)
     
     # -------------------------
     # public
