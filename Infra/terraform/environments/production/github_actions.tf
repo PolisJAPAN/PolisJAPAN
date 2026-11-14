@@ -156,6 +156,31 @@ resource "aws_iam_role_policy" "gha_deploy_server" {
   })
 }
 
+# ---- 本番定期テストの通知用（アラート用 SNS トピックへの Publish のみ） ----
+
+resource "aws_iam_role" "gha_e2e_notify" {
+  name               = "polisjapan-gha-e2e-notify"
+  description        = "GitHub Actions e2e-production.yml (publish test results to the alerts topic)"
+  assume_role_policy = data.aws_iam_policy_document.gha_assume.json
+}
+
+resource "aws_iam_role_policy" "gha_e2e_notify" {
+  name = "e2e-notify"
+  role = aws_iam_role.gha_e2e_notify.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "PublishAlerts"
+        Effect   = "Allow"
+        Action   = ["sns:Publish"]
+        Resource = "arn:aws:sns:${local.gha_region}:${local.gha_account_id}:polisjapan-alerts"
+      },
+    ]
+  })
+}
+
 output "gha_deploy_client_role_arn" {
   description = "deploy-client.yml の role-to-assume に設定するARN"
   value       = aws_iam_role.gha_deploy_client.arn
@@ -164,4 +189,9 @@ output "gha_deploy_client_role_arn" {
 output "gha_deploy_server_role_arn" {
   description = "deploy-server.yml の role-to-assume に設定するARN"
   value       = aws_iam_role.gha_deploy_server.arn
+}
+
+output "gha_e2e_notify_role_arn" {
+  description = "e2e-production.yml の role-to-assume に設定するARN"
+  value       = aws_iam_role.gha_e2e_notify.arn
 }

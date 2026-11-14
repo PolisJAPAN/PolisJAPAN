@@ -33,4 +33,5 @@ pol.is を使った日本語の合意形成サービス。静的サイト（LP�
 
 - 環境の準備と変更の流れ: `docs/開発ガイド.md`。画面の確認方法: `docs/クライアント動作確認ガイド.md`。
 - サーバーのテスト: `Server/web` で `pytest`。
+- 画面のテスト: `tests/e2e` で `npm run test:local`（ローカルの画面を起動しておく）。画面を変えたら `tests/e2e/specs/` と `docs/本番定期テストケース.md` も直す。
 - コミット時の検査を有効にする: `git config core.hooksPath .githooks`
