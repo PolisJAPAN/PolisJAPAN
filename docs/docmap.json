@@ -1,0 +1,210 @@
+{
+  "_説明": "scripts/check_docs.py の設定。コードと文書の対応、および文書に書くべきコード上の値を定義する。運用ルールは docs/README.md。",
+  "index": "docs/README.md",
+  "docs_allowed": [
+    "docs/サービス概要.md",
+    "docs/アーキテクチャ.md",
+    "docs/インフラ構成.md",
+    "docs/API仕様.md",
+    "docs/データ仕様.md",
+    "docs/サーバー設計.md",
+    "docs/クライアント設計.md",
+    "docs/画面仕様書.md",
+    "docs/操作ユースケース.md",
+    "docs/本番定期テストケース.md",
+    "docs/開発ガイド.md",
+    "docs/クライアント動作確認ガイド.md",
+    "docs/運用手順書.md",
+    "docs/改善バックログ.md"
+  ],
+  "doc_globs": [
+    "docs/*.md",
+    "README.md",
+    "CLAUDE.md",
+    "Client/README.md",
+    "Infra/terraform/README.md",
+    "Server/lambda/contact/README.md"
+  ],
+  "path_ignore": [
+    "Server/web/.env",
+    "Server/web/screenshot*",
+    "Infra/terraform/environments/production/terraform.tfvars",
+    "docs/superpowers*"
+  ],
+  "rules": [
+    {
+      "name": "WEB アプリ・LP・管理画面（クライアント）",
+      "paths": [
+        "Client/public_html/*",
+        "Client/public_html_app/*",
+        "Client/public_html_admin/*",
+        "Client/scss/*"
+      ],
+      "exclude": [
+        "*.png",
+        "*.jpg",
+        "*.jpeg",
+        "*.webp",
+        "*.svg",
+        "*.ico",
+        "*.woff",
+        "*.woff2",
+        "*.css.map"
+      ],
+      "docs": [
+        "docs/画面仕様書.md",
+        "docs/クライアント設計.md",
+        "docs/操作ユースケース.md",
+        "docs/本番定期テストケース.md",
+        "docs/データ仕様.md",
+        "docs/クライアント動作確認ガイド.md",
+        "docs/改善バックログ.md"
+      ]
+    },
+    {
+      "name": "API・バッチ（サーバー）",
+      "paths": [
+        "Server/web/api/*",
+        "Server/web/Dockerfile*",
+        "Server/web/pyproject.toml",
+        "Server/docker-compose.yml"
+      ],
+      "exclude": [
+        "*.pyc"
+      ],
+      "docs": [
+        "docs/API仕様.md",
+        "docs/データ仕様.md",
+        "docs/サーバー設計.md",
+        "docs/運用手順書.md",
+        "docs/改善バックログ.md"
+      ]
+    },
+    {
+      "name": "お問い合わせ Lambda",
+      "paths": [
+        "Server/lambda/*"
+      ],
+      "exclude": [
+        "*.md"
+      ],
+      "docs": [
+        "docs/API仕様.md",
+        "docs/サーバー設計.md",
+        "Server/lambda/contact/README.md"
+      ]
+    },
+    {
+      "name": "インフラ（Terraform）",
+      "paths": [
+        "Infra/terraform/*"
+      ],
+      "exclude": [
+        "*.md",
+        "*.lock.hcl"
+      ],
+      "docs": [
+        "docs/インフラ構成.md",
+        "docs/運用手順書.md",
+        "Infra/terraform/README.md"
+      ]
+    },
+    {
+      "name": "デプロイ・検査のワークフロー",
+      "paths": [
+        ".github/workflows/*",
+        ".githooks/*",
+        "scripts/check_docs.py"
+      ],
+      "docs": [
+        "docs/運用手順書.md",
+        "docs/開発ガイド.md",
+        "docs/インフラ構成.md",
+        "docs/README.md",
+        "Client/README.md"
+      ]
+    }
+  ],
+  "routes": {
+    "main": "Server/web/api/main.py",
+    "routers_dir": "Server/web/api/routers",
+    "doc": "docs/API仕様.md",
+    "ignore": [
+      "/batch/generate"
+    ]
+  },
+  "facts": [
+    {
+      "label": "Chrome for Testing の固定バージョン",
+      "source": "Server/web/Dockerfile.lambda-chromium",
+      "pattern": "ARG CHROME_VERSION=(\\S+)",
+      "docs": [
+        "docs/サーバー設計.md",
+        "docs/運用手順書.md"
+      ]
+    },
+    {
+      "label": "投稿リトライの上限回数",
+      "source": "Server/web/api/configs/constants.py",
+      "pattern": "PUBLISH_RETRY_LIMIT\\s*=\\s*(\\d+)",
+      "expect": "{0} 回連続",
+      "docs": [
+        "docs/サーバー設計.md",
+        "docs/データ仕様.md",
+        "docs/運用手順書.md"
+      ]
+    },
+    {
+      "label": "バッチの起動間隔",
+      "source": "Infra/terraform/modules/batch/main.tf",
+      "pattern": "rate\\((\\d+) minutes\\)",
+      "expect": "{0} 分",
+      "docs": [
+        "docs/インフラ構成.md",
+        "docs/サーバー設計.md",
+        "docs/運用手順書.md"
+      ]
+    },
+    {
+      "label": "CloudWatch アラーム名",
+      "source": "Infra/terraform/modules/monitoring/main.tf",
+      "pattern": "alarm_name\\s*=\\s*\"(polisjapan-[a-z-]+)\"",
+      "docs": [
+        "docs/インフラ構成.md",
+        "docs/運用手順書.md"
+      ]
+    },
+    {
+      "label": "通知先 SNS トピック名",
+      "source": "Infra/terraform/modules/monitoring/main.tf",
+      "pattern": "resource \"aws_sns_topic\"[^}]*?name\\s*=\\s*\"([^\"]+)\"",
+      "docs": [
+        "docs/インフラ構成.md",
+        "docs/運用手順書.md"
+      ]
+    },
+    {
+      "label": "タイトルの文字数上限",
+      "source": "Server/web/api/schemas/theme.py",
+      "pattern": "theme: str = Field\\(max_length=(\\d+)",
+      "expect": "タイトル {0}",
+      "docs": [
+        "docs/API仕様.md"
+      ]
+    }
+  ],
+  "selectors": {
+    "docs": [
+      "docs/画面仕様書.md",
+      "docs/本番定期テストケース.md",
+      "docs/操作ユースケース.md",
+      "docs/クライアント設計.md"
+    ],
+    "sources": [
+      "Client/public_html/*",
+      "Client/public_html_app/*",
+      "Client/public_html_admin/*"
+    ],
+    "ignore": []
+  }
+}

@@ -40,5 +40,17 @@ docker-compose up
 [WEBアプリケーション](http://localhost:8081/)
 [管理画面](http://localhost:8082/)
 
+## ドキュメント
+
+仕様、運用手順、テストケースなどの文書は [docs/](docs/README.md) にあります。
+
+コードを変えたら、同じコミットで対応する文書を更新してください。コミット時に検査するフックを、クローン後に一度だけ有効にします。
+
+```sh
+git config core.hooksPath .githooks
+```
+
+検査の内容と、文書に影響しない変更の扱いは [docs/README.md](docs/README.md) を参照してください。
+
 ## ライセンス
 [Polisライセンス規約](https://compdemocracy.org/FAQ/)に従い、AGPL-3.0 licenseでの提供を行っています。

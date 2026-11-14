@@ -1,6 +1,6 @@
 // ==============================
 // お気に入り機能（localStorage駆動・ホーム/詳細共通）
-// 仕様: docs/superpowers/specs/2026-07-08-favorites-design.md
+// 仕様: docs/画面仕様書.md
 // ==============================
 
 /** お気に入りのconversation_id配列を保存するlocalStorageキー */
