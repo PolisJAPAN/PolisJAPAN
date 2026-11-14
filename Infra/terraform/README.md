@@ -58,6 +58,7 @@ terraform apply
 - GitHub Actions の認証は OIDC フェデレーション（`github_actions.tf`）。ロールを使えるのは本リポジトリの `main` ブランチのワークフローだけ
   - `polisjapan-gha-deploy-client`: S3 同期と CloudFront 無効化のみ。`app.pol-is.jp/csv/*` への書き込みは明示的に拒否
   - `polisjapan-gha-deploy-server`: ECR への push と、3 関数の `UpdateFunctionCode` のみ
+  - `polisjapan-gha-e2e-notify`: SNS トピック `polisjapan-alerts` への `sns:Publish` のみ（本番定期テストの通知）
 
 ## シークレット
 

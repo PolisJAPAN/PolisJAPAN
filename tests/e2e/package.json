@@ -1,0 +1,12 @@
+{
+  "name": "polisjapan-e2e",
+  "private": true,
+  "description": "本番定期テスト（docs/本番定期テストケース.md）",
+  "scripts": {
+    "test": "playwright test",
+    "test:local": "APP_URL=http://localhost:8081 LP_URL=http://localhost:8080 playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.49.1"
+  }
+}
