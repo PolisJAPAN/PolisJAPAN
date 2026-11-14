@@ -1,0 +1,12 @@
+[
+  {"id": "work-remote", "theme": "在宅勤務を標準の働き方にすべきか"},
+  {"id": "tax-consumption", "theme": "消費税を減税すべきか"},
+  {"id": "school-club", "theme": "学校の部活動を地域に移すべきか"},
+  {"id": "rideshare", "theme": "ライドシェアを全面解禁すべきか"},
+  {"id": "nuclear", "theme": "原子力発電所の再稼働を進めるべきか"},
+  {"id": "surname", "theme": "選択的夫婦別姓を導入すべきか"},
+  {"id": "ai-school", "theme": "学校の宿題に生成AIを使ってよいか"},
+  {"id": "tourism-tax", "theme": "観光地で宿泊税や入域料を取るべきか"},
+  {"id": "short-word", "theme": "定年制"},
+  {"id": "local-daily", "theme": "町内会への加入は必要か"}
+]
