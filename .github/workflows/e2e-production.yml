@@ -12,6 +12,7 @@ on:
 permissions:
   id-token: write # OIDC トークン取得に必要
   contents: read
+  actions: write # スケジュール実行の自動停止を防ぐ（下の Keep schedule enabled）
 
 concurrency:
   group: e2e-production
@@ -31,6 +32,14 @@ jobs:
         working-directory: tests/e2e
     steps:
       - uses: actions/checkout@v4
+
+      # GitHub は、リポジトリに 60 日間動きが無いとスケジュール実行を止める。
+      # 毎回このワークフローを有効化し直して、その期間を数え直させる
+      - name: Keep schedule enabled
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow enable e2e-production.yml --repo "$GITHUB_REPOSITORY"
 
       - uses: actions/setup-node@v4
         with:
