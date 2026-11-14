@@ -1,23 +1,15 @@
-import json
-from functools import partial
-from typing import Any, Dict, List, Optional
-from urllib.parse import urlparse
+import re
+from typing import Any, Dict, List
 
-from langchain_core.output_parsers import PydanticOutputParser, StrOutputParser
-from langchain_core.runnables import (RunnableLambda, RunnableParallel, RunnableSerializable, RunnableBranch)
-from langchain_core.runnables.base import RunnableEach
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnableLambda, RunnableSerializable
 from langchain_openai import ChatOpenAI
 from langsmith import Client as LangSmithClient
-from pydantic import BaseModel, Field
-from selenium.webdriver.common.by import By
-from langchain_community.tools import DuckDuckGoSearchRun, DuckDuckGoSearchResults
+from langchain_community.tools import DuckDuckGoSearchResults
 
 import api.configs as configs
-import api.cruds as cruds
-from api import utils
 from api.core.common_service import CommonService
 from api.logger import Logger
-from api.utils.web_loader_chrome import WebLoaderChrome
 
 
 class ThemeService(CommonService):
@@ -25,6 +17,29 @@ class ThemeService(CommonService):
     テーマ関連の処理を集約したサービスクラス
     """
     
+    @staticmethod
+    def normalize_axis_lines(lines: list[str]) -> list[str]:
+        """
+        モデルが返した対立軸の行を、立場ごとの一覧に整える
+
+        行頭の「- 」と前後の空白、空の行を取り除く。モデルが 2 つの立場を
+        「A vs B」「A／B」のように 1 行で返したときは、区切りで分ける。
+
+        Args:
+            lines (list[str]): モデルの出力を行ごとに分けたもの
+
+        Returns:
+            list[str]: 立場の一覧
+        """
+        axis_list = [text.lstrip('- ').strip() for text in lines]
+        axis_list = [text for text in axis_list if text]
+        if len(axis_list) == 1:
+            parts = [part.strip() for part in re.split(r"\s+vs\.?\s+|\s*[／/]\s*", axis_list[0], flags=re.IGNORECASE)]
+            parts = [part for part in parts if part]
+            if len(parts) >= 2:
+                axis_list = parts
+        return axis_list
+
     async def generate_axis(self, theme: str) -> list[str]:
         
         # 1. LCELのエントリーポイントになるデータ
@@ -47,7 +62,7 @@ class ThemeService(CommonService):
             "theme": theme
         })
         
-        result["axis_list"] = [text.lstrip('- ').strip() for text in result["axis_list"]]
+        result["axis_list"] = self.normalize_axis_lines(result["axis_list"])
         
         Logger.debug(result)
         
@@ -190,15 +205,6 @@ class ThemeService(CommonService):
 
         return result_text
     
-    def get_theme_chain(self) -> RunnableSerializable:
-        """
-        テーマ生成用のLCELチェインを取得
-
-        Returns:
-            RunnableSerializable: LCELチェイン
-        """
-        llm, parser = ChatOpenAI(model="gpt-5"), StrOutputParser()
-        return  self.get_prompt_callable("get_theme") | llm | parser
     
     def get_axis_chain(self) -> RunnableSerializable:
         """
@@ -207,7 +213,7 @@ class ThemeService(CommonService):
         Returns:
             RunnableSerializable: LCELチェイン
         """
-        llm, parser = ChatOpenAI(model="gpt-5-nano", reasoning_effort="low", verbosity="low"), StrOutputParser()
+        llm, parser = ChatOpenAI(model=configs.constants.OPENAI_MODEL_LIGHT, reasoning_effort="low", verbosity="low"), StrOutputParser()
         return  self.get_prompt_callable("get_axis_standalone") | llm | parser | RunnableLambda(lambda x: x.splitlines())
     
     def get_comments_per_axis_chain(self) -> RunnableSerializable:
@@ -217,7 +223,7 @@ class ThemeService(CommonService):
         Returns:
             RunnableSerializable: LCELチェイン
         """
-        llm, parser = ChatOpenAI(model="gpt-5-nano", reasoning_effort="low", verbosity="low"), StrOutputParser()
+        llm, parser = ChatOpenAI(model=configs.constants.OPENAI_MODEL_LIGHT, reasoning_effort="low", verbosity="low"), StrOutputParser()
         comments_prompt = self.get_prompt_callable("get_comments_standalone")
         
         # 空白行はフィルターでカットして返却
@@ -225,55 +231,6 @@ class ThemeService(CommonService):
             comments_prompt | llm | parser | RunnableLambda(lambda s: [item.strip() for item in s.splitlines() if item and item.strip()])
         )
 
-    def get_comments_by_axis_chain(self) -> RunnableSerializable:
-        """
-        対立軸全てのコメント内容を一括取得するLCELチェインを取得
-
-        Returns:
-            RunnableSerializable: LCELチェイン
-        """
-        
-        def _explode_axes(data: Dict[str, Any]) -> List[Dict[str, Any]]:
-            """axis_list を展開して、各 axis を埋め込んだ辞書のリストにする"""
-            return [{**data, "axis": axis} for axis in data["axis_list"]]
-
-        def _pick_axis(data: Dict[str, Any]) -> str:
-            """辞書から axis の値だけ取り出す"""
-            return data["axis"]
-
-        def _pick_fields_for_comments(data: Dict[str, Any]) -> Dict[str, Any]:
-            """コメント生成に必要なフィールドだけを抽出して渡す"""
-            return {
-                "page_title": data["page_title"],
-                "main_tweet_text": data["main_tweet_text"],
-                "reaction_text": data["reaction_text"],
-                "detail": data["detail"],
-                "theme": data["theme"],
-                "axis": data["axis"],
-            }
-
-        def _aggregate_axis_to_comments(items: List[Dict[str, Any]]) -> Dict[str, List[str]]:
-            """[{axis, comments}] の配列を {axis: comments} の辞書にまとめる"""
-            return {it["axis"]: it["comments"] for it in items}
-        
-        # 軸リストを展開（1軸ごとに {"base": {...}, "axis": str} に分解）
-        explode_axes = RunnableLambda(_explode_axes)
-
-        # 各軸に対して {"axis": str, "comments": list[str]} を生成
-        one_axis_unit = RunnableParallel(
-            axis=RunnableLambda(_pick_axis),
-            comments=(
-                RunnableLambda(_pick_fields_for_comments)
-                | self.get_comments_per_axis_chain()
-            ),
-        )
-
-        # すべての軸を map で処理し、最終的に {axis: comments[]} 辞書にまとめる
-        return (
-            explode_axes
-            | one_axis_unit.map()
-            | RunnableLambda(_aggregate_axis_to_comments)
-        )
 
     def get_description_chain(self) -> RunnableSerializable:
         """
@@ -282,48 +239,13 @@ class ThemeService(CommonService):
         Returns:
             _type_: LCELチェイン
         """
-        llm, parser = ChatOpenAI(model="gpt-5-nano", reasoning_effort="low", verbosity="low"), StrOutputParser()
+        llm, parser = ChatOpenAI(model=configs.constants.OPENAI_MODEL_LIGHT, reasoning_effort="low", verbosity="low"), StrOutputParser()
         return (
             self.get_prompt_callable("get_description_standalone")
             | llm
             | parser
         )
     
-    def get_category_chain(self) -> RunnableSerializable:
-        """
-        カテゴリの説明を取得するLCELチェインを取得
-
-        Returns:
-            _type_: LCELチェイン
-        """
-        # 構造化出力用のPydanticクラス
-        class CategoryModel(BaseModel):
-            category: int = Field(..., description="合致するテーマの番号")
-            
-        def _inject_format_instructions(data: Dict[str, Any], fmt: str) -> Dict[str, Any]:
-            """入力辞書に format_instructions を追加"""
-            new_data = {**data, "format_instructions": fmt}
-            return new_data
-
-        def _extract_category_int(model: CategoryModel) -> int:
-            """CategoryModel から category(int) を抽出"""
-            # Pydantic Modelのバリデーション後、整数を返す
-            return int(model.category)
-
-            
-        llm = ChatOpenAI(model="gpt-5-nano")
-        parser = PydanticOutputParser(pydantic_object=CategoryModel)
-        # プロンプトに含めるフォーマット指示
-        format_instructions = parser.get_format_instructions()
-        prompt = self.get_prompt_callable("get_category")  # ← プロンプト側に {format_instructions} を含めておく
-
-        return (
-            RunnableLambda(partial(_inject_format_instructions, fmt=format_instructions))
-            | prompt
-            | llm
-            | parser                       # → CategoryModel
-            | RunnableLambda(_extract_category_int)  # → int にして出力
-        )
     
     # ###########################################################################
     # 共通ユーティリティ処理

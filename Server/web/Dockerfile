@@ -26,6 +26,9 @@ RUN poetry lock --no-interaction --no-ansi
 # 3) 生成された poetry.lock を使って install
 RUN poetry install --no-root --no-interaction --no-ansi
 
+# SQLAlchemy の非同期機能に必要。ロックを作り直すと依存から外れることがあるため、明示して入れる
+RUN pip install --no-cache-dir greenlet
+
 COPY . .
 
 # ライセンス一覧をビルド時に生成

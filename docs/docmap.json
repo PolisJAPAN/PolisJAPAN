@@ -28,6 +28,7 @@
   "path_ignore": [
     "Server/web/.env",
     "Server/web/screenshot*",
+    "Server/web/evals/results*",
     "Infra/terraform/environments/production/terraform.tfvars",
     "docs/superpowers*"
   ],
@@ -65,6 +66,7 @@
       "name": "API・バッチ（サーバー）",
       "paths": [
         "Server/web/api/*",
+        "Server/web/evals/*",
         "Server/web/Dockerfile*",
         "Server/web/pyproject.toml",
         "Server/docker-compose.yml"

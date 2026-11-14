@@ -308,7 +308,7 @@ sequenceDiagram
 
 1. テーマ（タイトル）で DuckDuckGo のニュース検索を行い、見出しと抜粋を背景情報にする。検索に失敗したら背景情報を空にして続ける。
 2. LangSmith からプロンプトを取得する。キーは `get_axis_standalone`、`get_comments_standalone`、`get_description_standalone`。
-3. OpenAI の `gpt-5-nano`（`reasoning_effort=low`、`verbosity=low`）で生成する。
+3. OpenAI の `gpt-6-luna`（`reasoning_effort=low`、`verbosity=low`）で生成する。
 
 **副作用**: OpenAI の利用料が呼び出しのたびに発生する。DuckDuckGo と LangSmith への通信が発生する。DynamoDB・S3・pol.is には何もしない。
 
