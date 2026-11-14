@@ -47,3 +47,6 @@ Server/web/THIRD_PARTY_LICENSES.html
 
 # 作業用の設計メモ・実装計画（コミットしない。決まったことは docs/ の文書に書く。docs/README.md 参照）
 docs/superpowers/
+
+# AI 出力の評価の実行結果
+/Server/web/evals/results/
