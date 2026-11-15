@@ -128,7 +128,7 @@ flowchart TD
 | 場面 | 動作 |
 | --- | --- |
 | コミット時 | `.githooks/commit-msg` が検査し、問題があればコミットを止める |
-| `main` への push、プルリクエスト | `.github/workflows/check-docs.yml` が検査し、問題があればワークフローが失敗する |
+| `main` への push、プルリクエスト | `.github/workflows/check-docs.yml` が検査し、問題があればワークフローが失敗する。`main` はブランチ保護により、この検査が成功したプルリクエストしかマージできない |
 | 手動 | `python3 scripts/check_docs.py` |
 
 コミット時の検査は、クローンごとに一度だけ有効化が必要である。
