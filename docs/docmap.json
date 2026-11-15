@@ -67,6 +67,7 @@
       "paths": [
         "Server/web/api/*",
         "Server/web/evals/*",
+        "Server/web/tests/*",
         "Server/web/Dockerfile*",
         "Server/web/pyproject.toml",
         "Server/docker-compose.yml"
@@ -208,6 +209,24 @@
       "expect": "タイトル {0}",
       "docs": [
         "docs/API仕様.md"
+      ]
+    },
+    {
+      "label": "OpenAI の軽量モデル名",
+      "source": "Server/web/api/configs/constants.py",
+      "pattern": "OPENAI_MODEL_LIGHT\\s*=\\s*\"([^\"]+)\"",
+      "docs": [
+        "docs/サーバー設計.md",
+        "docs/API仕様.md",
+        "docs/画面仕様書.md"
+      ]
+    },
+    {
+      "label": "OpenAI の標準モデル名",
+      "source": "Server/web/api/configs/constants.py",
+      "pattern": "OPENAI_MODEL_STANDARD\\s*=\\s*\"([^\"]+)\"",
+      "docs": [
+        "docs/サーバー設計.md"
       ]
     }
   ],
